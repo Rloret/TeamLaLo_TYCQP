@@ -68,15 +68,27 @@ void TiendaScene::returnToScene(Ref *pSender){
 
 void TiendaScene::colocaArmasTotales()
 {
-	int posY = 200;
+	int iterador = 0;
+	int margenesX = 200;
+	int margenesY = 140;
+	auto anchoCorrespondiente = 0;
+	auto altoCorrespondiente = 0;
 	for (int i = 0; i < Global::getInstance()->armasTotales.size(); i++) {
+		
 		Arma* arma = Global::getInstance()->armasTotales[i];
 		if (!arma->childEnTienda) {
 			this->addChild(arma, 3);
-			arma->setPosition(i * 50 + 100, posY);
-			if (i+1 % 5 == 0) posY += 100;
+			if (i >= 5) {
+				iterador = floor(i / 5);
+				anchoCorrespondiente = ((i - (iterador * 5))*arma->getContentSize().width) * 2;
+				altoCorrespondiente = arma->getContentSize().height *floor(i / 5);
+			}
+			else {
+				anchoCorrespondiente = (i*arma->getContentSize().width * 2);
+				altoCorrespondiente = arma->getContentSize().height *floor(i / 5);
+			}
+			arma->setPosition(margenesX + anchoCorrespondiente, margenesY + altoCorrespondiente + altoCorrespondiente *0.5);
 			arma->setColor(Color3B(i * 50, i * 10 + 60, 10));
-
 		}
 		arma->setDesdeTienda(true);
 		CCLOG("%d", i);

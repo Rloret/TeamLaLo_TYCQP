@@ -34,7 +34,7 @@ void Global::creaArmas()
 {
 	Texture2D* t = Director::getInstance()->getTextureCache()->addImage("images/Armas/arma.png");
 	//provisional crea un array genérico, en un futuro hay que meter las armas 1 a una
-	for (int i = 0; i < 10; i++){
+	for (int i = 0; i < 20; i++){
 		char* nombre = "espada Bastarda numero: ";
 		nombre += i;
 		Arma* armaaux = Arma::create(t, 100+i, nombre, "punzante",100);

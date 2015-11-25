@@ -93,6 +93,12 @@ void Arma::accionTouch(){
 		if (!armaComprada) {
 			Global::getInstance()->armasArsenal.push_back(this);
 			childEnTienda = true;
+			for (int i = 0; i < Global::getInstance()->armasTotales.size(); i++) {
+				if (Global::getInstance()->armasTotales[i] == this) {
+					Global::getInstance()->armasTotales.erase(Global::getInstance()->armasTotales.begin() + i);
+					break;
+				}
+			}
 			this->setVisible(false);
 
 		}
