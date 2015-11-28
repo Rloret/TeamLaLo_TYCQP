@@ -16,6 +16,10 @@ Arma::Arma( int daño, std::string nombre, std::string tipo,int precio)
 	this->AddListener();
 	desdeTienda = false;
 	this->retain();
+
+
+	//meter en función
+
 }
 
 Arma::~Arma()
@@ -37,6 +41,10 @@ Arma * Arma::create(cocos2d::Texture2D* t, int daño, std::string nombre, std::st
 
 void Arma::EnableListener(bool b){
 	listener->setEnabled(b);
+}
+void Arma::EnableSwallow(bool b)
+{
+	this->listener->setSwallowTouches(b);
 }
 void Arma::AddListener()
 {
@@ -64,19 +72,13 @@ void Arma::AddListener()
 	};
 	listener->onTouchEnded = [=](cocos2d::Touch* touch, cocos2d::Event* event)
 	{
-		Arma::TouchEvent(touch, touch->getLocation());
+		Arma::accionTouch();
 	};
 
-	cocos2d::Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 30);
+	cocos2d::Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 32);
 
 }
 
-void Arma::TouchEvent(cocos2d::Touch * touch, cocos2d::Point _p)
-{
-	//CCLOG("Has tocado un arma");
-
-	accionTouch();
-}
 
 void Arma::arrastraArma(cocos2d::Vec2 vector)
 {
@@ -90,18 +92,7 @@ void Arma::arrastraArma(cocos2d::Vec2 vector)
 void Arma::accionTouch(){
 	Point p = this->getPosition();
 	if (desdeTienda) {
-		if (!armaComprada) {
-			Global::getInstance()->armasArsenal.push_back(this);
-			childEnTienda = true;
-			for (int i = 0; i < Global::getInstance()->armasTotales.size(); i++) {
-				if (Global::getInstance()->armasTotales[i] == this) {
-					Global::getInstance()->armasTotales.erase(Global::getInstance()->armasTotales.begin() + i);
-					break;
-				}
-			}
-			this->setVisible(false);
-
-		}
+		Global::getInstance()->armaAComprar = this;
 		CCLOG("Desde tienda");
 	}
 	else{
@@ -136,20 +127,9 @@ void Arma::accionTouch(){
 
 }
 
-void Arma::CreateMenuCompra()
-{
-	//crear menu de compra
-}
 
-void Arma::CloseMenuCompra()
-{
-	//cerrar menu
-}
 
-void Arma::HacerCompra()
-{
-	//(WIP)
-}
+
 
 void Arma::setPointY(int y)
 {
@@ -191,6 +171,7 @@ void Arma::setDesdeTienda(bool estado)
 {
 	desdeTienda = estado;
 }
+
 
 Arma* Arma::ClonarArma(Arma* a){
 

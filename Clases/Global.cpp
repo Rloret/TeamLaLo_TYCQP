@@ -20,6 +20,7 @@ Global::Global(){
 	 creaArmas();
 	 creaObjetosEscenario();
 	 visibleSize = Director::getInstance()->getVisibleSize();
+	 armaAComprar = nullptr;
 	 CCLOG("me he iniciado por primera vez");
 }
 void Global::añadeArmasANivel(Arma* a){

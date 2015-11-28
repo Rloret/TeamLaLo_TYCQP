@@ -15,14 +15,11 @@ public:
 
 	void AddListener();
 	void EnableListener(bool b);
-	void TouchEvent(cocos2d::Touch* touch, cocos2d::Point _p);
+	void EnableSwallow(bool b);
 	void arrastraArma(cocos2d::Vec2 vector);
-	void CreateMenuCompra();
-	void CloseMenuCompra();
-	void HacerCompra();
+
 	void setPointY(int y);
 	void setDesdeTienda(bool estado);
-
 	void setArma(Arma* arma);
 
 	Arma* clon;
@@ -37,21 +34,22 @@ public:
 	bool colocada = false;
 	bool childEnTienda = false; //esta activa en tienda
 	bool childEnNivel = false; 
-
-
+	
 private:
 	bool desdeTienda;
-	bool armaComprada = false;
 	int daño;
 	int toqueY;
 	int precio;
+    
 	cocos2d::EventListenerTouchOneByOne* listener;
-	//cocos2d::Rect areaArma;
+
 	std::string tipo;
 	std::string nombre;
+	
 	Arma* esteArma;
 
 	void accionTouch();
+
 
 
 };

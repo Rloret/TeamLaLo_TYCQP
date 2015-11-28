@@ -203,7 +203,7 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 	CCLOG("voy a añadir el nivel %d",i);
 
 	//cocos2d::Director::getInstance()->getEventDispatcher()->removeEventListener(listener);
-	
+	_eventDispatcher->removeEventListener(this->listener);
 
 	Director::getInstance()->pushScene(Global::getInstance()->nivel);
 	CCLOG("antes del switch");
@@ -235,6 +235,7 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 	}
 
 
+
 	
 }
 
@@ -244,24 +245,10 @@ void LevelsMenuScene::muestraNivelesBtn(){
 	for (int i = mundoSeleccionado*5; i < ((mundoSeleccionado * 5)+5); i++) {
 		CCLOG("desde %d hasta %d", i, ((mundoSeleccionado * 5) + 5));
 		vectorNiveles[i]->setPositionX(170 +(568*(i-mundoSeleccionado*5))/5); //((i / 5) * 568)
-		vectorNiveles[i]->setVisible(true);
-
-		//INTENTO 1 -array de imagenes, crear el menuitemimage aqui
-		//auto nivelBtn = MenuItemImage::create();
-		//nivelBtn->setNormalImage(matrizNivelesBtn[i]);
-		//nivelBtn->setSelectedImage(matrizNivelesBtn[i]);
-		//nivelBtn->setCallback(CC_CALLBACK_1(LevelsMenuScene::goToNivel,this,(int)i));
-
-		//auto menu3 = Menu::create(nivelBtn, NULL);
-		//menu3->setPosition(Point(i * 10, i * 10));
-		//this->addChild(menu3);
-
-
-		//INTENTO 2 vector de menuitemimages, solo añadir como hijo y ya. no deja.
-		
+		vectorNiveles[i]->setVisible(true);	
 
 	}
-	//CCLOG("capacidad: %d", this->matrizNivelesBtn.capacity());
+
 
 }
                       
