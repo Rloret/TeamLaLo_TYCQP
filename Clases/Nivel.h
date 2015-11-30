@@ -17,6 +17,9 @@ public:
 	void displayArmasArsenal();
 	void goToGameOver(Ref *pSender);
 
+	void mueveNubes(int v);
+	void mueveFondo(int v);
+	int getPosXFondo();
 	// implement the "static create()" method manually
 	CREATE_FUNC(Nivel);
 
@@ -44,7 +47,9 @@ private:
 	void colocaBotones();
 	void colocaFondo(std::vector<std::string> fondos);
 
-	//void update(float dt);
+
+	
+	//virtual void update(float dt);
 
 	cocos2d::MenuItemImage* masBtn;
 	cocos2d::MenuItemImage* menosBtn;
@@ -54,9 +59,12 @@ private:
 	cocos2d::MenuItemImage* arsenalBtn;
 	cocos2d::MenuItemImage* simulacionBtn;
 
+
+
 	cocos2d::Sprite* background;
 	cocos2d::Sprite* muralla;
 	cocos2d::Sprite* nubes;
+	
 
 
 };

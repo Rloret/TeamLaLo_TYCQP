@@ -38,6 +38,8 @@ bool Nivel::init()
 	{
 		return false;
 	}
+
+	//this->scheduleUpdate();
 	return true;
 }
 
@@ -227,10 +229,8 @@ void Nivel::simulacion(Ref *pSender){
 		}
 		
 		addChild(Global::getInstance()->zerrin,4);
-		Global::getInstance()->zerrin->setPosition(Point(visibleSize.width/6,visibleSize.height/3));
-
-		//this->schedule(schedule_selector(Nivel::update), 1.0);
-		//this->scheduleUpdate();
+		Global::getInstance()->zerrin->setPosition(Point(10+ Global::getInstance()->zerrin->getContentSize().width/2
+													,visibleSize.height/3));
 
 		((ZerrinClass *)Global::getInstance()->zerrin)->setCorrer(true);
 		
@@ -325,8 +325,8 @@ void Nivel::colocaBotones()
 	pauseBtn->setTag(23);
 
 	auto menu1 = Menu::create(pauseBtn, tiendaBtn, vestuarioBtn, NULL);
-	menu1->setPosition(Point(150, visibleSize.height - visibleSize.height / 40));
-	menu1->alignItemsHorizontallyWithPadding(30);
+	menu1->setPosition(Point(150, visibleSize.height - pauseBtn->getContentSize().height/2));
+	menu1->alignItemsHorizontally();
 	addChild(menu1, 1);
 
 
@@ -337,7 +337,7 @@ void Nivel::colocaBotones()
 	simulacionBtn->setColor(Color3B(150, 50, 150));
 
 	auto menu2 = Menu::create(arsenalBtn, simulacionBtn, NULL);
-	menu2->setPosition(Point(visibleSize.width / 2 + visibleSize.width / 3, visibleSize.height / 40));
+	menu2->setPosition(Point(visibleSize.width / 2 + visibleSize.width / 3, arsenalBtn->getContentSize().height/2));
 	menu2->alignItemsHorizontallyWithPadding(30);
 	addChild(menu2, 1);
 
@@ -366,8 +366,12 @@ void Nivel::colocaFondo(std::vector<std::string> fondos)
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
 	background = Sprite::create(fondos[0]);
-	background->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
+	
+	background->setPosition(Point(visibleSize.width / 2 + background->getContentSize().width/2, visibleSize.height / 2));
 	addChild(background, 0);
+	
+	background->setAnchorPoint(Point(background->getContentSize().width, background->getContentSize().height));
+	background->retain();
 
 
 	nubes = Sprite::create(fondos[1]);
@@ -375,20 +379,44 @@ void Nivel::colocaFondo(std::vector<std::string> fondos)
 	addChild(nubes, 0);
 
 	nubes->setScaleX(2);
+	nubes->retain();
 
 	muralla = Sprite::create(fondos[2]);
 	muralla->setPosition(Point(visibleSize.width / 2, visibleSize.height / 6-50));
 	addChild(muralla, 0);
 	muralla->setScaleX(2);
+	muralla->retain();
 }
-/*
-void Nivel::update(float dt)
+
+void Nivel::mueveNubes(int v)
 {
-	while (Global::getInstance()->zerrin->corriendo) {
+	nubes->setPositionX(nubes->getPositionX()+v/2);
+}
+void Nivel::mueveFondo(int v) {
+	background->setPositionX(background->getPositionX()- v);
+
+}
+
+int Nivel::getPosXFondo()
+{
+	return background->getPositionX();
+}
+
+
+/*
+ void Nivel::update(float dt)
+{
+	CCLOG("en update nivel");
+	if (Global::getInstance()->juegoEnCurso && Global::getInstance()->zerrin->corriendo) {
 	
-		nubes->setPositionX(nubes->getPositionX() +Global::getInstance()->zerrin->getVelocidad()/2);
-		muralla->setPositionX(muralla->getPositionX() + Global::getInstance()->zerrin->getVelocidad() *1.5);
+		//nubes->setPositionX(nubes->getPositionX() +Global::getInstance()->zerrin->getVelocidad()/2);
+		//muralla->setPositionX(muralla->getPositionX() + Global::getInstance()->zerrin->getVelocidad() *1.5);
+
+	//	nubes->setPositionX(nubes->getPositionX() +5);
+	//	muralla->setPositionX(muralla->getPositionX() + 15);
 	
 	}
-}*/
+}
+
+*/
 

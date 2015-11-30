@@ -10,8 +10,10 @@ USING_NS_CC;
 static ZerrinClass * zerrin = nullptr;
 
 ZerrinClass::ZerrinClass() {
-	velocidad = 10; // es el tiempo que tarda en llegar al final
+	velocidad = 2;
 	vida = 10;
+
+	//visibleSize = Director::getInstance()->getVisibleSize();
 	this->retain();
 }
 
@@ -61,26 +63,34 @@ void ZerrinClass::setCorrer(bool c)
 
 void ZerrinClass::correr()
 {
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-
 	CCLOG("Voy a correr");
 	corriendo = true;
 
 	this->scheduleUpdate();
+	//Global::getInstance()->nivel->scheduleUpdate();
 }
 
 
 void ZerrinClass::update(float dt)
 {
-	int v = getVelocidad();
+	
 	if (corriendo) {
-		this->setPositionX(this->getPositionX() + v);
-		if (this->getPositionX()> 750) {
+		if (this->getPositionX() > Director::getInstance()->getVisibleSize().width/2 && (((Nivel *)Global::getInstance()->nivel)->getPosXFondo() >Director::getInstance()->getVisibleSize().width)) {
+			((Nivel *)Global::getInstance()->nivel)->mueveFondo(velocidad);
+
+		}
+
+		else if (this->getPositionX()> Director::getInstance()->getVisibleSize().width-50) {
 			this->corriendo = false;
 			Global::getInstance()->zerrin->haLlegado = true;
 			CCLOG("jhiuh");
 
 			((Nivel*)Global::getInstance()->nivel)->goToGameOver(this);
 		}
+
+		else 		this->setPositionX(this->getPositionX() + velocidad);
+
+
+		((Nivel *)Global::getInstance()->nivel)->mueveNubes(velocidad);
 	}
 }

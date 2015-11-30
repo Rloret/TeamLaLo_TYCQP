@@ -30,6 +30,7 @@ private:
 	void update(float dt);
 	void correr();
 
+	//Size visibleSize;
 };
 
 #endif

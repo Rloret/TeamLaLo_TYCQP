@@ -159,7 +159,8 @@ void LevelsMenuScene::addListener(){
 	listener->onTouchBegan = [&](cocos2d::Touch* touch, cocos2d::Event* event) {
 	
 	cocos2d::Point p = touch->getLocation();
-	cocos2d::Rect rect = Rect(115, 80, 568, 444);
+	cocos2d::Rect rect = Rect(Director::getInstance()->getVisibleSize().width/2-568/2, Director::getInstance()->getVisibleSize().height / 2-222,
+											568, 444);
 
 		if (rect.containsPoint(p)){
 				return true;
@@ -270,18 +271,23 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 	default:
 		break;
 	}
-
-
-
 	
 }
 
 
 void LevelsMenuScene::muestraNivelesBtn(){
-
+	int posant = 0;
 	for (int i = mundoSeleccionado*5; i < ((mundoSeleccionado * 5)+5); i++) {
 		CCLOG("desde %d hasta %d", i, ((mundoSeleccionado * 5) + 5));
-		vectorNiveles[i]->setPositionX(170 +(568*(i-mundoSeleccionado*5))/5); //((i / 5) * 568)
+		if(i == mundoSeleccionado * 5){
+			vectorNiveles[i]->setPositionX(imagenesMundos[mundoSeleccionado]->getPosition().x -
+				imagenesMundos[mundoSeleccionado]->getContentSize().width / 2 + vectorNiveles[i]->getContentSize().width / 25);
+				//(i-mundoSeleccionado*5))/5); //((i / 5) * 568)
+		}
+		else {
+			vectorNiveles[i]->setPositionX(posant + (imagenesMundos[mundoSeleccionado]->getContentSize().width / 5));
+		}
+		posant = vectorNiveles[i]->getPositionX();
 		vectorNiveles[i]->setVisible(true);	
 
 	}
