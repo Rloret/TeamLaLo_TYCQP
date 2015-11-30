@@ -211,23 +211,60 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 	switch (i)
 	{
 	case 0:
-		((Nivel*)Global::getInstance()->nivel)->preparaNivel(0, 10);	
-		break;
-	case 1:
-		((Nivel*)Global::getInstance()->nivel)->preparaNivel(0, 10);	
-		break;
-	case 2:
-		((Nivel*)Global::getInstance()->nivel)->preparaNivel(0, 10);	
-		break;
-	case 3:
-		((Nivel*)Global::getInstance()->nivel)->preparaNivel(0, 10);	
-		break;
-	case 4:
-		((Nivel*)Global::getInstance()->nivel)->preparaNivel(0, 10);		
-		break;
-	case 5:
 
-		((Nivel*)Global::getInstance()->nivel)->preparaNivel(0, 10);
+		if(fondosPasar.size()>0)fondosPasar.clear();
+		fondosPasar.push_back("images/Nivel/fondo1_NivelScene.png");
+		fondosPasar.push_back("images/Nivel/nubes.png");
+		fondosPasar.push_back("images/Nivel/muralla.png");
+
+		((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar,0, 10);	
+		break;
+
+	case 1:
+
+		if (fondosPasar.size()>0)fondosPasar.clear();
+		fondosPasar.push_back("images/Nivel/fondo2_NivelScene.png");
+		fondosPasar.push_back("images/Nivel/nubes.png");
+		fondosPasar.push_back("images/Nivel/muralla.png");
+
+		((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);	
+		break;
+
+	case 2:
+		if (fondosPasar.size()>0)fondosPasar.clear();
+		fondosPasar.push_back("images/Nivel/fondo3_NivelScene.png");
+		fondosPasar.push_back("images/Nivel/nubes.png");
+		fondosPasar.push_back("images/Nivel/muralla.png");
+
+		((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);	
+		break;
+
+	case 3:
+		if (fondosPasar.size()>0)fondosPasar.clear();
+		fondosPasar.push_back("images/Nivel/fondo1_NivelScene.png");
+		fondosPasar.push_back("images/Nivel/nubes.png");
+		fondosPasar.push_back("images/Nivel/muralla.png");
+
+		((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);	
+		break;
+
+	case 4:
+
+		if (fondosPasar.size()>0)fondosPasar.clear();
+		fondosPasar.push_back("images/Nivel/fondo1_NivelScene.png");
+		fondosPasar.push_back("images/Nivel/nubes.png");
+		fondosPasar.push_back("images/Nivel/muralla.png");
+
+		((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);		
+		break;
+
+	case 5:
+		if (fondosPasar.size()>0)fondosPasar.clear();
+		fondosPasar.push_back("images/Nivel/fondo1_NivelScene.png");
+		fondosPasar.push_back("images/Nivel/nubes.png");
+		fondosPasar.push_back("images/Nivel/muralla.png");
+
+		((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);
 		break;
 
 	default:

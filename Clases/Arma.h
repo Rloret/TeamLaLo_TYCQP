@@ -50,8 +50,6 @@ private:
 
 	void accionTouch();
 
-
-
 };
 
 #endif //ARMA

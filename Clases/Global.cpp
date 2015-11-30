@@ -14,6 +14,8 @@ Global::Global(){
 	 nivel = Nivel::createScene();
 	 levelsMenuScene = LevelsMenuScene::createScene();
 
+	 zerrin = ZerrinClass::create();
+
 	 nivel->retain();
 	 levelsMenuScene->retain();
 

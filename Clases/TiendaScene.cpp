@@ -151,7 +151,7 @@ void TiendaScene::preparaBotones()
 	rectangulo->setPosition(Point(Global::getInstance()->visibleSize.width/2, Global::getInstance()->visibleSize.height / 2));
 	addChild(rectangulo, 3);
 
-	textoCompra = Label::createWithSystemFont("QUIELE COMPLA?", "Arial", 40);
+	textoCompra = Label::createWithSystemFont("QUIERES COMPRAR?", "Arial", 40);
 	textoCompra->setColor(Color3B::ORANGE);
 	textoCompra->enableShadow();
 	textoCompra->setPosition(Global::getInstance()->visibleSize.width / 2, Global::getInstance()->visibleSize.height / 2+textoCompra->getContentSize().height*1.5);

@@ -24,6 +24,7 @@ public:
 	std::vector<cocos2d::Sprite*> imagenesMundos;
 	//std::vector<cocos2d::Sprite*> matrizNivelesBtn;
 	std::vector<cocos2d::Menu*> vectorNiveles;
+	std::vector<std::string> fondosPasar;
 
 	void muestraUnoMas(Ref *pSender);
 	void muestraUnoMenos(Ref *pSender); //funciones para la seleccion del nivel con dos botones fleacha

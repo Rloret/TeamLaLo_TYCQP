@@ -13,8 +13,10 @@ public:
 
 	int vueltasArsenal;
 	cocos2d::Sprite* rectangulo;
-	void preparaNivel(int n, int u);
+	void preparaNivel(std::vector<std::string> fondos, int i_objetos, int u_objetos);
 	void displayArmasArsenal();
+	void goToGameOver(Ref *pSender);
+
 	// implement the "static create()" method manually
 	CREATE_FUNC(Nivel);
 
@@ -38,7 +40,11 @@ private:
 	void activaDesactivaArma(Arma* arma, bool estado);
 	void quitaArmas();
 
+	void colocaObjetos(int i_objetos, int u_objetos);
+	void colocaBotones();
+	void colocaFondo(std::vector<std::string> fondos);
 
+	//void update(float dt);
 
 	cocos2d::MenuItemImage* masBtn;
 	cocos2d::MenuItemImage* menosBtn;
@@ -48,6 +54,9 @@ private:
 	cocos2d::MenuItemImage* arsenalBtn;
 	cocos2d::MenuItemImage* simulacionBtn;
 
+	cocos2d::Sprite* background;
+	cocos2d::Sprite* muralla;
+	cocos2d::Sprite* nubes;
 
 
 };

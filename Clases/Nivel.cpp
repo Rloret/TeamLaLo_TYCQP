@@ -4,6 +4,8 @@
 #include "proj.win32\VestuarioScene.h"
 #include "proj.win32\PauseScene.h"
 #include "Global.h"
+#include "ZerrinClass.h"
+#include "GameOverScene.h"
 
 USING_NS_CC;
 
@@ -40,84 +42,21 @@ bool Nivel::init()
 }
 
 
-void Nivel::preparaNivel(int n, int u){  // nivel=numero nivel para colocar
+void Nivel::preparaNivel(std::vector<std::string> fondos, int i_objetos, int u_objetos) {  // nivel=numero nivel para colocar
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	vueltasArsenal = 0;
-	rectangulo = Sprite::create("images/Nivel/rectangle.png");
 	auto ancho = ANCHOARSENAL;
 	auto alto = ALTOARSENAL;
 	
 	ContadorArmas = 0;
 	Global::getInstance()->juegoEnCurso = false;
-
-	rectangulo->setScaleX(ancho/rectangulo->getContentSize().width);
-	rectangulo->setScaleY(alto/rectangulo->getContentSize().height);
-	rectangulo->setPosition(Point(ancho/2, alto/2));
-	rectangulo->setVisible(false);
-	addChild(rectangulo, 2);
-
-
-	//FONDO Y BOTONES GENERALES
-
-	auto pauseBtn = MenuItemImage::create("images/Nivel/back_btn.png", "images/Nivel/back_btn.png",CC_CALLBACK_1(Nivel::goToPause, this));
-	auto tiendaBtn = MenuItemImage::create("images/Nivel/back_btn.png", "images/Nivel/back_btn.png",CC_CALLBACK_1(Nivel::goToTienda, this));
-	tiendaBtn->setColor(Color3B(255, 0, 0));
-	auto vestuarioBtn = MenuItemImage::create("images/Nivel/back_btn.png", "images/Nivel/back_btn.png",CC_CALLBACK_1(Nivel::goToVestuario, this));
-	vestuarioBtn->setColor(Color3B(0, 255, 0));
-
-	pauseBtn->setName("botoncito");
-	pauseBtn->setTag(23);
-
-	auto menu1 = Menu::create(pauseBtn, tiendaBtn, vestuarioBtn, NULL);
-	menu1->setPosition(Point(150, visibleSize.height - visibleSize.height / 40));
-	menu1->alignItemsHorizontallyWithPadding(30);
-	addChild(menu1, 1);
-
-
-
-	auto arsenalBtn = MenuItemImage::create("images/Nivel/back_btn.png", "images/Nivel/back_btn.png", CC_CALLBACK_1(Nivel::abrirArsenal, this));
-	arsenalBtn->setColor(Color3B(100, 100, 100));
-	auto simulacionBtn = MenuItemImage::create("images/Nivel/back_btn.png", "images/Nivel/back_btn.png", CC_CALLBACK_1(Nivel::simulacion, this));
-	simulacionBtn->setColor(Color3B(150, 50, 150));
-
-	auto menu2 = Menu::create(arsenalBtn,simulacionBtn, NULL);
-	menu2->setPosition(Point(visibleSize.width / 2 + visibleSize.width / 3, visibleSize.height / 40));
-	menu2->alignItemsHorizontallyWithPadding(30);
-	addChild(menu2, 1);
-	
-
-	masBtn = MenuItemImage::create("images/LevelsMenuScene/Flecha.png", "images/LevelsMenuScene/Flecha.png",CC_CALLBACK_1(Nivel::muestraUnoMas, this));
-
-	auto ancho1 = rectangulo->getContentSize().width;
-	auto alto1 = Global::getInstance()->visibleSize.height / 16;
-
-	masBtn->setScaleX(-ancho1/(masBtn->getContentSize().width*11));
-	masBtn->setScaleY(alto1 / masBtn->getContentSize().height);
-	masBtn->setPosition((-visibleSize.width / 2.0)+ancho-45, -visibleSize.height/2.0 +30);
-	menosBtn = MenuItemImage::create("images/LevelsMenuScene/Flecha.png", "images/LevelsMenuScene/Flecha.png",CC_CALLBACK_1(Nivel::muestraUnoMenos, this,vueltasArsenal));
-
-	menosBtn->setScaleX(ancho1 / (menosBtn->getContentSize().width*11));
-	menosBtn->setScaleY(alto1 / menosBtn->getContentSize().height);
-	menosBtn->setPosition((-visibleSize.width / 2.0)+40, -visibleSize.height / 2.0 + 30);
-
-	menuArsenal = Menu::create(masBtn, menosBtn,NULL);
-	addChild(menuArsenal, 3);
-	menuArsenal->setVisible(false);
-
-
+	colocaBotones();
 	displayArmasArsenal();
 
+	colocaFondo(fondos);
+	colocaObjetos(i_objetos, u_objetos);
 
-	auto background = Sprite::create("images/Nivel/fondo_NivelScene.png");
-	background->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
-	addChild(background, 0);
-
-	for (int i = n; i < u; i++){
-		addChild(Global::getInstance()->ObjetosTotalesEscenarios[i]);
-		Global::getInstance()->ObjetosTotalesEscenarios[i]->setVisible(true);
-
-	}
-
+	Global::getInstance()->zerrin->haLlegado = false;
 }
 
 void Nivel::displayArmasArsenal()
@@ -215,7 +154,6 @@ void Nivel::goToTienda(Ref *pSender){
 		vueltasArsenal = 0;
 		auto scene = TiendaScene::createScene();
 		Director::getInstance()->pushScene(scene);
-		//Director::getInstance()->pushScene((Scene*)Global::getInstance()->tienda);
 	}
 	
 }
@@ -232,6 +170,12 @@ void Nivel::goToPause(Ref *pSender){
 
 	auto scene = PauseScene::createScene();
 	Director::getInstance()->pushScene(scene);
+}
+
+void Nivel::goToGameOver(Ref * pSender)
+{
+	auto scene = GameOverScene::createScene();
+	Director::getInstance()->replaceScene(scene);
 }
 
 void Nivel::abrirArsenal(Ref *pSender){
@@ -268,7 +212,8 @@ void Nivel::abrirArsenal(Ref *pSender){
 
 void Nivel::simulacion(Ref *pSender){
 
-	
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+
 	if (!Global::getInstance()->juegoEnCurso){
 		Global::getInstance()->juegoEnCurso = true;
 		CCLOG("Empieza la simulacion");
@@ -280,6 +225,18 @@ void Nivel::simulacion(Ref *pSender){
 			activaDesactivaBoton(menosBtn,false);
 			
 		}
+		
+		addChild(Global::getInstance()->zerrin,4);
+		Global::getInstance()->zerrin->setPosition(Point(visibleSize.width/6,visibleSize.height/3));
+
+		//this->schedule(schedule_selector(Nivel::update), 1.0);
+		//this->scheduleUpdate();
+
+		((ZerrinClass *)Global::getInstance()->zerrin)->setCorrer(true);
+		
+
+
+
 	}
 	else{
 		CCLOG("Ya estas en simulacion");
@@ -334,3 +291,104 @@ void Nivel::quitaArmas(){
 		arma->EnableListener(false);
 	}
 }
+
+void Nivel::colocaObjetos(int i_objetos, int u_objetos)
+{
+	for (int i = i_objetos; i < u_objetos; i++) {
+		addChild(Global::getInstance()->ObjetosTotalesEscenarios[i]);
+		Global::getInstance()->ObjetosTotalesEscenarios[i]->setVisible(true);
+
+	}
+}
+
+void Nivel::colocaBotones()
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+
+	rectangulo = Sprite::create("images/Nivel/rectangle.png");
+	auto ancho = ANCHOARSENAL;
+	auto alto = ALTOARSENAL;
+
+	rectangulo->setScaleX(ancho / rectangulo->getContentSize().width);
+	rectangulo->setScaleY(alto / rectangulo->getContentSize().height);
+	rectangulo->setPosition(Point(ancho / 2, alto / 2));
+	rectangulo->setVisible(false);
+	addChild(rectangulo, 2);
+
+	auto pauseBtn = MenuItemImage::create("images/Nivel/back_btn.png", "images/Nivel/back_btn.png", CC_CALLBACK_1(Nivel::goToPause, this));
+	auto tiendaBtn = MenuItemImage::create("images/Nivel/back_btn.png", "images/Nivel/back_btn.png", CC_CALLBACK_1(Nivel::goToTienda, this));
+	tiendaBtn->setColor(Color3B(255, 0, 0));
+	auto vestuarioBtn = MenuItemImage::create("images/Nivel/back_btn.png", "images/Nivel/back_btn.png", CC_CALLBACK_1(Nivel::goToVestuario, this));
+	vestuarioBtn->setColor(Color3B(0, 255, 0));
+
+	pauseBtn->setName("botoncito");
+	pauseBtn->setTag(23);
+
+	auto menu1 = Menu::create(pauseBtn, tiendaBtn, vestuarioBtn, NULL);
+	menu1->setPosition(Point(150, visibleSize.height - visibleSize.height / 40));
+	menu1->alignItemsHorizontallyWithPadding(30);
+	addChild(menu1, 1);
+
+
+
+	auto arsenalBtn = MenuItemImage::create("images/Nivel/back_btn.png", "images/Nivel/back_btn.png", CC_CALLBACK_1(Nivel::abrirArsenal, this));
+	arsenalBtn->setColor(Color3B(100, 100, 100));
+	auto simulacionBtn = MenuItemImage::create("images/Nivel/back_btn.png", "images/Nivel/back_btn.png", CC_CALLBACK_1(Nivel::simulacion, this));
+	simulacionBtn->setColor(Color3B(150, 50, 150));
+
+	auto menu2 = Menu::create(arsenalBtn, simulacionBtn, NULL);
+	menu2->setPosition(Point(visibleSize.width / 2 + visibleSize.width / 3, visibleSize.height / 40));
+	menu2->alignItemsHorizontallyWithPadding(30);
+	addChild(menu2, 1);
+
+
+	masBtn = MenuItemImage::create("images/LevelsMenuScene/Flecha.png", "images/LevelsMenuScene/Flecha.png", CC_CALLBACK_1(Nivel::muestraUnoMas, this));
+
+	auto ancho1 = rectangulo->getContentSize().width;
+	auto alto1 = Global::getInstance()->visibleSize.height / 16;
+
+	masBtn->setScaleX(-ancho1 / (masBtn->getContentSize().width * 11));
+	masBtn->setScaleY(alto1 / masBtn->getContentSize().height);
+	masBtn->setPosition((-visibleSize.width / 2.0) + ancho - 45, -visibleSize.height / 2.0 + 30);
+	menosBtn = MenuItemImage::create("images/LevelsMenuScene/Flecha.png", "images/LevelsMenuScene/Flecha.png", CC_CALLBACK_1(Nivel::muestraUnoMenos, this, vueltasArsenal));
+
+	menosBtn->setScaleX(ancho1 / (menosBtn->getContentSize().width * 11));
+	menosBtn->setScaleY(alto1 / menosBtn->getContentSize().height);
+	menosBtn->setPosition((-visibleSize.width / 2.0) + 40, -visibleSize.height / 2.0 + 30);
+
+	menuArsenal = Menu::create(masBtn, menosBtn, NULL);
+	addChild(menuArsenal, 3);
+	menuArsenal->setVisible(false);
+}
+
+void Nivel::colocaFondo(std::vector<std::string> fondos)
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+
+	background = Sprite::create(fondos[0]);
+	background->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
+	addChild(background, 0);
+
+
+	nubes = Sprite::create(fondos[1]);
+	nubes->setPosition(Point(visibleSize.width / 2, visibleSize.height - 50));
+	addChild(nubes, 0);
+
+	nubes->setScaleX(2);
+
+	muralla = Sprite::create(fondos[2]);
+	muralla->setPosition(Point(visibleSize.width / 2, visibleSize.height / 6-50));
+	addChild(muralla, 0);
+	muralla->setScaleX(2);
+}
+/*
+void Nivel::update(float dt)
+{
+	while (Global::getInstance()->zerrin->corriendo) {
+	
+		nubes->setPositionX(nubes->getPositionX() +Global::getInstance()->zerrin->getVelocidad()/2);
+		muralla->setPositionX(muralla->getPositionX() + Global::getInstance()->zerrin->getVelocidad() *1.5);
+	
+	}
+}*/
+
