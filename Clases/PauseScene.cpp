@@ -65,6 +65,8 @@ void PauseScene::goToMainMenuScene(Ref *pSender){
 	CCLOG("me voy a mainmenuScene");
 	Global::getInstance()->vaciaArmasNivel();
 	Global::getInstance()->juegoEnCurso = false;
+	//((Nivel*)Global::getInstance()->nivel)->removeScheduler();
+	((Nivel*)Global::getInstance()->nivel)->unscheduleAllSelectors();
 	Global::getInstance()->nivel->removeAllChildren();
 	
 	Director::getInstance()->popScene();

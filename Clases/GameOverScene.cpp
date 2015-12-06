@@ -1,5 +1,6 @@
 #include "GameOverScene.h"
 #include"Global.h"
+#include "Nivel.h"
 USING_NS_CC;
 
 Scene* GameOverScene::createScene()
@@ -49,8 +50,10 @@ void GameOverScene::goToMenuStartScene(Ref * pSender)
 {
 	Global::getInstance()->vaciaArmasNivel();
 	Global::getInstance()->juegoEnCurso = false;
+	//((Nivel*)Global::getInstance()->nivel)->removeScheduler();
+	//unschedule(schedule_selector(Nivel::spawnNube));
+	((Nivel*)Global::getInstance()->nivel)->unscheduleAllSelectors();
 	Global::getInstance()->nivel->removeAllChildren();
-
 	Director::getInstance()->popScene();
 	Director::getInstance()->popScene();
 }

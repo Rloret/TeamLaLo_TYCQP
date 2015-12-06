@@ -214,9 +214,11 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 	case 0:
 
 		if(fondosPasar.size()>0)fondosPasar.clear();
-		fondosPasar.push_back("images/Nivel/fondo1_NivelScene.png");
-		fondosPasar.push_back("images/Nivel/nubes.png");
-		fondosPasar.push_back("images/Nivel/muralla.png");
+		fondosPasar.push_back("images/Nivel/Castillo_Fondo.png");
+		fondosPasar.push_back("images/Nivel/Castillo_Tercer_Plano.png");
+		fondosPasar.push_back("images/Nivel/Castillo_Nubes.png");
+		fondosPasar.push_back("images/Nivel/Castillo_Segundo_Plano.png");
+		fondosPasar.push_back("images/Nivel/Castillo_Primer_Plano.png");
 
 		((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar,0, 10);	
 		break;
@@ -224,27 +226,33 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 	case 1:
 
 		if (fondosPasar.size()>0)fondosPasar.clear();
-		fondosPasar.push_back("images/Nivel/fondo2_NivelScene.png");
-		fondosPasar.push_back("images/Nivel/nubes.png");
-		fondosPasar.push_back("images/Nivel/muralla.png");
+		fondosPasar.push_back("images/Nivel/Castillo_Fondo.png");
+		fondosPasar.push_back("images/Nivel/Castillo_Tercer_Plano.png");
+		fondosPasar.push_back("images/Nivel/Castillo_Nubes.png");
+		fondosPasar.push_back("images/Nivel/Castillo_Segundo_Plano.png");
+		fondosPasar.push_back("images/Nivel/Castillo_Primer_Plano.png");
 
 		((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);	
 		break;
 
 	case 2:
 		if (fondosPasar.size()>0)fondosPasar.clear();
-		fondosPasar.push_back("images/Nivel/fondo3_NivelScene.png");
-		fondosPasar.push_back("images/Nivel/nubes.png");
-		fondosPasar.push_back("images/Nivel/muralla.png");
+		fondosPasar.push_back("images/Nivel/Castillo_Fondo.png");
+		fondosPasar.push_back("images/Nivel/Castillo_Tercer_Plano.png");
+		fondosPasar.push_back("images/Nivel/Castillo_Nubes.png");
+		fondosPasar.push_back("images/Nivel/Castillo_Segundo_Plano.png");
+		fondosPasar.push_back("images/Nivel/Castillo_Primer_Plano.png");
 
 		((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);	
 		break;
 
 	case 3:
 		if (fondosPasar.size()>0)fondosPasar.clear();
-		fondosPasar.push_back("images/Nivel/fondo1_NivelScene.png");
-		fondosPasar.push_back("images/Nivel/nubes.png");
-		fondosPasar.push_back("images/Nivel/muralla.png");
+		fondosPasar.push_back("images/Nivel/Castillo_Fondo.png");
+		fondosPasar.push_back("images/Nivel/Castillo_Tercer_Plano.png");
+		fondosPasar.push_back("images/Nivel/Castillo_Nubes.png");
+		fondosPasar.push_back("images/Nivel/Castillo_Segundo_Plano.png");
+		fondosPasar.push_back("images/Nivel/Castillo_Primer_Plano.png");
 
 		((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);	
 		break;
@@ -252,18 +260,22 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 	case 4:
 
 		if (fondosPasar.size()>0)fondosPasar.clear();
-		fondosPasar.push_back("images/Nivel/fondo1_NivelScene.png");
-		fondosPasar.push_back("images/Nivel/nubes.png");
-		fondosPasar.push_back("images/Nivel/muralla.png");
+		fondosPasar.push_back("images/Nivel/Castillo_Fondo.png");
+		fondosPasar.push_back("images/Nivel/Castillo_Tercer_Plano.png");
+		fondosPasar.push_back("images/Nivel/Castillo_Nubes.png");
+		fondosPasar.push_back("images/Nivel/Castillo_Segundo_Plano.png");
+		fondosPasar.push_back("images/Nivel/Castillo_Primer_Plano.png");
 
 		((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);		
 		break;
 
 	case 5:
 		if (fondosPasar.size()>0)fondosPasar.clear();
-		fondosPasar.push_back("images/Nivel/fondo1_NivelScene.png");
-		fondosPasar.push_back("images/Nivel/nubes.png");
-		fondosPasar.push_back("images/Nivel/muralla.png");
+		fondosPasar.push_back("images/Nivel/Castillo_Fondo.png");
+		fondosPasar.push_back("images/Nivel/Castillo_Tercer_Plano.png");
+		fondosPasar.push_back("images/Nivel/Castillo_Nubes.png");
+		fondosPasar.push_back("images/Nivel/Castillo_Segundo_Plano.png");
+		fondosPasar.push_back("images/Nivel/Castillo_Primer_Plano.png");
 
 		((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);
 		break;

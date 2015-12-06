@@ -11,13 +11,15 @@ public:
 	virtual bool init();
 	int ContadorArmas;
 
+
 	int vueltasArsenal;
 	cocos2d::Sprite* rectangulo;
 	void preparaNivel(std::vector<std::string> fondos, int i_objetos, int u_objetos);
 	void displayArmasArsenal();
 	void goToGameOver(Ref *pSender);
+	void spawnNube(float dt);
+	void removeScheduler();
 
-	void mueveNubes(int v);
 	void mueveFondo(int v);
 	int getPosXFondo();
 	// implement the "static create()" method manually
@@ -26,7 +28,7 @@ public:
 private:
 	static int tiempoDelNivel;
 	static int puntosDelNivel;
-	cocos2d::Menu* menuArsenal;
+	cocos2d::Menu* menuArsenal;
 	//bool juegoEnCurso;
 
 	void muestraUnoMas(Ref *pSender);
@@ -39,6 +41,7 @@ private:
 	void simulacion(Ref *pSender);
 	void displayArmasNivel();
 	void activaDesactivaBoton(cocos2d::MenuItemImage* boton, bool estado);
+
 	void recorreArmas(int iterador, int posicion, int ancho, int alto, int iteraciones);
 	void activaDesactivaArma(Arma* arma, bool estado);
 	void quitaArmas();
@@ -46,9 +49,10 @@ private:
 	void colocaObjetos(int i_objetos, int u_objetos);
 	void colocaBotones();
 	void colocaFondo(std::vector<std::string> fondos);
+	//void update(float dt);
 
 
-	
+	//std::list<cocos2d::Node *> Nubes;
 	//virtual void update(float dt);
 
 	cocos2d::MenuItemImage* masBtn;
@@ -62,9 +66,12 @@ private:
 
 
 	cocos2d::Sprite* background;
+	cocos2d::Sprite* background1;
+	cocos2d::Sprite* background2;
 	cocos2d::Sprite* muralla;
 	cocos2d::Sprite* nubes;
 	
+
 
 
 };

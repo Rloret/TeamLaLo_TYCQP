@@ -7,14 +7,17 @@
 USING_NS_CC;
 
 
-static ZerrinClass * zerrin = nullptr;
 
 ZerrinClass::ZerrinClass() {
 	velocidad = 2;
 	vida = 10;
-
+	//this->setPositionY(Director::getInstance()->getVisibleSize().height);
 	//visibleSize = Director::getInstance()->getVisibleSize();
 	this->retain();
+}
+
+ZerrinClass::~ZerrinClass()
+{
 }
 
 ZerrinClass * ZerrinClass::create()
@@ -22,7 +25,7 @@ ZerrinClass * ZerrinClass::create()
 	ZerrinClass* zerrin = new ZerrinClass();
 	//Texture2D *texture = Director::getInstance()->getTextureCache()->addImage(fileName);
 	zerrin->initWithFile("images/Zerrin/zerrin.PNG");
-	zerrin->setScale(0.5,0.5);
+	
 	return zerrin;
 }
 
@@ -77,6 +80,7 @@ void ZerrinClass::update(float dt)
 	if (corriendo) {
 		if (this->getPositionX() > Director::getInstance()->getVisibleSize().width/2 && (((Nivel *)Global::getInstance()->nivel)->getPosXFondo() >Director::getInstance()->getVisibleSize().width)) {
 			((Nivel *)Global::getInstance()->nivel)->mueveFondo(velocidad);
+			//((Nivel *)Global::getInstance()->nivel)->mueveNubes(-velocidad*1.5);
 
 		}
 
@@ -87,10 +91,13 @@ void ZerrinClass::update(float dt)
 
 			((Nivel*)Global::getInstance()->nivel)->goToGameOver(this);
 		}
+		
+		else {
+			this->setPositionX(this->getPositionX() + velocidad);
+			//((Nivel *)Global::getInstance()->nivel)->mueveNubes(-velocidad/2);
+		}
 
-		else 		this->setPositionX(this->getPositionX() + velocidad);
 
 
-		((Nivel *)Global::getInstance()->nivel)->mueveNubes(velocidad);
 	}
 }

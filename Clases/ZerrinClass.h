@@ -11,7 +11,8 @@ class ZerrinClass :public cocos2d::Sprite
 {
 public:
 
-	ZerrinClass();
+	ZerrinClass(); 
+	~ZerrinClass();
 	static ZerrinClass* create();
 
 	void setVelocidad(int v);
