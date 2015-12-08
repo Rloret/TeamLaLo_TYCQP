@@ -39,8 +39,8 @@ void Global::creaArmas()
 
 	//Prueba dagas
 	Texture2D* d = Director::getInstance()->getTextureCache()->addImage("images/Armas/dagas.png");
-	Arma* dagas = Arma::create(d,50,"dagas",0,50);
-	
+	Arma* dagas = Arma::create(d,50,"dagas",0,50, random(0, 1));
+	dagas->setVisible(false);
 	armasTotales.push_back(dagas);
 
 	Texture2D* t = Director::getInstance()->getTextureCache()->addImage("images/Armas/arma.png");
@@ -48,9 +48,10 @@ void Global::creaArmas()
 	for (int i = 1; i < 20; i++){
 		char* nombre = "espada Bastarda numero: ";
 		nombre += i;
-		Arma* armaaux = Arma::create(t, 100+i, nombre, 1,i*10+1);
+		Arma* armaaux = Arma::create(t, 100+i, nombre, 1,i*10+1,random(0,1));
 		armaaux->setColor(Color3B(i * 25, i * 25, i * 25));
 		armasTotales.push_back(armaaux);
+		armaaux->setVisible(false);
 	}
 
 }

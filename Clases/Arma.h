@@ -7,9 +7,9 @@
 class Arma : public cocos2d::Sprite
 {
 public:
-	Arma(int daño, std::string nombre, int tipo,int precio);
+	Arma(int daño, std::string nombre, int tipo,int precio,int mechones);
 	~Arma();
-	static Arma* create(cocos2d::Texture2D* t, int daño, std::string nombre, int tipo,int precio);
+	static Arma* create(cocos2d::Texture2D* t, int daño, std::string nombre, int tipo,int precio,int mechones);
 
 	//void initOptions(cocos2d::Rect area);
 
@@ -32,6 +32,7 @@ public:
 	std::string getNombre();
 	int getDaño();
 	int getPrecio();
+	int getMechones();
 	bool getDesdeTienda();
 	bool enNivel = false; 
 	bool colocada = false;
@@ -43,6 +44,7 @@ private:
 	int daño;
 	int toqueY;
 	int precio;
+	int mechones;
     
 	cocos2d::EventListenerTouchOneByOne* listener;
 

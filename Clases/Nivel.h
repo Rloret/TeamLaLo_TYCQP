@@ -17,14 +17,16 @@ public:
 	void preparaNivel(std::vector<std::string> fondos, int i_objetos, int u_objetos);
 	void displayArmasArsenal();
 	void goToGameOver(Ref *pSender);
+	void goToPause(Ref *pSender);
 	void spawnNube(float dt);
-	void removeScheduler();
+	//void removeScheduler();
 
 	void mueveFondo(int v);
 	int getPosXFondo();
 	int getBackgroundWidth();
 
-	
+
+
 	// implement the "static create()" method manually
 	CREATE_FUNC(Nivel);
 
@@ -41,7 +43,6 @@ private:
 	void borraArsenal(int superiorinferior);
 	void goToTienda(Ref *pSender);
 	void goToVestuario(Ref *pSender);
-	void goToPause(Ref *pSender);
 	void abrirArsenal(Ref *pSender);
 	void simulacion(Ref *pSender);
 	//void displayArmasNivel();
@@ -54,8 +55,11 @@ private:
 	void colocaObjetos(int i_objetos, int u_objetos);
 	void colocaBotones();
 	void colocaFondo(std::vector<std::string> fondos);
-	//void update(float dt);
 
+	/*void onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
+	void onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);*/
+	
+	//void update(float dt);
 
 	//std::list<cocos2d::Node *> Nubes;
 	//virtual void update(float dt);

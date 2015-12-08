@@ -1,4 +1,4 @@
-#include "TiendaScene.h"
+﻿#include "TiendaScene.h"
 #include "Arma.h"
 #include "Global.h"
 #include "Nivel.h"
@@ -30,7 +30,6 @@ bool TiendaScene::init()
 	}
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-
 	
 	//menu
 	auto backBtn = MenuItemImage::create("images/TiendaScene/back_btn.png", "images/TiendaScene/back_btn.png",
@@ -40,7 +39,7 @@ bool TiendaScene::init()
 	menu->setPosition(Point(visibleSize.width- 20, visibleSize.height- 20));
 	addChild(menu, 2);
 
-
+	
 	//Fondo
 	auto background = Sprite::create("images/TiendaScene/fondo_TiendaScene.png");
 	background->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
@@ -50,6 +49,7 @@ bool TiendaScene::init()
 	//menu Compra
 	colocaArmasTotales();
 	this->preparaBotones();
+	this->preparaLabels();
 	listenerTienda->setEnabled(true);
 
 	/*CCString * score = CCString::createWithFormat("%i", _
@@ -63,34 +63,8 @@ bool TiendaScene::init()
 	dinero_oro_int->setString(oro_buffer);
 	dinero_oro->setColor(Color3B::WHITE);
 	dinero_oro_int->setColor(Color3B::WHITE);*/
-
-	auto dinero_oro = Label::createWithSystemFont("ORO: ", "Arial", 30);
-	auto aux = CCString::createWithFormat("%i", Global::getInstance()->katahi->getOro());
-	auto dinero_oro_int= Label::createWithSystemFont(" ", "Arial", 30);
-	dinero_oro_int->setString(aux->getCString());
-	dinero_oro->setColor(Color3B::WHITE);
-	dinero_oro_int->setColor(Color3B::WHITE);
-
-	char mechones_buffer[10];
-	sprintf(mechones_buffer, "%i", Global::getInstance()->katahi->getMechones());
-	auto dinero_mechones = Label::createWithSystemFont("MECHONES: ", "Arial", 30);
-	auto dinero_mechones_int = Label::createWithSystemFont("", "Arial", 30);
-	dinero_mechones_int->setString(mechones_buffer);
-	dinero_mechones->setColor(Color3B::WHITE);
-	dinero_mechones_int->setColor(Color3B::WHITE);
-
-	int y = visibleSize.height - 50;
-	dinero_oro->setPosition(Point(250, y));
-	dinero_oro_int->setPosition(Point(320, y));
-	dinero_mechones->setPosition(Point(650, y));
-	dinero_mechones_int->setPosition(Point(770,y));
-	dinero_oro_int->retain();
-
-	addChild(dinero_oro, 2);
-	addChild(dinero_oro_int, 2);
-	addChild(dinero_mechones, 2);
-	addChild(dinero_mechones_int, 2);
 	return true;
+
 }
 
 void TiendaScene::returnToScene(Ref *pSender){
@@ -99,6 +73,7 @@ void TiendaScene::returnToScene(Ref *pSender){
 	for (int i = 0; i < Global::getInstance()->armasTotales.size(); i++) {
 		(Global::getInstance()->armasTotales[i])->setDesdeTienda(false);
 		(Global::getInstance()->armasTotales[i])->EnableSwallow(false);
+		Global::getInstance()->armasTotales[i]->setVisible(false);
 	}
 	this->removeAllChildren();
 	_eventDispatcher->removeEventListener(this->listenerTienda);
@@ -111,6 +86,8 @@ void TiendaScene::createMenuCompra()
 {
 	activaDesactivaBotones(this->yesButton, true);
 	activaDesactivaBotones(this->cerrarMenuButton, true);
+
+	textoCompra->setString(String::createWithFormat("Quieres comprar por \n el modico precio de %d lingotes de oro \n y tan solo %d mechon/es", Global::getInstance()->armaAComprar->getPrecio(), Global::getInstance()->armaAComprar->getMechones())->getCString());
 
 }
 
@@ -129,25 +106,30 @@ void TiendaScene::hacerCompra(Ref *pSender)
 	Global::getInstance()->armaAComprar->childEnTienda = true;
 	for (int i = 0; i < Global::getInstance()->armasTotales.size(); i++) {
 		if (Global::getInstance()->armasTotales[i] == Global::getInstance()->armaAComprar) {
-			if (Global::getInstance()->katahi->getOro() >= Global::getInstance()->armaAComprar->getPrecio()) {
+			if (Global::getInstance()->katahi->getOro() >= Global::getInstance()->armaAComprar->getPrecio() && Global::getInstance()->katahi->getMechones() >= Global::getInstance()->armaAComprar->getMechones()) {
 				Global::getInstance()->armasTotales[i]->setDesdeTienda(false);
 				Global::getInstance()->armasTotales.erase(Global::getInstance()->armasTotales.begin() + i);
 				
 				Global::getInstance()->armasArsenal.push_back(Global::getInstance()->armaAComprar);
 				Global::getInstance()->armaAComprar->setVisible(false);
 				Global::getInstance()->katahi->modificaOro(-Global::getInstance()->armaAComprar->getPrecio());
-				//CCLOG("oro: %d", Global::getInstance()->katahi->getOro());
+				Global::getInstance()->katahi->modificaMechones(-Global::getInstance()->armaAComprar->getMechones());
+				CCLOG("oro: %d", Global::getInstance()->katahi->getOro());
 				
 				closeMenuCompra(this);
-				modificaTextoOro(dinero_oro_int);
+				this->modificaTextoOro(dinero_oro_int);
 			
 				
 				break;
 			}
 			else {
-				MessageBox("No tienes suficiente dinero", "Aviso");
-				closeMenuCompra(this);
-				break;
+				//MessageBox("No tienes suficiente dinero", "Aviso");
+
+				activaDesactivaBotones(yesButton,false);
+				rectangulo->setVisible(true);
+				textoCompra->setString("Pero...si no tienes suficiente.\nNo me hagas perder el tiempo.");
+				textoCompra->setVisible(true);
+
 			}
 			
 		}
@@ -171,6 +153,7 @@ void TiendaScene::colocaArmasTotales()
 
 		if (!arma->childEnTienda) {
 			this->addChild(arma, 3);
+			arma->setVisible(true);
 			arma->EnableSwallow(true);
 			if (i >= 5) {
 				iterador = floor(i / 5);
@@ -209,10 +192,10 @@ void TiendaScene::preparaBotones()
 	rectangulo->setPosition(Point(Global::getInstance()->visibleSize.width/2, Global::getInstance()->visibleSize.height / 2));
 	addChild(rectangulo, 3);
 
-	textoCompra = Label::createWithSystemFont("QUIERES COMPRAR?", "Arial", 40);
-	textoCompra->setColor(Color3B::ORANGE);
+	textoCompra = Label::createWithSystemFont("QUIERES COMPRAR?", "Arial", 30);
+	textoCompra->setColor(Color3B::GRAY);
 	textoCompra->enableShadow();
-	textoCompra->setPosition(Global::getInstance()->visibleSize.width / 2, Global::getInstance()->visibleSize.height / 2+textoCompra->getContentSize().height*1.5);
+	textoCompra->setPosition(Global::getInstance()->visibleSize.width / 2, Global::getInstance()->visibleSize.height / 2+textoCompra->getContentSize().height*2);
 
 	addChild(textoCompra,3);
 	textoCompra->setVisible(false);
@@ -231,8 +214,28 @@ void TiendaScene::preparaBotones()
 	cerrarMenuButton->setPosition(cerrarMenuButton->getContentSize().width / 4, 0);
 
 	menuCompra = Menu::create(yesButton, cerrarMenuButton, NULL);
-	menuCompra->setPosition(Director::getInstance()->getVisibleSize().width / 2, Director::getInstance()->getVisibleSize().height / 2);
+	menuCompra->setPosition(Director::getInstance()->getVisibleSize().width / 2, Director::getInstance()->getVisibleSize().height / 2-30);
 	this->addChild(menuCompra, 3);
+}
+
+void TiendaScene::preparaLabels()
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	
+	int y = visibleSize.height - 50;
+
+	dinero_oro_int = Label::createWithSystemFont((String::createWithFormat("Dinero : %i", Global::getInstance()->katahi->getOro())->getCString()), "Arial", 30);
+	dinero_oro_int->setColor(Color3B::ORANGE);
+	dinero_oro_int->enableShadow();
+
+	dinero_mechones_int = Label::createWithSystemFont((String::createWithFormat("Mechones : %i", Global::getInstance()->katahi->getMechones())->getCString()), "Arial", 30);
+	dinero_mechones_int->setColor(Color3B::ORANGE);
+	dinero_mechones_int->enableShadow();
+
+	this->addChild(dinero_oro_int, 2);
+	this->addChild(dinero_mechones_int, 2); 
+	dinero_oro_int->setPosition(Point(320, y));
+	dinero_mechones_int->setPosition(Point(770, y));
 }
 
 void TiendaScene::addListener()
@@ -270,9 +273,11 @@ void TiendaScene::gestionaToque()
 
 void TiendaScene::modificaTextoOro(cocos2d::Label * l)
 {
-	//auto aux1 = CCString::createWithFormat("%i", Global::getInstance()->katahi->getOro());
-	//CCLOG("Katahi tiene : %d", Global::getInstance()->katahi->getOro());
-
+	auto aux1 = CCString::createWithFormat("%i", Global::getInstance()->katahi->getOro());
+	CCLOG("Katahi tiene : %d", Global::getInstance()->katahi->getOro());
+	dinero_oro_int->setString((String::createWithFormat("Dinero = %d", Global::getInstance()->katahi->getOro())->getCString()));
+	
+	dinero_mechones_int->setString((String::createWithFormat("Mechones = %d", Global::getInstance()->katahi->getMechones())->getCString()));
 	//l->setVisible(false);
 }
 

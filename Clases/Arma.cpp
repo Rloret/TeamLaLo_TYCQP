@@ -5,13 +5,14 @@
 
 USING_NS_CC;
 
-Arma::Arma( int daño, std::string nombre, int tipo,int precio)
+Arma::Arma( int daño, std::string nombre, int tipo,int precio,int mechones)
 {
 
 	this->daño = daño;
 	this->nombre = nombre;
 	this->tipo = tipo;
 	this->precio = precio;
+	this->mechones = mechones;
 	this->setArma(this);
 	this->AddListener();
 	desdeTienda = false;
@@ -26,9 +27,9 @@ Arma::~Arma()
 {
 }
 
-Arma * Arma::create(cocos2d::Texture2D* t, int daño, std::string nombre,int tipo,int precio)
+Arma * Arma::create(cocos2d::Texture2D* t, int daño, std::string nombre,int tipo,int precio,int mechones)
 {
-	Arma* arma = new Arma(daño,nombre,tipo,precio);
+	Arma* arma = new Arma(daño,nombre,tipo,precio,mechones);
 	//Texture2D *texture = Director::getInstance()->getTextureCache()->addImage(fileName);
 	arma->initWithTexture(t);
 	return arma;
@@ -53,10 +54,20 @@ void Arma::AddListener()
 
 	listener->onTouchBegan = [&](cocos2d::Touch* touch, cocos2d::Event* event) {
 		cocos2d::Point p = touch->getLocation();
-		cocos2d::Rect rect = this->getBoundingBox();
+		cocos2d::Point p2 = Point(0, 0);
+		auto posi = this->getPosition();
+		cocos2d::Rect rect = Rect(this->getPosition().x- this->getBoundingBox().size.width/2, this->getPosition().y- this->getBoundingBox().size.height/2,
+							this->getBoundingBox().size.width, this->getBoundingBox().size.height);
 
-		if (rect.containsPoint(p))
+
+		if (Global::getInstance()->juegoEnCurso) {
+			p2 = Point(Global::getInstance()->zerrin->getPosition().x-Director::getInstance()->getVisibleSize().width/2 + p.x, p.y);
+			CCLOG("(%f,%f)",p.x, p2.x);
+		}
+
+		if (this->isVisible() && (rect.containsPoint(p)|| rect.containsPoint(p2)))
 		{
+			CCLOG("He tocado el arma que cuesta:  %d ", this->getPrecio());
 			setPointY(p.y);
 
 			return true;
@@ -65,8 +76,11 @@ void Arma::AddListener()
 		return false;
 	};
 	listener->onTouchMoved = [=](Touch* touch, Event* event) {
+		cocos2d::Point p = touch->getLocation();
 		if (Global::getInstance()->juegoEnCurso && this->getPosition().y >50 && !this->colocada && !this->getDesdeTienda()) {
-			Arma::arrastraArma(touch->getLocation());
+			if(Global::getInstance()->juegoEnCurso)	Arma::arrastraArma(Point(Global::getInstance()->zerrin->getPosition().x - Director::getInstance()->getVisibleSize().width / 2 + p.x, p.y));
+			else		Arma::arrastraArma(p);
+			
 
 		}
 	};
@@ -82,10 +96,11 @@ void Arma::AddListener()
 
 void Arma::arrastraArma(cocos2d::Vec2 vector)
 {
-
-	if (vector.y > 520) vector.y = 520;
-	if (vector.x < 20) vector.x = 20;
-	else if (vector.x>780) vector.x = 780;
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	auto zerrinpos = Global::getInstance()->zerrin->getPosition();
+	/*if (vector.y > 768) vector.y = 768;
+	if (vector.x < zerrinpos.x-visibleSize.width/2+20) vector.x = zerrinpos.x - visibleSize.width / 2+20;
+	else if (vector.x>zerrinpos.x + visibleSize.width / 2-20) vector.x = zerrinpos.x + visibleSize.width / 2-20;*/
 	this->setPosition(vector);
 }
 
@@ -189,6 +204,11 @@ int Arma::getPrecio()
 	return precio;
 }
 
+int Arma::getMechones()
+{
+	return mechones;
+}
+
 bool Arma::getDesdeTienda()
 {
 	return desdeTienda;
@@ -203,7 +223,7 @@ void Arma::setDesdeTienda(bool estado)
 
 Arma* Arma::ClonarArma(Arma* a){
 
-	Arma* nueva = Arma::create(a->getTexture(),a->daño,a->getNombre(),a->tipo,a->precio);
+	Arma* nueva = Arma::create(a->getTexture(),a->daño,a->getNombre(),a->tipo,a->precio,a->mechones);
 	nueva->clon = a;
 	return nueva;
 }

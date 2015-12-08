@@ -61,9 +61,10 @@ void Nivel::preparaNivel(std::vector<std::string> fondos, int i_objetos, int u_o
 	addChild(Global::getInstance()->zerrin, 3);
 	Global::getInstance()->zerrin->setPosition(Point(450 + Global::getInstance()->zerrin->getContentSize().width / 2
 		, visibleSize.height / 3 + Global::getInstance()->zerrin->getContentSize().height / 2 + 30));
-
+	this->setPosition(0, 0);
 	Global::getInstance()->zerrin->haLlegado = false;
 	this->schedule(schedule_selector(Nivel::spawnNube), 1.5);
+
 	
 }
 
@@ -225,7 +226,8 @@ void Nivel::simulacion(Ref *pSender){
 	if (!Global::getInstance()->juegoEnCurso){
 		Global::getInstance()->juegoEnCurso = true;
 		CCLOG("Empieza la simulacion");
-		menu2->setVisible(false);
+		menu1->setVisible(false);
+		if(menu2!=nullptr)menu2->setVisible(false);
 		quitaArmas();
 
 		if (rectangulo->isVisible()){
@@ -318,17 +320,26 @@ void Nivel::colocaBotones()
 	addChild(rectangulo, 5);
 
 	auto pauseBtn = MenuItemImage::create("images/Nivel/pause_btn.png", "images/Nivel/pause_btn.png", CC_CALLBACK_1(Nivel::goToPause, this));
+
 	auto tiendaBtn = MenuItemImage::create("images/Nivel/tienda_btn.png", "images/Nivel/tienda_btn.png", CC_CALLBACK_1(Nivel::goToTienda, this));
 	auto vestuarioBtn = MenuItemImage::create("images/Nivel/vestuario_btn.png", "images/Nivel/vestuario_btn.png", CC_CALLBACK_1(Nivel::goToVestuario, this));
 
+	auto listenerPause = EventListenerKeyboard::create();
+	listenerPause->onKeyPressed = [=](EventKeyboard::KeyCode keyCode, Event* event) {
+		switch (keyCode) {
+		case EventKeyboard::KeyCode::KEY_ESCAPE:
+			Nivel::goToPause(Global::getInstance()->nivel);
+		}
 
-	pauseBtn->setName("botoncito");
-	pauseBtn->setTag(23);
-
+	};
+	//listenerPause->onKeyReleased = CC_CALLBACK_2(Nivel::onKeyReleased, this);
 	menu1 = Menu::create(pauseBtn, tiendaBtn, vestuarioBtn, NULL);
 	menu1->setPosition(Point(150, visibleSize.height - pauseBtn->getContentSize().height));
+	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listenerPause, this);
 	menu1->alignItemsHorizontally();
 	addChild(menu1, 5);
+
+	
 
 
 
@@ -339,7 +350,7 @@ void Nivel::colocaBotones()
 
 	menu2 = Menu::create(arsenalBtn, simulacionBtn, NULL);
 	menu2->setPosition(Point(visibleSize.width / 2 + visibleSize.width / 3, arsenalBtn->getContentSize().height/2));
-	menu2->alignItemsHorizontallyWithPadding(30);
+	menu2->alignItemsHorizontally();
 	addChild(menu2, 5);
 
 
@@ -351,6 +362,7 @@ void Nivel::colocaBotones()
 	masBtn->setScaleX(-ancho1 / (masBtn->getContentSize().width * 11));
 	masBtn->setScaleY(alto1 / masBtn->getContentSize().height);
 	masBtn->setPosition((-visibleSize.width / 2.0) + ancho - 45, -visibleSize.height / 2.0 + 30);
+	
 	menosBtn = MenuItemImage::create("images/LevelsMenuScene/Flecha.png", "images/LevelsMenuScene/Flecha.png", CC_CALLBACK_1(Nivel::muestraUnoMenos, this, vueltasArsenal));
 
 	menosBtn->setScaleX(ancho1 / (menosBtn->getContentSize().width * 11));
@@ -401,6 +413,7 @@ void Nivel::colocaFondo(std::vector<std::string> fondos)
 	muralla->retain();
 }
 
+
 int Nivel::getBackgroundWidth()
 {
 	auto s = background->getContentSize();
@@ -413,7 +426,8 @@ void Nivel::spawnNube(float dt)
 	auto Nube = Nube::create();
 	this->addChild(Nube, 1);
 	auto rand = random(1, 3);
-	Nube->setPosition(Point(visibleSize.width+Nube->getContentSize().width, visibleSize.height - Nube->getContentSize().height*rand));
+	Nube->setPosition(Point(Global::getInstance()->zerrin->getPosition().x +visibleSize.width/2 +Nube->getContentSize().width,
+						visibleSize.height - Nube->getContentSize().height*rand));
 	Nube->spawnNube(dt);
 
 }
@@ -429,10 +443,10 @@ void Nivel::mueveFondo(int v) {
 	background2->setPositionX(background2->getPositionX() - v);
 	muralla->setPositionX(muralla->getPositionX() - v);*/
 
-	menu1->setPositionX(menu1->getPositionX() + v);
 	for (auto a : Global::getInstance()->ArmasNivel) {
-		a->setPositionX(a->getPositionX()+v);
+		if(!a->colocada) a->setPositionX(a->getPositionX()+v);
 	}
+
 
 	/*for (int i = 0; i < fondosVector.size(); i++) {
 		fondosVector[i]->setPositionX(fondosVector[i]->getPositionX()-v);

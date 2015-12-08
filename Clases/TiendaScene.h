@@ -28,6 +28,7 @@ private:
 
 	void activaDesactivaBotones(cocos2d::MenuItemImage* boton, bool estado);
 	void preparaBotones();
+	void preparaLabels();
 
 	void addListener();
 	void gestionaToque();
@@ -41,6 +42,7 @@ private:
 
 	cocos2d::Label* dinero_oro_int;
 	cocos2d::Label* dinero_mechones_int;
+
 
 	//virtual void onEnterTransitionDidFinish();
 };

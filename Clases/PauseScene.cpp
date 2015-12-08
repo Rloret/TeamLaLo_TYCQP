@@ -69,10 +69,13 @@ void PauseScene::goToMainMenuScene(Ref *pSender){
 	((Nivel*)Global::getInstance()->nivel)->unscheduleAllSelectors();
 	Global::getInstance()->nivel->removeAllChildren();
 	Global::getInstance()->nivel->stopAllActions();
+	if (Global::getInstance()->juegoEnCurso)	Director::getInstance()->popScene();
+	/*Director::getInstance()->popScene();
 	Director::getInstance()->popScene();
 	Director::getInstance()->popScene();
-	Director::getInstance()->popScene();
-	Director::getInstance()->popScene();
+	Director::getInstance()->popScene();*/
+	Director::getInstance()->popToRootScene();
+
 	
 }
 
