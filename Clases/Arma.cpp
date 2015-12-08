@@ -5,7 +5,7 @@
 
 USING_NS_CC;
 
-Arma::Arma( int daño, std::string nombre, std::string tipo,int precio)
+Arma::Arma( int daño, std::string nombre, int tipo,int precio)
 {
 
 	this->daño = daño;
@@ -26,7 +26,7 @@ Arma::~Arma()
 {
 }
 
-Arma * Arma::create(cocos2d::Texture2D* t, int daño, std::string nombre, std::string tipo,int precio)
+Arma * Arma::create(cocos2d::Texture2D* t, int daño, std::string nombre,int tipo,int precio)
 {
 	Arma* arma = new Arma(daño,nombre,tipo,precio);
 	//Texture2D *texture = Director::getInstance()->getTextureCache()->addImage(fileName);
@@ -105,7 +105,10 @@ void Arma::accionTouch(){
 
 				((Nivel*)Global::getInstance()->nivel)->ContadorArmas += 1;
 				//llamar a global
-				Global::getInstance()->añadeArmasANivel(this->ClonarArma(this));
+				Arma* a = this->ClonarArma(this);
+				Global::getInstance()->añadeArmasANivel(a);
+				a->colocada = false;
+				a->setPosition(Point(Global::getInstance()->ArmasNivel.size() * 80 + 500,Director::getInstance()->getVisibleSize().height-70));
 				this->enNivel = true;
 			}
 			else if (this->enNivel) CCLOG("ya esta metida");
@@ -120,10 +123,17 @@ void Arma::accionTouch(){
 
 	if (Global::getInstance()->juegoEnCurso){
 		 if (!colocada) this->colocada = true;
+		// accion(this);
 	}
 
 	else if (!Global::getInstance()->juegoEnCurso) Global::getInstance()->quitaArmaDeNivel(this);
 	
+
+}
+
+void Arma::caer(float dt)
+{
+	this->setPositionY(this->getPositionY()-5);
 
 }
 
@@ -141,12 +151,25 @@ void Arma::setArma(Arma* arma)
 	esteArma = arma;
 }
 
+void Arma::accion(Arma * a)
+{
+	switch (a->tipo)
+	{
+	case 0:  //las que caen
+		a->schedule(schedule_selector(Arma::caer), 0.5);
+		break;
+	default:
+		break;
+	}
+
+}
+
 Arma* Arma::getArma()
 {
 	return esteArma;
 }
 
-std::string Arma::getTipo()
+int Arma::getTipo()
 {
 	return tipo;
 }
@@ -159,6 +182,11 @@ std::string Arma::getNombre()
 int Arma::getDaño()
 {
 	return this->daño;
+}
+
+int Arma::getPrecio()
+{
+	return precio;
 }
 
 bool Arma::getDesdeTienda()

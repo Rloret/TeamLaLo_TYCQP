@@ -78,13 +78,15 @@ void ZerrinClass::update(float dt)
 {
 	
 	if (corriendo) {
-		if (this->getPositionX() > Director::getInstance()->getVisibleSize().width/2 && (((Nivel *)Global::getInstance()->nivel)->getPosXFondo() >Director::getInstance()->getVisibleSize().width)) {
+		/*if (this->getPositionX() > Director::getInstance()->getVisibleSize().width/2 && 
+				(((Nivel *)Global::getInstance()->nivel)->getPosXFondo() >Director::getInstance()->getVisibleSize().width)) {
 			((Nivel *)Global::getInstance()->nivel)->mueveFondo(velocidad);
 			//((Nivel *)Global::getInstance()->nivel)->mueveNubes(-velocidad*1.5);
 
-		}
+		}*/
+		((Nivel *)Global::getInstance()->nivel)->mueveFondo(velocidad);
 
-		else if (this->getPositionX()> Director::getInstance()->getVisibleSize().width-50) {
+		if (this->getPositionX()> ((Nivel*)Global::getInstance()->nivel)->getBackgroundWidth()-450) {
 			this->corriendo = false;
 			Global::getInstance()->zerrin->haLlegado = true;
 			CCLOG("jhiuh");

@@ -68,7 +68,7 @@ void PauseScene::goToMainMenuScene(Ref *pSender){
 	//((Nivel*)Global::getInstance()->nivel)->removeScheduler();
 	((Nivel*)Global::getInstance()->nivel)->unscheduleAllSelectors();
 	Global::getInstance()->nivel->removeAllChildren();
-	
+	Global::getInstance()->nivel->stopAllActions();
 	Director::getInstance()->popScene();
 	Director::getInstance()->popScene();
 	Director::getInstance()->popScene();

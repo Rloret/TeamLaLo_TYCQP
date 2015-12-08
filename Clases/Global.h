@@ -4,6 +4,7 @@
 #include "Arma.h"
 #include "ObjetoEscenario.h"
 #include "ZerrinClass.h"
+#include "KatahiClass.h"
 //Singleton
 
 class Global 
@@ -19,6 +20,7 @@ public:
 	std::vector<Arma*> ArmasNivel;
 
 	ZerrinClass* zerrin;
+	KatahiClass* katahi;
 
 	std::vector<ObjetoEscenario*> ObjetosTotalesEscenarios;
 	cocos2d::Size visibleSize;

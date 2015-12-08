@@ -32,13 +32,15 @@ private:
 	void addListener();
 	void gestionaToque();
 
+	void modificaTextoOro(cocos2d::Label * l);
+
 	cocos2d::MenuItemImage* yesButton;
 	cocos2d::MenuItemImage* cerrarMenuButton;
 	cocos2d::Label* textoCompra;
 	cocos2d::Menu* menuCompra;
 
-
-
+	cocos2d::Label* dinero_oro_int;
+	cocos2d::Label* dinero_mechones_int;
 
 	//virtual void onEnterTransitionDidFinish();
 };

@@ -22,13 +22,18 @@ public:
 
 	void mueveFondo(int v);
 	int getPosXFondo();
+	int getBackgroundWidth();
+
+	
 	// implement the "static create()" method manually
 	CREATE_FUNC(Nivel);
 
 private:
 	static int tiempoDelNivel;
 	static int puntosDelNivel;
-	cocos2d::Menu* menuArsenal;
+	cocos2d::Menu* menuArsenal;
+	
+
 	//bool juegoEnCurso;
 
 	void muestraUnoMas(Ref *pSender);
@@ -39,7 +44,7 @@ private:
 	void goToPause(Ref *pSender);
 	void abrirArsenal(Ref *pSender);
 	void simulacion(Ref *pSender);
-	void displayArmasNivel();
+	//void displayArmasNivel();
 	void activaDesactivaBoton(cocos2d::MenuItemImage* boton, bool estado);
 
 	void recorreArmas(int iterador, int posicion, int ancho, int alto, int iteraciones);
@@ -62,6 +67,9 @@ private:
 	cocos2d::MenuItemImage* vestuarioBtn;
 	cocos2d::MenuItemImage* arsenalBtn;
 	cocos2d::MenuItemImage* simulacionBtn;
+
+	cocos2d::Menu* menu1;
+	cocos2d::Menu* menu2;
 
 
 

@@ -36,7 +36,8 @@ void Nube::spawnNube(float dt)
 	CallFuncN::create(CC_CALLBACK_1(Nube::nubeDone, this)),	NULL);
 	seq->retain();
 
-	this->runAction(seq);
+	this->runAction(seq);
+
 }
 
 void Nube::nubeDone(Node* pSender) {

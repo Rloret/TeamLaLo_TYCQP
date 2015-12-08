@@ -281,6 +281,14 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 		break;
 
 	default:
+		if (fondosPasar.size()>0)fondosPasar.clear();
+		fondosPasar.push_back("images/Nivel/Castillo_Fondo.png");
+		fondosPasar.push_back("images/Nivel/Castillo_Tercer_Plano.png");
+		fondosPasar.push_back("images/Nivel/Castillo_Nubes.png");
+		fondosPasar.push_back("images/Nivel/Castillo_Segundo_Plano.png");
+		fondosPasar.push_back("images/Nivel/Castillo_Primer_Plano.png");
+
+		((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);
 		break;
 	}
 	

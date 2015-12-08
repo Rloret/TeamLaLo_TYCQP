@@ -2,7 +2,7 @@
 #include"proj.win32\Nivel.h"
 #include"proj.win32\levelsMenuScene.h"
 #include "TiendaScene.h"
-
+#include "KatahiClass.h"
 
 USING_NS_CC;
 
@@ -15,6 +15,7 @@ Global::Global(){
 	 levelsMenuScene = LevelsMenuScene::createScene();
 
 	 zerrin = ZerrinClass::create();
+	 katahi = KatahiClass::create();
 
 	 nivel->retain();
 	 levelsMenuScene->retain();
@@ -35,12 +36,19 @@ void Global::añadeArmasANivel(Arma* a){
 
 void Global::creaArmas()
 {
+
+	//Prueba dagas
+	Texture2D* d = Director::getInstance()->getTextureCache()->addImage("images/Armas/dagas.png");
+	Arma* dagas = Arma::create(d,50,"dagas",0,50);
+	
+	armasTotales.push_back(dagas);
+
 	Texture2D* t = Director::getInstance()->getTextureCache()->addImage("images/Armas/arma.png");
 	//provisional crea un array genérico, en un futuro hay que meter las armas 1 a una
-	for (int i = 0; i < 20; i++){
+	for (int i = 1; i < 20; i++){
 		char* nombre = "espada Bastarda numero: ";
 		nombre += i;
-		Arma* armaaux = Arma::create(t, 100+i, nombre, "punzante",100);
+		Arma* armaaux = Arma::create(t, 100+i, nombre, 1,i*10+1);
 		armaaux->setColor(Color3B(i * 25, i * 25, i * 25));
 		armasTotales.push_back(armaaux);
 	}
