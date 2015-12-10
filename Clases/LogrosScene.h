@@ -12,8 +12,14 @@ public:
  
 	void returnToScene(Ref *pSender);
 
+
+
 	// implement the "static create()" method manually
 	CREATE_FUNC(LogrosScene);
+private:
+	cocos2d::PhysicsWorld *nivelPhysics;
+
+	void setPhysicsWorld(cocos2d::PhysicsWorld* world);
 
 
 };

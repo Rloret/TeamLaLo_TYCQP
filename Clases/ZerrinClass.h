@@ -15,6 +15,8 @@ public:
 	~ZerrinClass();
 	static ZerrinClass* create();
 
+	//Sprite* ObjetivoCamara;
+
 	void setVelocidad(int v);
 	void setVida(int v);
 	int getVelocidad();
@@ -26,7 +28,7 @@ public:
 	cocos2d::Sprite aspecto;
 
 private:
-	int velocidad;
+	float velocidad;
 	int vida;
 	void update(float dt);
 	void correr();

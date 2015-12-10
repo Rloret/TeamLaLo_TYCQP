@@ -65,7 +65,7 @@ bool LevelsMenuScene::init()
 		this->vectorNiveles.push_back(menuaux);
 		this->addChild(vectorNiveles[i],3);
 		vectorNiveles[i]->setVisible(false);
-
+		CCLOG("i vale %d", i);
 	}
 	CCLOG("vector ocupa: %d", vectorNiveles.capacity());
 	
@@ -206,7 +206,7 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 	//cocos2d::Director::getInstance()->getEventDispatcher()->removeEventListener(listener);
 	_eventDispatcher->removeEventListener(this->listener);
 
-	Director::getInstance()->pushScene(Global::getInstance()->nivel);
+	cocos2d::Scene* cene;
 	CCLOG("antes del switch");
 	//Aqui SWITCH con el numero de nivel que es para saber que objetos tenemos que pasarle
 	switch (i)
@@ -219,8 +219,9 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 		fondosPasar.push_back("images/Nivel/Castillo_Nubes.png");
 		fondosPasar.push_back("images/Nivel/Castillo_Segundo_Plano.png");
 		fondosPasar.push_back("images/Nivel/Castillo_Primer_Plano.png");
-
-		((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar,0, 10);	
+		cene = Nivel::createScene(fondosPasar, 0, 10);
+		Director::getInstance()->pushScene(cene);
+		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar,0, 10);	
 		break;
 
 	case 1:
@@ -231,8 +232,9 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 		fondosPasar.push_back("images/Nivel/Castillo_Nubes.png");
 		fondosPasar.push_back("images/Nivel/Castillo_Segundo_Plano.png");
 		fondosPasar.push_back("images/Nivel/Castillo_Primer_Plano.png");
-
-		((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);	
+		cene = Nivel::createScene(fondosPasar, 0, 10);
+		Director::getInstance()->pushScene(cene);
+		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);	
 		break;
 
 	case 2:
@@ -242,8 +244,10 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 		fondosPasar.push_back("images/Nivel/Castillo_Nubes.png");
 		fondosPasar.push_back("images/Nivel/Castillo_Segundo_Plano.png");
 		fondosPasar.push_back("images/Nivel/Castillo_Primer_Plano.png");
+		cene = Nivel::createScene(fondosPasar, 0, 10);
+		Director::getInstance()->pushScene(cene);
 
-		((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);	
+		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);	
 		break;
 
 	case 3:
@@ -253,8 +257,9 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 		fondosPasar.push_back("images/Nivel/Castillo_Nubes.png");
 		fondosPasar.push_back("images/Nivel/Castillo_Segundo_Plano.png");
 		fondosPasar.push_back("images/Nivel/Castillo_Primer_Plano.png");
-
-		((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);	
+		cene = Nivel::createScene(fondosPasar, 0, 10);
+		Director::getInstance()->pushScene(cene);
+		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);	
 		break;
 
 	case 4:
@@ -265,8 +270,9 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 		fondosPasar.push_back("images/Nivel/Castillo_Nubes.png");
 		fondosPasar.push_back("images/Nivel/Castillo_Segundo_Plano.png");
 		fondosPasar.push_back("images/Nivel/Castillo_Primer_Plano.png");
-
-		((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);		
+		cene = Nivel::createScene(fondosPasar, 0, 10);
+		Director::getInstance()->pushScene(cene);
+		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);		
 		break;
 
 	case 5:
@@ -276,8 +282,9 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 		fondosPasar.push_back("images/Nivel/Castillo_Nubes.png");
 		fondosPasar.push_back("images/Nivel/Castillo_Segundo_Plano.png");
 		fondosPasar.push_back("images/Nivel/Castillo_Primer_Plano.png");
-
-		((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);
+		cene = Nivel::createScene(fondosPasar, 0, 10);
+		Director::getInstance()->pushScene(cene);
+		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);
 		break;
 
 	default:
@@ -287,10 +294,13 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 		fondosPasar.push_back("images/Nivel/Castillo_Nubes.png");
 		fondosPasar.push_back("images/Nivel/Castillo_Segundo_Plano.png");
 		fondosPasar.push_back("images/Nivel/Castillo_Primer_Plano.png");
-
-		((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);
+		cene = Nivel::createScene(fondosPasar, 0, 10);
+		Director::getInstance()->pushScene(cene);
+		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);
 		break;
 	}
+	//Director::getInstance()->pushScene(Global::getInstance()->nivel);
+	//Director::getInstance()->pushScene(cene);
 	
 }
 

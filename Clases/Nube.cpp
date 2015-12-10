@@ -41,7 +41,7 @@ void Nube::spawnNube(float dt)
 }
 
 void Nube::nubeDone(Node* pSender) {
-	Global::getInstance()->nivel->removeChild(pSender);
+	Director::getInstance()->getRunningScene()->removeChild(pSender);
 	this->stopAllActions();
 
 }

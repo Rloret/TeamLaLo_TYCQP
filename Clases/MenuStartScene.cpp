@@ -103,7 +103,7 @@ void MenuStartScene::goToTiendaScene(Ref *pSender){
 void MenuStartScene::goToLevelsScene(Ref *pSender){
 
 	//Scene* escena= Global::getInstance()->levelsMenuScene;
-	Director::getInstance()->pushScene((Scene*)Global::getInstance()->levelsMenuScene);
+	Director::getInstance()->pushScene(/*(Scene*)*/Global::getInstance()->levelsMenuScene);
 	/*auto scene = LevelsMenuScene::createScene();
 	Director::getInstance()->pushScene(scene);*/
 	

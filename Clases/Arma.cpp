@@ -78,15 +78,19 @@ void Arma::AddListener()
 	listener->onTouchMoved = [=](Touch* touch, Event* event) {
 		cocos2d::Point p = touch->getLocation();
 		if (Global::getInstance()->juegoEnCurso && this->getPosition().y >50 && !this->colocada && !this->getDesdeTienda()) {
-			if(Global::getInstance()->juegoEnCurso)	Arma::arrastraArma(Point(Global::getInstance()->zerrin->getPosition().x - Director::getInstance()->getVisibleSize().width / 2 + p.x, p.y));
-			else		Arma::arrastraArma(p);
-			
+			arrastrando = true;
+			if (Global::getInstance()->juegoEnCurso)	Arma::arrastraArma(p);
 
+				//Arma::arrastraArma(Point(Global::getInstance()->zerrin->getPosition().x -
+				//Director::getInstance()->getVisibleSize().width / 2 + p.x, p.y));
+			//else		Arma::arrastraArma(p);
+			
 		}
 	};
 	listener->onTouchEnded = [=](cocos2d::Touch* touch, cocos2d::Event* event)
 	{
 		Arma::accionTouch();
+		arrastrando = false;
 	};
 
 	cocos2d::Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 32);
@@ -98,10 +102,19 @@ void Arma::arrastraArma(cocos2d::Vec2 vector)
 {
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto zerrinpos = Global::getInstance()->zerrin->getPosition();
-	/*if (vector.y > 768) vector.y = 768;
-	if (vector.x < zerrinpos.x-visibleSize.width/2+20) vector.x = zerrinpos.x - visibleSize.width / 2+20;
-	else if (vector.x>zerrinpos.x + visibleSize.width / 2-20) vector.x = zerrinpos.x + visibleSize.width / 2-20;*/
+	
+	if (vector.y >768 - this->getBoundingBox().size.height) vector.y = 768-this->getBoundingBox().size.height;
+	else if (vector.y < 200+ this->getBoundingBox().size.height/2) vector.y = 200+ this->getBoundingBox().size.height/2;
+
+	if (vector.x > visibleSize.width-50) vector.x = visibleSize.width- 50;
+	else if (vector.x < 50) vector.x = 50;
+	//if (vector.x < zerrinpos.x-visibleSize.width/2+20) vector.x = zerrinpos.x - visibleSize.width / 2+20;
+	//else if (vector.x>zerrinpos.x + visibleSize.width / 2-20) vector.x = zerrinpos.x + visibleSize.width / 2-20;
+
 	this->setPosition(vector);
+	CCLOG("ARMAA %f %f",vector.x,vector.y);
+	CCLOG("visible size %f %f", visibleSize.width, visibleSize.height);
+
 }
 
 void Arma::accionTouch(){
@@ -114,11 +127,12 @@ void Arma::accionTouch(){
 		if (p.y < 500 && !Global::getInstance()->juegoEnCurso) {
 			CCLOG("El arma con daño : %d", this->daño);
 			//CCLOG("Es para añadir a la lista de armas que vamos a usar");
-			if (((Nivel*)Global::getInstance()->nivel)->ContadorArmas < 5 && !this->enNivel) {
+			CCLOG("contador armas %d", Global::getInstance()->ContadorArmas);
+			if (Global::getInstance()->ContadorArmas < 5 && !this->enNivel) {
 
 				//CCLOG("Se puede añadir");
 
-				((Nivel*)Global::getInstance()->nivel)->ContadorArmas += 1;
+				Global::getInstance()->ContadorArmas += 1;
 				//llamar a global
 				Arma* a = this->ClonarArma(this);
 				Global::getInstance()->añadeArmasANivel(a);
@@ -138,7 +152,7 @@ void Arma::accionTouch(){
 
 	if (Global::getInstance()->juegoEnCurso){
 		 if (!colocada) this->colocada = true;
-		// accion(this);
+		 accion(this);
 	}
 
 	else if (!Global::getInstance()->juegoEnCurso) Global::getInstance()->quitaArmaDeNivel(this);
@@ -146,11 +160,11 @@ void Arma::accionTouch(){
 
 }
 
-void Arma::caer(float dt)
+/*void Arma::caer(float dt)
 {
 	this->setPositionY(this->getPositionY()-5);
 
-}
+}*/
 
 
 
@@ -171,7 +185,10 @@ void Arma::accion(Arma * a)
 	switch (a->tipo)
 	{
 	case 0:  //las que caen
-		a->schedule(schedule_selector(Arma::caer), 0.5);
+		a->setPhysicsBody(PhysicsBody::createCircle(a->getBoundingBox().size.height / 2, cocos2d::PhysicsMaterial(25.0, 0.2, 1)));
+		break;
+	case 1:  //las que caen
+		a->setPhysicsBody(PhysicsBody::createCircle(a->getBoundingBox().size.height / 2, cocos2d::PhysicsMaterial(25.0, 0.2, 1)));
 		break;
 	default:
 		break;

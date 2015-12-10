@@ -52,8 +52,8 @@ void GameOverScene::goToMenuStartScene(Ref * pSender)
 	Global::getInstance()->juegoEnCurso = false;
 	//((Nivel*)Global::getInstance()->nivel)->removeScheduler();
 	//unschedule(schedule_selector(Nivel::spawnNube));
-	((Nivel*)Global::getInstance()->nivel)->unscheduleAllSelectors();
-	Global::getInstance()->nivel->removeAllChildren();
+	//((Nivel*)Global::getInstance()->nivel)->unscheduleAllSelectors();
+	//Global::getInstance()->nivel->removeAllChildren();
 	Director::getInstance()->popScene();
 	Director::getInstance()->popScene();
 }

@@ -14,20 +14,46 @@ USING_NS_CC;
 
 
 
-Scene* Nivel::createScene() 
+Scene* Nivel::createScene(std::vector<std::string> fondos, int i_objetos, int u_objetos)
 {
 	// 'scene' is an autorelease object
-	auto scene = Scene::create();
+	auto scene = Scene::createWithPhysics();
+	scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
+	scene->setName("Padre");
+	auto layer = Nivel::create(fondos, i_objetos, u_objetos);
+	scene->addChild(layer);
 
 	// 'layer' is an autorelease object
-	auto layer = Nivel::create();
-
+/*	auto layer= Nivel::create();
+	layer->setName("Hijo");
+	layer->setPhysicsWorld(scene->getPhysicsWorld());
 	// add layer as a child to scene
 	scene->addChild(layer);
 
-	// return the scene
+	// return the scene*/
 	return scene;
 }
+
+
+Nivel * Nivel::create(std::vector<std::string> fondos, int i_objetos, int u_objetos)
+{
+	Nivel *pRet = new(std::nothrow)Nivel(fondos, i_objetos, u_objetos); \
+		if (pRet && pRet->init()) \
+		{ \
+			pRet->autorelease(); \
+			return pRet; \
+		} \
+		else \
+		{ \
+			delete pRet; \
+			pRet = NULL; \
+			return NULL; \
+		} \
+
+		//Global::getInstance()->modificaNivel((cocos2d::Scene*)pRet);
+}
+
+
 
 // on "init" you need to initialize your instance
 bool Nivel::init()
@@ -39,7 +65,7 @@ bool Nivel::init()
 		return false;
 	}
 
-
+	CCLOG("devuelvo true");
 	return true;
 }
 
@@ -50,17 +76,20 @@ void Nivel::preparaNivel(std::vector<std::string> fondos, int i_objetos, int u_o
 	auto ancho = ANCHOARSENAL;
 	auto alto = ALTOARSENAL;
 
-
-	ContadorArmas = 0;
+	Global::getInstance()->ContadorArmas = 0;
 	Global::getInstance()->juegoEnCurso = false;
 	colocaBotones();
 	displayArmasArsenal();
 
 	colocaFondo(fondos);
+
 	colocaObjetos(i_objetos, u_objetos);
 	addChild(Global::getInstance()->zerrin, 3);
+
 	Global::getInstance()->zerrin->setPosition(Point(450 + Global::getInstance()->zerrin->getContentSize().width / 2
-		, visibleSize.height / 3 + Global::getInstance()->zerrin->getContentSize().height / 2 + 30));
+		, visibleSize.height / 3 + Global::getInstance()->zerrin->getContentSize().height / 2));
+	Global::getInstance()->zerrin->setRotation(0);
+	CCLOG("Zerrin esta burladisimo %d", Global::getInstance()->zerrin->getRotation());
 	this->setPosition(0, 0);
 	Global::getInstance()->zerrin->haLlegado = false;
 	this->schedule(schedule_selector(Nivel::spawnNube), 1.5);
@@ -239,7 +268,10 @@ void Nivel::simulacion(Ref *pSender){
 		
 		
 		((ZerrinClass *)Global::getInstance()->zerrin)->setCorrer(true);
-		this->runAction(Follow::create(Global::getInstance()->zerrin));
+
+
+		this->runAction(Follow::create(Global::getInstance()->zerrin,background->getBoundingBox()));
+
 		
 	}
 	else{
@@ -247,16 +279,6 @@ void Nivel::simulacion(Ref *pSender){
 	}
 	
 }
-/*
-void Nivel::displayArmasNivel(){
-
-	for (int i = Global::getInstance()->ArmasNivel.size(); i >0 ; i--){
-		if (Global::getInstance()->ArmasNivel[i] != nullptr){
-			
-		}
-	}
-
-}*/
 
 void Nivel::activaDesactivaBoton(MenuItemImage* boton, bool estado)
 {
@@ -271,7 +293,8 @@ void Nivel::recorreArmas(int iterador,int posicion,int ancho,int alto,int iterac
 		posicion++;
 		if (vueltasArsenal == Global::getInstance()->armasArsenal.size()) vueltasArsenal = 0;
 		Arma* arma = Global::getInstance()->armasArsenal[vueltasArsenal];
-		arma->setPosition((((posicion + 1)*ancho) / 7) - arma->getContentSize().width, alto / 2 + 2 * vueltasArsenal);
+		//arma->setPosition((((posicion + 1)*ancho) / 7) - arma->getContentSize().width, alto / 2 + 2 * vueltasArsenal);
+		arma->setPosition((((posicion + 1)*ancho) / 7) /*+ arma->getContentSize().width*/, alto / 2 + 2 * vueltasArsenal);
 		activaDesactivaArma(arma, true);
 		CCLOG("muestro la %d", vueltasArsenal);
 
@@ -301,7 +324,10 @@ void Nivel::colocaObjetos(int i_objetos, int u_objetos)
 	for (int i = i_objetos; i < u_objetos; i++) {
 		addChild(Global::getInstance()->ObjetosTotalesEscenarios[i],3);
 		Global::getInstance()->ObjetosTotalesEscenarios[i]->setVisible(true);
-
+		Vec2 punto = Vec2(((i + 1)*Director::getInstance()->getVisibleSize().width) / 10 - 
+					Global::getInstance()->ObjetosTotalesEscenarios[i]->getContentSize().width,
+					Director::getInstance()->getVisibleSize().height / 2);
+		Global::getInstance()->ObjetosTotalesEscenarios[i]->setPosition(punto);
 	}
 }
 
@@ -328,11 +354,10 @@ void Nivel::colocaBotones()
 	listenerPause->onKeyPressed = [=](EventKeyboard::KeyCode keyCode, Event* event) {
 		switch (keyCode) {
 		case EventKeyboard::KeyCode::KEY_ESCAPE:
-			Nivel::goToPause(Global::getInstance()->nivel);
+			Nivel::goToPause(this);
 		}
 
 	};
-	//listenerPause->onKeyReleased = CC_CALLBACK_2(Nivel::onKeyReleased, this);
 	menu1 = Menu::create(pauseBtn, tiendaBtn, vestuarioBtn, NULL);
 	menu1->setPosition(Point(150, visibleSize.height - pauseBtn->getContentSize().height));
 	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listenerPause, this);
@@ -374,29 +399,35 @@ void Nivel::colocaBotones()
 	menuArsenal->setVisible(false);
 }
 
-void Nivel::colocaFondo(std::vector<std::string> fondos)
-{
+void Nivel::colocaFondo(std::vector<std::string> fondos){
+
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	/*for (int i = 0; i < fondos.size(); i++) {
-		auto fondoi = cocos2d::Sprite::create(fondos[i]);
-		fondosVector.push_back(fondoi);
-		addChild(fondoi, i);
-		fondosVector[i]->retain();
-	}*/
 
 	background = Sprite::create(fondos[0]);
-	addChild(background, 0);
 
-	background->setPosition(background->getContentSize().width, visibleSize.height);
-	background->setAnchorPoint(Vec2(1,1));
+	auto limitesEscenario = PhysicsBody::createEdgeBox(Size(background->getContentSize().width,568), PHYSICSBODY_MATERIAL_DEFAULT,0.3);
+	limitesEscenario->setPositionOffset(Vec2(0, 200));
 	background->retain();
+	background->setPosition(background->getContentSize().width, visibleSize.height);
+	background->setAnchorPoint(Vec2(1, 1));
+	background->setPhysicsBody(limitesEscenario);
+	addChild(background,0);
+
+	/*cocos2d::Sprite* limites = cocos2d::Sprite::create();
+	limites->setPhysicsBody(limitesEscenario);
+	addChild(limites, 1);*/
+
+
+	//background->retain();
 
 	background1 = Sprite::create(fondos[1]);
+
 	addChild(background1, 1);
 
 	background1->setPosition(background1->getContentSize().width, visibleSize.height);
 	background1->setAnchorPoint(Vec2(1, 1));
 	background1->retain();
+
 
 	background2 = Sprite::create(fondos[3]);
 	addChild(background2, 3);
@@ -413,44 +444,59 @@ void Nivel::colocaFondo(std::vector<std::string> fondos)
 	muralla->retain();
 }
 
+void Nivel::setPhysicsWorld(cocos2d::PhysicsWorld * world)
+{
+	nivelPhysics = world;
+	nivelPhysics->setGravity(Vec2(0, -9.8));
+}
+
 
 int Nivel::getBackgroundWidth()
 {
-	auto s = background->getContentSize();
+	auto s =background2->getContentSize();
 	return s.width;
 }
 
+Nivel::Nivel(std::vector<std::string> fondos, int i_objetos, int u_objetos)
+{
+	preparaNivel(fondos, i_objetos, u_objetos);
+}
+
+Nivel::~Nivel()
+{
+}
+
+cocos2d::Rect Nivel::getBackgroundSize()
+{
+	return 	background->getBoundingBox();
+
+}
 void Nivel::spawnNube(float dt)
 {
 	auto visibleSize = Director::getInstance()->getVisibleSize();
-	auto Nube = Nube::create();
-	this->addChild(Nube, 1);
+	auto Nubecita = Nube::create();
+	auto limitesEscenario = PhysicsBody::createEdgeBox(Nubecita->getBoundingBox().size, PHYSICSBODY_MATERIAL_DEFAULT, 3);
+	//Nubecita->setPhysicsBody(limitesEscenario);
+	this->addChild(Nubecita, 1);
 	auto rand = random(1, 3);
-	Nube->setPosition(Point(Global::getInstance()->zerrin->getPosition().x +visibleSize.width/2 +Nube->getContentSize().width,
-						visibleSize.height - Nube->getContentSize().height*rand));
-	Nube->spawnNube(dt);
+	Nubecita->setPosition(Point(Global::getInstance()->zerrin->getPosition().x +visibleSize.width/2 +Nubecita->getContentSize().width,
+						visibleSize.height - Nubecita->getContentSize().height*rand));
+	Nubecita->spawnNube(dt);
 
 }
 
-/*void Nivel::removeScheduler()
+/*void Nivel::stopCamara()
 {
-	this->unschedule(schedule_selector(Nivel::spawnNube));
+	this->stopAction(Global::getInstance()->getCamara());
 }*/
 
-void Nivel::mueveFondo(int v) {
-	/*background->setPositionX(background->getPositionX()- v);
-	background1->setPositionX(background1->getPositionX() - v);
-	background2->setPositionX(background2->getPositionX() - v);
-	muralla->setPositionX(muralla->getPositionX() - v);*/
 
+void Nivel::mueveFondo(int v) {
+	
 	for (auto a : Global::getInstance()->ArmasNivel) {
-		if(!a->colocada) a->setPositionX(a->getPositionX()+v);
+		if(a->colocada ) a->setPositionX(a->getPositionX()-v);
 	}
 
-
-	/*for (int i = 0; i < fondosVector.size(); i++) {
-		fondosVector[i]->setPositionX(fondosVector[i]->getPositionX()-v);
-	}*/
 }
 
 

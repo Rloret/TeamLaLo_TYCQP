@@ -3,6 +3,7 @@
 #include "cocos2d.h"
 #include "Arma.h"
 #include "ObjetoEscenario.h"
+#include "Nivel.h"
 #include "ZerrinClass.h"
 #include "KatahiClass.h"
 //Singleton
@@ -11,9 +12,9 @@ class Global
 {
 public:
 	static Global* getInstance();
-	cocos2d::Scene* nivel;
+	//cocos2d::Scene* nivel;
 	cocos2d::Scene* levelsMenuScene;
-	cocos2d::Scene* tienda;
+	//cocos2d::Scene* tienda;
 
 	std::vector<Arma*> armasTotales;
 	std::vector<Arma*> armasArsenal;
@@ -28,9 +29,12 @@ public:
 	void añadeArmasANivel(Arma* a);
 	void vaciaArmasNivel();
 	void quitaArmaDeNivel(Arma* a);
+	//void modificaNivel(cocos2d::Scene* elnivel);
+	cocos2d::Action* getCamara();
 	bool juegoEnCurso;
 
 	Arma* armaAComprar;
+	int ContadorArmas=0;
 
 	//std::vector<Vec2*> ObjetosTotalesEscenarioPosiciones;
 	
@@ -41,7 +45,8 @@ private:
 	~Global();
 	void creaArmas();
 	void creaObjetosEscenario();
-	
+	//void creaCamara();
+	//cocos2d::Action* Camara;
 
 
 };

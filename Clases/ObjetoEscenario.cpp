@@ -7,6 +7,7 @@ ObjetoEscenario::ObjetoEscenario(const std::string & fileName, int daño, std::st
 	this->daño = daño;
 	this->nombre = nombre;
 	this->initWithFile(fileName);
+	this->setPhysicsBody(PhysicsBody::createCircle(this->getContentSize().width / 2));
 	this->AddListener();
 }
 
@@ -34,7 +35,7 @@ void ObjetoEscenario::AddListener()
 		cocos2d::Point p = touch->getLocation();
 		cocos2d::Rect rect = this->getBoundingBox();
 
-		if (rect.containsPoint(p))
+		if (rect.containsPoint(p)&& this->isVisible())
 		{
 			return true;
 		}

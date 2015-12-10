@@ -11,23 +11,25 @@ static Global* global = nullptr;
 
 Global::Global(){
 	//inicializar escenas a null
-	 nivel = Nivel::createScene();
+	 //nivel = nullptr;
 	 levelsMenuScene = LevelsMenuScene::createScene();
 
 	 zerrin = ZerrinClass::create();
 	 katahi = KatahiClass::create();
 
-	 nivel->retain();
+	// nivel->retain();
 	 levelsMenuScene->retain();
 
 	 creaArmas();
 	 creaObjetosEscenario();
 	 visibleSize = Director::getInstance()->getVisibleSize();
 	 armaAComprar = nullptr;
+//	 Camara = nullptr;
+
 	 CCLOG("me he iniciado por primera vez");
 }
 void Global::añadeArmasANivel(Arma* a){
-	((Nivel*)nivel)->addChild(a, 3);
+	((Nivel*)Director::getInstance()->getRunningScene())->addChild(a, 2);
 	auto rand = random(0, 19);
 	a->setPosition(Point(200+rand*10, 500));
 	ArmasNivel.push_back(a);
@@ -72,6 +74,12 @@ void Global::creaObjetosEscenario()
 		ObjetosTotalesEscenarios.push_back(objetoaux);
 	}
 }
+/*
+void Global::creaCamara()
+{
+	Camara = Follow::create(Global::getInstance()->zerrin,Rect(0,0,3072,768));
+	Camara->retain();
+}*/
 
 Global* Global::getInstance(){
 
@@ -90,11 +98,24 @@ void Global::quitaArmaDeNivel(Arma*a){
 
 	for (int i = 0; i<ArmasNivel.size(); i++) {
 		if (ArmasNivel[i] == a) {
-			((Nivel*)nivel)->removeChild(a);
+			Director::getInstance()->getRunningScene()->removeChild(a);
 			a->clon->enNivel = false;
 			a->clon = nullptr;
 			ArmasNivel.erase(ArmasNivel.begin() + i);
-			((Nivel*)nivel)->ContadorArmas--;
+			//((Nivel*)nivel)->ContadorArmas--;
 		}
 	}
 }
+/*
+void Global::modificaNivel(cocos2d::Scene* elnivel)
+{
+	nivel = elnivel;
+	nivel->retain();
+}*/
+/*
+cocos2d::Action * Global::getCamara()
+{
+	if (Camara!=nullptr)return Camara;
+	creaCamara();
+	return Camara;
+}*/
