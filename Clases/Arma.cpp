@@ -79,11 +79,14 @@ void Arma::AddListener()
 		cocos2d::Point p = touch->getLocation();
 		if (Global::getInstance()->juegoEnCurso && this->getPosition().y >50 && !this->colocada && !this->getDesdeTienda()) {
 			arrastrando = true;
-			if (Global::getInstance()->juegoEnCurso)	Arma::arrastraArma(p);
+			if (Global::getInstance()->juegoEnCurso)	//Arma::arrastraArma(p);
+				if(Global::getInstance()->zerrin->getPositionX()>1024){
+					Arma::arrastraArma(Point(Global::getInstance()->zerrin->getPosition().x -
+										Director::getInstance()->getVisibleSize().width / 2 + p.x, p.y));
 
-				//Arma::arrastraArma(Point(Global::getInstance()->zerrin->getPosition().x -
-				//Director::getInstance()->getVisibleSize().width / 2 + p.x, p.y));
-			//else		Arma::arrastraArma(p);
+				}
+				
+				else		Arma::arrastraArma(p);
 			
 		}
 	};
@@ -185,10 +188,19 @@ void Arma::accion(Arma * a)
 	switch (a->tipo)
 	{
 	case 0:  //las que caen
-		a->setPhysicsBody(PhysicsBody::createCircle(a->getBoundingBox().size.height / 2, cocos2d::PhysicsMaterial(25.0, 0.2, 1)));
+		a->setPhysicsBody(PhysicsBody::createCircle(a->getBoundingBox().size.height / 2, cocos2d::PhysicsMaterial(100000000000000, 1, 0.5)));
+		a->getPhysicsBody()->setCollisionBitmask(0x02);
+		a->getPhysicsBody()->setCategoryBitmask(0x02);
+		a->getPhysicsBody()->setCategoryBitmask(0x01);
+		a->getPhysicsBody()->setCategoryBitmask(0x03);
+		a->getPhysicsBody()->setContactTestBitmask(true);
 		break;
 	case 1:  //las que caen
-		a->setPhysicsBody(PhysicsBody::createCircle(a->getBoundingBox().size.height / 2, cocos2d::PhysicsMaterial(25.0, 0.2, 1)));
+		a->setPhysicsBody(PhysicsBody::createCircle(a->getBoundingBox().size.height / 2, cocos2d::PhysicsMaterial(10.0, 0.2, 1)));
+		a->getPhysicsBody()->setCollisionBitmask(0x02);
+		a->getPhysicsBody()->setCategoryBitmask(0x02);
+		a->getPhysicsBody()->setCategoryBitmask(0x01);
+		a->getPhysicsBody()->setContactTestBitmask(true);
 		break;
 	default:
 		break;

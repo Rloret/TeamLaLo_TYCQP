@@ -7,6 +7,7 @@
 
 //Singleton
 
+
 class ZerrinClass :public cocos2d::Sprite
 {
 public:
@@ -24,7 +25,6 @@ public:
 	bool haLlegado = false;
 	bool corriendo = false;
 	void setCorrer(bool c);
-
 	cocos2d::Sprite aspecto;
 
 private:

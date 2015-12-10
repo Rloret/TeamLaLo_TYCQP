@@ -14,23 +14,16 @@ USING_NS_CC;
 
 
 
+
 Scene* Nivel::createScene(std::vector<std::string> fondos, int i_objetos, int u_objetos)
 {
 	// 'scene' is an autorelease object
 	auto scene = Scene::createWithPhysics();
 	scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
-	scene->setName("Padre");
+
 	auto layer = Nivel::create(fondos, i_objetos, u_objetos);
 	scene->addChild(layer);
 
-	// 'layer' is an autorelease object
-/*	auto layer= Nivel::create();
-	layer->setName("Hijo");
-	layer->setPhysicsWorld(scene->getPhysicsWorld());
-	// add layer as a child to scene
-	scene->addChild(layer);
-
-	// return the scene*/
 	return scene;
 }
 
@@ -75,7 +68,7 @@ void Nivel::preparaNivel(std::vector<std::string> fondos, int i_objetos, int u_o
 	vueltasArsenal = 0;
 	auto ancho = ANCHOARSENAL;
 	auto alto = ALTOARSENAL;
-
+	this->addContactListener();
 	Global::getInstance()->ContadorArmas = 0;
 	Global::getInstance()->juegoEnCurso = false;
 	colocaBotones();
@@ -89,12 +82,16 @@ void Nivel::preparaNivel(std::vector<std::string> fondos, int i_objetos, int u_o
 	Global::getInstance()->zerrin->setPosition(Point(450 + Global::getInstance()->zerrin->getContentSize().width / 2
 		, visibleSize.height / 3 + Global::getInstance()->zerrin->getContentSize().height / 2));
 	Global::getInstance()->zerrin->setRotation(0);
-	CCLOG("Zerrin esta burladisimo %d", Global::getInstance()->zerrin->getRotation());
-	this->setPosition(0, 0);
+	Global::getInstance()->zerrin->setPhysicsBody(PhysicsBody::createBox(Global::getInstance()->zerrin->getBoundingBox().size, PhysicsMaterial(20, 0.1, 0)));
+	Global::getInstance()->zerrin->getPhysicsBody()->setDynamic(true);
+	Global::getInstance()->zerrin->getPhysicsBody()->setCollisionBitmask(0x01);
+	Global::getInstance()->zerrin->getPhysicsBody()->setCategoryBitmask(0x02);
+	Global::getInstance()->zerrin->getPhysicsBody()->setCategoryBitmask(0x03);
+	Global::getInstance()->zerrin->getPhysicsBody()->setContactTestBitmask(true);
+	/*CCLOG("Zerrin esta burladisimo %d", Global::getInstance()->zerrin->getRotation());
+	this->setPosition(0, 0);*/
 	Global::getInstance()->zerrin->haLlegado = false;
 	this->schedule(schedule_selector(Nivel::spawnNube), 1.5);
-
-	
 }
 
 void Nivel::displayArmasArsenal()
@@ -268,7 +265,8 @@ void Nivel::simulacion(Ref *pSender){
 		
 		
 		((ZerrinClass *)Global::getInstance()->zerrin)->setCorrer(true);
-
+		/*((ZerrinClass *)Global::getInstance()->zerrin)->getPhysicsBody()->applyForce(Vec2(100000,0));
+		((ZerrinClass *)Global::getInstance()->zerrin)->getPhysicsBody()->setVelocity(Vec2(1, 0));*/
 
 		this->runAction(Follow::create(Global::getInstance()->zerrin,background->getBoundingBox()));
 
@@ -355,6 +353,24 @@ void Nivel::colocaBotones()
 		switch (keyCode) {
 		case EventKeyboard::KeyCode::KEY_ESCAPE:
 			Nivel::goToPause(this);
+			break;
+		case EventKeyboard::KeyCode::KEY_A:
+			Global::getInstance()->zerrin->getPhysicsBody()->applyImpulse(Vec2(-100000000,0));
+			break;
+		case EventKeyboard::KeyCode::KEY_S:
+			Global::getInstance()->zerrin->getPhysicsBody()->applyForce(Vec2(-100000, 100000));
+			break;
+		case EventKeyboard::KeyCode::KEY_D:
+			Global::getInstance()->zerrin->getPhysicsBody()->setVelocity(Vec2(0 ,100));
+			break;
+		case EventKeyboard::KeyCode::KEY_X:
+			auto armadeturno = Global::getInstance()->armasTotales[random(0, 10)];
+			auto armadeturno2 = armadeturno->ClonarArma(armadeturno);
+			this->addChild(armadeturno2,3);
+			armadeturno2->setPosition(Global::getInstance()->zerrin->getPositionX()+ 1024/random(1, 5), visibleSize.height);
+			armadeturno2->setPhysicsBody(PhysicsBody::createBox(armadeturno2->getContentSize(), PhysicsMaterial(random(1,10)*10000,random(0,10)/10, random(0, 10)/10)));
+
+			break;
 		}
 
 	};
@@ -504,6 +520,26 @@ int Nivel::getPosXFondo()
 {
 	return background->getPositionX();
 }
+
+bool Nivel::onContactBegin(cocos2d::PhysicsContact & contact)
+{
+	PhysicsBody*a = contact.getShapeA()->getBody();
+	PhysicsBody*b = contact.getShapeB()->getBody();
+
+	if (a->getCollisionBitmask() == 0X01 && b->getCollisionBitmask() == 0x02 || b->getCollisionBitmask() == 0X01 && a->getCollisionBitmask() == 0x02) {
+		CCLOG("COLISON DE Z CON A");
+	}
+	return true;
+}
+
+
+void Nivel::addContactListener()
+{
+	this->listenerColision = EventListenerPhysicsContact::create();
+	this->listenerColision->onContactBegin = CC_CALLBACK_1(Nivel::onContactBegin, this);
+	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listenerColision, this);
+}
+
 
 
 

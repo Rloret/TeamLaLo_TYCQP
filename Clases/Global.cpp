@@ -52,6 +52,7 @@ void Global::creaArmas()
 		nombre += i;
 		Arma* armaaux = Arma::create(t, 100+i, nombre, 1,i*10+1,random(0,1));
 		armaaux->setColor(Color3B(i * 25, i * 25, i * 25));
+		armaaux->setPosition(-200, -200);
 		armasTotales.push_back(armaaux);
 		armaaux->setVisible(false);
 	}
@@ -67,7 +68,7 @@ void Global::creaObjetosEscenario()
 		nombre += i;
 
 		//ObjetosTotalesEscenarioPosiciones.push_back(&Vec2(((i + 1)*visiblesize.width) / 10, visiblesize.height / 2));
-		ObjetoEscenario* objetoaux = ObjetoEscenario::create("images/ObjetosEscenario/Baul.png", 100, nombre);
+		ObjetoEscenario* objetoaux = ObjetoEscenario::create("images/ObjetosEscenario/Baul.png", 100, nombre,random(0,1));
 		Vec2 punto = Vec2(((i + 1)*visiblesize.width) / 10 - objetoaux->getContentSize().width, visiblesize.height / 2);
 		objetoaux->setPosition(punto);
 		objetoaux->setColor(Color3B(i * 25, i * 25, i * 25));
@@ -106,16 +107,10 @@ void Global::quitaArmaDeNivel(Arma*a){
 		}
 	}
 }
-/*
-void Global::modificaNivel(cocos2d::Scene* elnivel)
+
+
+void Global::modificaNivel(Nivel* elnivel)
 {
 	nivel = elnivel;
-	nivel->retain();
-}*/
-/*
-cocos2d::Action * Global::getCamara()
-{
-	if (Camara!=nullptr)return Camara;
-	creaCamara();
-	return Camara;
-}*/
+}
+

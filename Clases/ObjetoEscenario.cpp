@@ -2,12 +2,18 @@
 
 USING_NS_CC;
 
-ObjetoEscenario::ObjetoEscenario(const std::string & fileName, int daño, std::string nombre)
+ObjetoEscenario::ObjetoEscenario(const std::string & fileName, int daño, std::string nombre,int tipo)
 {
 	this->daño = daño;
 	this->nombre = nombre;
 	this->initWithFile(fileName);
-	this->setPhysicsBody(PhysicsBody::createCircle(this->getContentSize().width / 2));
+	this->tipo = tipo;
+	this->setPhysicsBody(PhysicsBody::createBox(this->getContentSize()));
+	this->getPhysicsBody()->setDynamic(false);
+	this->getPhysicsBody()->setCollisionBitmask(0x03);
+	this->getPhysicsBody()->setCategoryBitmask(0x01);
+	this->getPhysicsBody()->setContactTestBitmask(false);
+
 	this->AddListener();
 }
 
@@ -15,9 +21,9 @@ ObjetoEscenario::~ObjetoEscenario()
 {
 }
 
-ObjetoEscenario * ObjetoEscenario::create(const std::string & fileName, int daño, std::string nombre)
+ObjetoEscenario * ObjetoEscenario::create(const std::string & fileName, int daño, std::string nombre,int tipo)
 {
-	ObjetoEscenario* objeto = new ObjetoEscenario(fileName,daño,nombre);
+	ObjetoEscenario* objeto = new ObjetoEscenario(fileName,daño,nombre, tipo);
 
 	objeto->retain();
 	return objeto;

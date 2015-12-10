@@ -3,6 +3,9 @@
 #include "cocos2d.h"
 #include "Arma.h"
 
+
+
+
 class Nivel : public cocos2d::Layer
 {
 public:
@@ -12,33 +15,36 @@ public:
 	//int ContadorArmas;
 
 
-	int vueltasArsenal;
+
 	cocos2d::Sprite* rectangulo;
 	void preparaNivel(std::vector<std::string> fondos, int i_objetos, int u_objetos);
 	void displayArmasArsenal();
 	void goToGameOver(Ref *pSender);
 	void goToPause(Ref *pSender);
 	void spawnNube(float dt);
-	//void stopCamara();
-	cocos2d::Rect getBackgroundSize();
-	//void removeScheduler();
-
 	void mueveFondo(int v);
+	void addContactListener();
+
+	cocos2d::Rect getBackgroundSize();
+
+
+
 	int getPosXFondo();
+
+	int vueltasArsenal;
+	bool onContactBegin(cocos2d::PhysicsContact & contact);
+
 	int getBackgroundWidth();
 
-	static Nivel* nivelActual;
+	cocos2d::EventListenerPhysicsContact * listenerColision;
+
 	static Nivel* create(std::vector<std::string> fondos, int i_objetos, int u_objetos);
 	Nivel(std::vector<std::string> fondos, int i_objetos, int u_objetos);
 	~Nivel();
 
-
-
 	cocos2d::Sprite* background;
 
 
-	// implement the "static create()" method manually
-	//CREATE_FUNC(Nivel);
 
 private:
 	static int tiempoDelNivel;
@@ -66,13 +72,7 @@ private:
 	void colocaBotones();
 	void colocaFondo(std::vector<std::string> fondos);
 
-	/*void onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
-	void onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);*/
-	
-	//void update(float dt);
 
-	//std::list<cocos2d::Node *> Nubes;
-	//virtual void update(float dt);
 
 	cocos2d::MenuItemImage* masBtn;
 	cocos2d::MenuItemImage* menosBtn;
