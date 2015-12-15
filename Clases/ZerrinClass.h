@@ -25,7 +25,10 @@ public:
 	bool haLlegado = false;
 	bool corriendo = false;
 	void setCorrer(bool c);
+<<<<<<< HEAD
 	void muestraDaño(int daño);
+=======
+>>>>>>> origin/master
 	cocos2d::Sprite aspecto;
 
 private:

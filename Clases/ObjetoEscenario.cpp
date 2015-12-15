@@ -8,9 +8,17 @@ ObjetoEscenario::ObjetoEscenario(const std::string & fileName, int daño, std::st
 	this->nombre = nombre;
 	this->initWithFile(fileName);
 	this->tipo = tipo;
+<<<<<<< HEAD
 
 
 	this->setName("Objeto");
+=======
+	this->setPhysicsBody(PhysicsBody::createBox(this->getContentSize()));
+	this->getPhysicsBody()->setDynamic(false);
+	this->getPhysicsBody()->setCollisionBitmask(0x03);
+	this->getPhysicsBody()->setCategoryBitmask(0x01);
+	this->getPhysicsBody()->setContactTestBitmask(false);
+>>>>>>> origin/master
 
 	this->AddListener();
 }
