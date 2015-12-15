@@ -39,11 +39,8 @@ public:
 	bool childEnTienda = false; //esta activa en tienda
 	bool childEnNivel = false; 
 	bool arrastrando = false;
-<<<<<<< HEAD
 
 	bool soyObjeto();
-=======
->>>>>>> origin/master
 	
 private:
 	bool desdeTienda;

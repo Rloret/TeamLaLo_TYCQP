@@ -10,11 +10,7 @@ USING_NS_CC;
 
 ZerrinClass::ZerrinClass() {
 	velocidad = 0.2;
-<<<<<<< HEAD
 	vida = 1000;
-=======
-	vida = 10;
->>>>>>> origin/master
 	this->retain();
 	this->setName("Zerrin");
 }
@@ -99,11 +95,7 @@ void ZerrinClass::update(float dt)
 		if ((this->getPositionX())  >  3072 - this->getBoundingBox().size.width) {
 			this->corriendo = false;
 			Global::getInstance()->zerrin->haLlegado = true;
-<<<<<<< HEAD
 			//CCLOG("Zerrin esta burladisimo %d",this->getRotation());
-=======
-			CCLOG("Zerrin esta burladisimo %d",this->getRotation());
->>>>>>> origin/master
 			((Nivel*)Director::getInstance()->getRunningScene())->goToGameOver(this);
 
 		}

@@ -65,11 +65,7 @@ bool LevelsMenuScene::init()
 		this->vectorNiveles.push_back(menuaux);
 		this->addChild(vectorNiveles[i],3);
 		vectorNiveles[i]->setVisible(false);
-<<<<<<< HEAD
 		//CCLOG("i vale %d", i);
-=======
-		CCLOG("i vale %d", i);
->>>>>>> origin/master
 	}
 	//CCLOG("vector ocupa: %d", vectorNiveles.capacity());
 	
@@ -208,10 +204,6 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 	_eventDispatcher->removeEventListener(this->listener);
 
 	cocos2d::Scene* cene;
-<<<<<<< HEAD
-=======
-	CCLOG("antes del switch");
->>>>>>> origin/master
 	//Aqui SWITCH con el numero de nivel que es para saber que objetos tenemos que pasarle
 	switch (i)
 	{

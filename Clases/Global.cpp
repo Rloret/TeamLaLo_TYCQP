@@ -26,11 +26,7 @@ Global::Global(){
 	 armaAComprar = nullptr;
 //	 Camara = nullptr;
 
-<<<<<<< HEAD
 	// CCLOG("me he iniciado por primera vez");
-=======
-	 CCLOG("me he iniciado por primera vez");
->>>>>>> origin/master
 }
 void Global::añadeArmasANivel(Arma* a){
 	((Nivel*)Director::getInstance()->getRunningScene())->addChild(a, 2);
@@ -72,13 +68,8 @@ void Global::creaObjetosEscenario()
 		nombre += i;
 
 		//ObjetosTotalesEscenarioPosiciones.push_back(&Vec2(((i + 1)*visiblesize.width) / 10, visiblesize.height / 2));
-<<<<<<< HEAD
 		ObjetoEscenario* objetoaux = ObjetoEscenario::create("images/ObjetosEscenario/Baul.png", random(9,12), nombre,1);
 		Vec2 punto = Vec2(((i*5 + 100)*visiblesize.width) / 10 - objetoaux->getContentSize().width, visiblesize.height / 2);
-=======
-		ObjetoEscenario* objetoaux = ObjetoEscenario::create("images/ObjetosEscenario/Baul.png", 100, nombre,random(0,1));
-		Vec2 punto = Vec2(((i + 1)*visiblesize.width) / 10 - objetoaux->getContentSize().width, visiblesize.height / 2);
->>>>>>> origin/master
 		objetoaux->setPosition(punto);
 		objetoaux->setColor(Color3B(i * 25, i * 25, i * 25));
 		ObjetosTotalesEscenarios.push_back(objetoaux);

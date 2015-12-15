@@ -119,13 +119,8 @@ void Arma::arrastraArma(cocos2d::Vec2 vector)
 	//else if (vector.x>zerrinpos.x + visibleSize.width / 2-20) vector.x = zerrinpos.x + visibleSize.width / 2-20;
 
 	this->setPosition(vector);
-<<<<<<< HEAD
 	//CCLOG("ARMAA %f %f",vector.x,vector.y);
 	//CCLOG("visible size %f %f", visibleSize.width, visibleSize.height);
-=======
-	CCLOG("ARMAA %f %f",vector.x,vector.y);
-	CCLOG("visible size %f %f", visibleSize.width, visibleSize.height);
->>>>>>> origin/master
 
 }
 
@@ -137,17 +132,7 @@ void Arma::accionTouch(){
 	}
 	else{
 		if (p.y < 500 && !Global::getInstance()->juegoEnCurso) {
-<<<<<<< HEAD
 			if (Global::getInstance()->ContadorArmas < 5 && !this->enNivel) {
-=======
-			CCLOG("El arma con daño : %d", this->daño);
-			//CCLOG("Es para añadir a la lista de armas que vamos a usar");
-			CCLOG("contador armas %d", Global::getInstance()->ContadorArmas);
-			if (Global::getInstance()->ContadorArmas < 5 && !this->enNivel) {
-
-				//CCLOG("Se puede añadir");
-
->>>>>>> origin/master
 				Global::getInstance()->ContadorArmas += 1;
 				//llamar a global
 				Arma* a = this->ClonarArma(this);
@@ -165,17 +150,10 @@ void Arma::accionTouch(){
 		}
 		else if (!Global::getInstance()->juegoEnCurso) Global::getInstance()->quitaArmaDeNivel(this);
 
-<<<<<<< HEAD
 		else if (Global::getInstance()->juegoEnCurso) {
 			if (!colocada) this->colocada = true;
 			accion(this);
 		}
-=======
-
-	if (Global::getInstance()->juegoEnCurso){
-		 if (!colocada) this->colocada = true;
-		 accion(this);
->>>>>>> origin/master
 	}
 }
 
@@ -205,30 +183,17 @@ void Arma::accion(Arma * a)
 	{
 	case 0:  //las que caen
 		a->setPhysicsBody(PhysicsBody::createCircle(a->getBoundingBox().size.height / 2, cocos2d::PhysicsMaterial(100000000000000, 1, 0.5)));
-<<<<<<< HEAD
 		/*a->getPhysicsBody()->setCollisionBitmask(0x02);
 		a->getPhysicsBody()->setCategoryBitmask(0x02);
 		a->getPhysicsBody()->setCategoryBitmask(0x01);
 		a->getPhysicsBody()->setCategoryBitmask(0x03);*/
-=======
-		a->getPhysicsBody()->setCollisionBitmask(0x02);
-		a->getPhysicsBody()->setCategoryBitmask(0x02);
-		a->getPhysicsBody()->setCategoryBitmask(0x01);
-		a->getPhysicsBody()->setCategoryBitmask(0x03);
->>>>>>> origin/master
 		a->getPhysicsBody()->setContactTestBitmask(true);
 		break;
 	case 1:  //las que caen
 		a->setPhysicsBody(PhysicsBody::createCircle(a->getBoundingBox().size.height / 2, cocos2d::PhysicsMaterial(10.0, 0.2, 1)));
-<<<<<<< HEAD
 		/*a->getPhysicsBody()->setCollisionBitmask(0x02);
 		a->getPhysicsBody()->setCategoryBitmask(0x02);
 		a->getPhysicsBody()->setCategoryBitmask(0x01);*/
-=======
-		a->getPhysicsBody()->setCollisionBitmask(0x02);
-		a->getPhysicsBody()->setCategoryBitmask(0x02);
-		a->getPhysicsBody()->setCategoryBitmask(0x01);
->>>>>>> origin/master
 		a->getPhysicsBody()->setContactTestBitmask(true);
 		break;
 	default:

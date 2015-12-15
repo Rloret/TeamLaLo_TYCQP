@@ -87,7 +87,6 @@ void Nivel::preparaNivel(std::vector<std::string> fondos, int i_objetos, int u_o
 	Global::getInstance()->zerrin->setRotation(0);
 	Global::getInstance()->zerrin->setPhysicsBody(PhysicsBody::createBox(Global::getInstance()->zerrin->getBoundingBox().size, PhysicsMaterial(20, 0.1, 0)));
 	Global::getInstance()->zerrin->getPhysicsBody()->setDynamic(true);
-<<<<<<< HEAD
 	Global::getInstance()->zerrin->getPhysicsBody()->setCollisionBitmask(true);
 
 	//Global::getInstance()->zerrin->getPhysicsBody()->setCategoryBitmask(0x01);
@@ -99,16 +98,6 @@ void Nivel::preparaNivel(std::vector<std::string> fondos, int i_objetos, int u_o
 	this->setPosition(0, 0);*/
 	Global::getInstance()->zerrin->haLlegado = false;
 	this->schedule(schedule_selector(Nivel::spawnNube), 0.5);
-=======
-	Global::getInstance()->zerrin->getPhysicsBody()->setCollisionBitmask(0x01);
-	Global::getInstance()->zerrin->getPhysicsBody()->setCategoryBitmask(0x02);
-	Global::getInstance()->zerrin->getPhysicsBody()->setCategoryBitmask(0x03);
-	Global::getInstance()->zerrin->getPhysicsBody()->setContactTestBitmask(true);
-	/*CCLOG("Zerrin esta burladisimo %d", Global::getInstance()->zerrin->getRotation());
-	this->setPosition(0, 0);*/
-	Global::getInstance()->zerrin->haLlegado = false;
-	this->schedule(schedule_selector(Nivel::spawnNube), 1.5);
->>>>>>> origin/master
 }
 
 void Nivel::displayArmasArsenal()
@@ -289,12 +278,7 @@ void Nivel::simulacion(Ref *pSender){
 		
 		
 		((ZerrinClass *)Global::getInstance()->zerrin)->setCorrer(true);
-<<<<<<< HEAD
 	
-=======
-		/*((ZerrinClass *)Global::getInstance()->zerrin)->getPhysicsBody()->applyForce(Vec2(100000,0));
-		((ZerrinClass *)Global::getInstance()->zerrin)->getPhysicsBody()->setVelocity(Vec2(1, 0));*/
->>>>>>> origin/master
 
 		this->runAction(Follow::create(Global::getInstance()->zerrin,background->getBoundingBox()));
 
@@ -350,18 +334,12 @@ void Nivel::colocaObjetos(int i_objetos, int u_objetos)
 	for (int i = i_objetos; i < u_objetos; i++) {
 		addChild(Global::getInstance()->ObjetosTotalesEscenarios[i],3);
 		Global::getInstance()->ObjetosTotalesEscenarios[i]->setVisible(true);
-<<<<<<< HEAD
 		Vec2 punto = Vec2(((i + 1)*3020) / 10 - 
 					Global::getInstance()->ObjetosTotalesEscenarios[i]->getContentSize().width,
 					Director::getInstance()->getVisibleSize().height / 2);
 		if (Global::getInstance()->ObjetosTotalesEscenarios[i]->getPhysicsBody() == nullptr) {
 			Global::getInstance()->ObjetosTotalesEscenarios[i]->assignBody();
 		}
-=======
-		Vec2 punto = Vec2(((i + 1)*Director::getInstance()->getVisibleSize().width) / 10 - 
-					Global::getInstance()->ObjetosTotalesEscenarios[i]->getContentSize().width,
-					Director::getInstance()->getVisibleSize().height / 2);
->>>>>>> origin/master
 		Global::getInstance()->ObjetosTotalesEscenarios[i]->setPosition(punto);
 	}
 }
@@ -391,11 +369,7 @@ void Nivel::colocaBotones()
 		case EventKeyboard::KeyCode::KEY_ESCAPE:
 			Nivel::goToPause(this);
 			break;
-<<<<<<< HEAD
 		/*case EventKeyboard::KeyCode::KEY_A:
-=======
-		case EventKeyboard::KeyCode::KEY_A:
->>>>>>> origin/master
 			Global::getInstance()->zerrin->getPhysicsBody()->applyImpulse(Vec2(-100000000,0));
 			break;
 		case EventKeyboard::KeyCode::KEY_S:
@@ -411,11 +385,7 @@ void Nivel::colocaBotones()
 			armadeturno2->setPosition(Global::getInstance()->zerrin->getPositionX()+ 1024/random(1, 5), visibleSize.height);
 			armadeturno2->setPhysicsBody(PhysicsBody::createBox(armadeturno2->getContentSize(), PhysicsMaterial(random(1,10)*10000,random(0,10)/10, random(0, 10)/10)));
 
-<<<<<<< HEAD
 			break;*/
-=======
-			break;
->>>>>>> origin/master
 		}
 
 	};
@@ -536,17 +506,9 @@ void Nivel::spawnNube(float dt)
 {
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto Nubecita = Nube::create();
-<<<<<<< HEAD
 	this->addChild(Nubecita, 1);
 	auto rand = random(1, 3);
 	Nubecita->setPosition(Point(Global::getInstance()->zerrin->getPosition().x +visibleSize.width +Nubecita->getContentSize().width,
-=======
-	auto limitesEscenario = PhysicsBody::createEdgeBox(Nubecita->getBoundingBox().size, PHYSICSBODY_MATERIAL_DEFAULT, 3);
-	//Nubecita->setPhysicsBody(limitesEscenario);
-	this->addChild(Nubecita, 1);
-	auto rand = random(1, 3);
-	Nubecita->setPosition(Point(Global::getInstance()->zerrin->getPosition().x +visibleSize.width/2 +Nubecita->getContentSize().width,
->>>>>>> origin/master
 						visibleSize.height - Nubecita->getContentSize().height*rand));
 	Nubecita->spawnNube(dt);
 
@@ -572,7 +534,6 @@ int Nivel::getPosXFondo()
 	return background->getPositionX();
 }
 
-<<<<<<< HEAD
 bool Nivel::onContactBegin(cocos2d::PhysicsContact & contact) {
 	PhysicsBody*a = contact.getShapeA()->getBody();
 	PhysicsBody*b = contact.getShapeB()->getBody();
@@ -654,16 +615,6 @@ bool Nivel::onContactBegin(cocos2d::PhysicsContact & contact) {
 			}
 		
 		}
-=======
-bool Nivel::onContactBegin(cocos2d::PhysicsContact & contact)
-{
-	PhysicsBody*a = contact.getShapeA()->getBody();
-	PhysicsBody*b = contact.getShapeB()->getBody();
-
-	if (a->getCollisionBitmask() == 0X01 && b->getCollisionBitmask() == 0x02 || b->getCollisionBitmask() == 0X01 && a->getCollisionBitmask() == 0x02) {
-		CCLOG("COLISON DE Z CON A");
-	}
->>>>>>> origin/master
 	return true;
 }
 

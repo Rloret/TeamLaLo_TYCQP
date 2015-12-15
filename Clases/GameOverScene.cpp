@@ -56,16 +56,7 @@ void GameOverScene::goToMenuStartScene(Ref * pSender)
 {
 	Global::getInstance()->vaciaArmasNivel();
 	Global::getInstance()->juegoEnCurso = false;
-<<<<<<< HEAD
 	Director::getInstance()->popToRootScene();
-=======
-	//((Nivel*)Global::getInstance()->nivel)->removeScheduler();
-	//unschedule(schedule_selector(Nivel::spawnNube));
-	//((Nivel*)Global::getInstance()->nivel)->unscheduleAllSelectors();
-	//Global::getInstance()->nivel->removeAllChildren();
-	Director::getInstance()->popScene();
-	Director::getInstance()->popScene();
->>>>>>> origin/master
 }
 
 
