@@ -38,6 +38,9 @@ public:
 	bool colocada = false;
 	bool childEnTienda = false; //esta activa en tienda
 	bool childEnNivel = false; 
+	bool arrastrando = false;
+
+	bool soyObjeto();
 	
 private:
 	bool desdeTienda;
@@ -56,7 +59,7 @@ private:
 
 	void accionTouch();
 
-	void caer(float dt);
+	//void caer(float dt);
 };
 
 #endif //ARMA

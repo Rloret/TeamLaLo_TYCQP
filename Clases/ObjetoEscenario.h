@@ -7,19 +7,24 @@
 class ObjetoEscenario : public cocos2d::Sprite
 {
 public:
-	ObjetoEscenario(const std::string & fileName, int daño, std::string nombre);
+	ObjetoEscenario(const std::string & fileName, int daño, std::string nombre,int tipo);
 	~ObjetoEscenario();
-	static ObjetoEscenario* create(const std::string &fileName, int daño, std::string nombre);
+	static ObjetoEscenario* create(const std::string &fileName, int daño, std::string nombre, int tipo);
 
 	//void initOptions();
 
 	void AddListener();
 	void TouchEvent(cocos2d::Touch* touch, cocos2d::Point _p);
+	int getDaño();
+	bool soyObjeto();
+	void assignBody();
+
 
 private:
 	int daño;
-	std::string tipo;
+	int tipo;
 	std::string nombre;
+
 
 };
 

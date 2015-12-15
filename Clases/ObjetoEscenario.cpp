@@ -2,11 +2,16 @@
 
 USING_NS_CC;
 
-ObjetoEscenario::ObjetoEscenario(const std::string & fileName, int daño, std::string nombre)
+ObjetoEscenario::ObjetoEscenario(const std::string & fileName, int daño, std::string nombre,int tipo)
 {
 	this->daño = daño;
 	this->nombre = nombre;
 	this->initWithFile(fileName);
+	this->tipo = tipo;
+
+
+	this->setName("Objeto");
+
 	this->AddListener();
 }
 
@@ -14,9 +19,9 @@ ObjetoEscenario::~ObjetoEscenario()
 {
 }
 
-ObjetoEscenario * ObjetoEscenario::create(const std::string & fileName, int daño, std::string nombre)
+ObjetoEscenario * ObjetoEscenario::create(const std::string & fileName, int daño, std::string nombre,int tipo)
 {
-	ObjetoEscenario* objeto = new ObjetoEscenario(fileName,daño,nombre);
+	ObjetoEscenario* objeto = new ObjetoEscenario(fileName,daño,nombre, tipo);
 
 	objeto->retain();
 	return objeto;
@@ -34,7 +39,7 @@ void ObjetoEscenario::AddListener()
 		cocos2d::Point p = touch->getLocation();
 		cocos2d::Rect rect = this->getBoundingBox();
 
-		if (rect.containsPoint(p))
+		if (rect.containsPoint(p)&& this->isVisible())
 		{
 			return true;
 		}
@@ -53,6 +58,36 @@ void ObjetoEscenario::AddListener()
 void ObjetoEscenario::TouchEvent(cocos2d::Touch * touch, cocos2d::Point _p)
 {
 	CCLOG("Has tocado un objeto");
+}
+
+int ObjetoEscenario::getDaño()
+{
+	return daño;
+}
+
+bool ObjetoEscenario::soyObjeto()
+{
+	return true;
+}
+
+
+void ObjetoEscenario::assignBody()
+{
+	cocos2d::PhysicsBody* body;
+	switch (this->tipo) {
+	case 1:
+		body = cocos2d::PhysicsBody::createBox(this->getContentSize(), PHYSICSBODY_MATERIAL_DEFAULT);
+		this->setPhysicsBody(body);
+
+		break;
+	case 2:
+		break;
+	case 3:
+		break;
+	}
+	this->getPhysicsBody()->setDynamic(false);
+	this->getPhysicsBody()->setCollisionBitmask(false);
+	this->getPhysicsBody()->setContactTestBitmask(true);
 }
 
 

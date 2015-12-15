@@ -1,18 +1,15 @@
-#include "PauseScene.h"
-#include "proj.win32\LogrosScene.h"
-#include"MainMenuScene.h"
+#include "WinScene.h"
 #include"Global.h"
-#include"Nivel.h"
-
+#include "Nivel.h"
 USING_NS_CC;
 
-Scene* PauseScene::createScene()
+Scene* WinScene::createScene()
 {
 	// 'scene' is an autorelease object
 	auto scene = Scene::create();
 
 	// 'layer' is an autorelease object
-	auto layer = PauseScene::create();
+	auto layer = WinScene::create();
 
 	// add layer as a child to scene
 	scene->addChild(layer);
@@ -22,7 +19,7 @@ Scene* PauseScene::createScene()
 }
 
 // on "init" you need to initialize your instance
-bool PauseScene::init()
+bool WinScene::init()
 {
 	//////////////////////////////
 	// 1. super init first
@@ -32,48 +29,34 @@ bool PauseScene::init()
 	}
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	//menu
-	auto backBtn = MenuItemImage::create("images/PauseScene/back_btn.png", "images/VestuarioScene/back_btn.png",
-		CC_CALLBACK_1(PauseScene::resumeGameScene, this));
 
 	auto menuBtn = MenuItemImage::create("images/PauseScene/back_btn.png", "images/VestuarioScene/back_btn.png",
-		CC_CALLBACK_1(PauseScene::goToMainMenuScene, this));
-	//menuBtn->setColor(Color3B(100,40,2));
+		CC_CALLBACK_1(WinScene::goToMenuStartScene, this));
 
-	auto menu = Menu::create(backBtn,menuBtn, NULL);
+
+	auto menu = Menu::create(menuBtn, NULL);
 	menu->alignItemsVerticallyWithPadding(visibleSize.height / 2);
 	menu->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
 	addChild(menu, 2);
 
+	auto goLabel = Label::createWithSystemFont("HAS GANADO.", "Arial", 60);
+	goLabel->setColor(Color3B::GREEN);
+	goLabel->enableShadow();
+	goLabel->setPosition(Global::getInstance()->visibleSize.width / 2, Global::getInstance()->visibleSize.height / 2 + goLabel->getContentSize().height * 2);
 
+	this->addChild(goLabel, 4);
 	//Fondo
-	auto background = Sprite::create("images/PauseScene/fondo_VestuarioScene.png");
+	auto background = Sprite::create("images/MainMenuScene/fondo_mainMenu.png");
 	background->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
 	addChild(background, 0);
-
 	return true;
 }
 
-
-void PauseScene::resumeGameScene(Ref *pSender){
-
-	Director::getInstance()->popScene();
-}
-
-
-void PauseScene::goToMainMenuScene(Ref *pSender){
-	CCLOG("me voy a mainmenuScene");
+void WinScene::goToMenuStartScene(Ref * pSender)
+{
 	Global::getInstance()->vaciaArmasNivel();
 	Global::getInstance()->juegoEnCurso = false;
 	Director::getInstance()->popToRootScene();
-
-	
 }
 
 
-void PauseScene::goToLogrosScene(Ref *pSender){
-
-	auto scene = LogrosScene::createScene();
-
-	Director::getInstance()->replaceScene(scene);
-}

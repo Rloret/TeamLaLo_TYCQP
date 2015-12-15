@@ -7,6 +7,9 @@
 #include "ZerrinClass.h"
 #include "GameOverScene.h"
 #include "Nube.h"
+#include "ObjetoEscenario.h"
+#include "Arma.h"
+#include "WinScene.h"
 USING_NS_CC;
 
 #define ANCHOARSENAL ((Global::getInstance()->visibleSize.width*4)/6);
@@ -14,20 +17,39 @@ USING_NS_CC;
 
 
 
-Scene* Nivel::createScene() 
+
+Scene* Nivel::createScene(std::vector<std::string> fondos, int i_objetos, int u_objetos)
 {
 	// 'scene' is an autorelease object
-	auto scene = Scene::create();
+	auto scene = Scene::createWithPhysics();
+	scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
 
-	// 'layer' is an autorelease object
-	auto layer = Nivel::create();
-
-	// add layer as a child to scene
+	auto layer = Nivel::create(fondos, i_objetos, u_objetos);
 	scene->addChild(layer);
 
-	// return the scene
 	return scene;
 }
+
+
+Nivel * Nivel::create(std::vector<std::string> fondos, int i_objetos, int u_objetos)
+{
+	Nivel *pRet = new(std::nothrow)Nivel(fondos, i_objetos, u_objetos); \
+		if (pRet && pRet->init()) \
+		{ \
+			pRet->autorelease(); \
+			return pRet; \
+		} \
+		else \
+		{ \
+			delete pRet; \
+			pRet = NULL; \
+			return NULL; \
+		} \
+
+		//Global::getInstance()->modificaNivel((cocos2d::Scene*)pRet);
+}
+
+
 
 // on "init" you need to initialize your instance
 bool Nivel::init()
@@ -39,7 +61,7 @@ bool Nivel::init()
 		return false;
 	}
 
-
+	CCLOG("devuelvo true");
 	return true;
 }
 
@@ -49,35 +71,45 @@ void Nivel::preparaNivel(std::vector<std::string> fondos, int i_objetos, int u_o
 	vueltasArsenal = 0;
 	auto ancho = ANCHOARSENAL;
 	auto alto = ALTOARSENAL;
-
-
-	ContadorArmas = 0;
+	this->addContactListener();
+	Global::getInstance()->ContadorArmas = 0;
 	Global::getInstance()->juegoEnCurso = false;
 	colocaBotones();
 	displayArmasArsenal();
 
 	colocaFondo(fondos);
+
 	colocaObjetos(i_objetos, u_objetos);
 	addChild(Global::getInstance()->zerrin, 3);
-	Global::getInstance()->zerrin->setPosition(Point(450 + Global::getInstance()->zerrin->getContentSize().width / 2
-		, visibleSize.height / 3 + Global::getInstance()->zerrin->getContentSize().height / 2 + 30));
-	this->setPosition(0, 0);
-	Global::getInstance()->zerrin->haLlegado = false;
-	this->schedule(schedule_selector(Nivel::spawnNube), 1.5);
 
-	
+	Global::getInstance()->zerrin->setPosition(Point(450 + Global::getInstance()->zerrin->getContentSize().width / 2
+		, visibleSize.height / 3 + Global::getInstance()->zerrin->getContentSize().height / 2));
+	Global::getInstance()->zerrin->setRotation(0);
+	Global::getInstance()->zerrin->setPhysicsBody(PhysicsBody::createBox(Global::getInstance()->zerrin->getBoundingBox().size, PhysicsMaterial(20, 0.1, 0)));
+	Global::getInstance()->zerrin->getPhysicsBody()->setDynamic(true);
+	Global::getInstance()->zerrin->getPhysicsBody()->setCollisionBitmask(true);
+
+	//Global::getInstance()->zerrin->getPhysicsBody()->setCategoryBitmask(0x01);
+	//Global::getInstance()->zerrin->getPhysicsBody()->setContactTestBitmask(0x02);
+
+	Global::getInstance()->zerrin->getPhysicsBody()->setContactTestBitmask(true);
+	((ZerrinClass*)Global::getInstance()->zerrin)->setVida(100);
+	/*CCLOG("Zerrin esta burladisimo %d", Global::getInstance()->zerrin->getRotation());
+	this->setPosition(0, 0);*/
+	Global::getInstance()->zerrin->haLlegado = false;
+	this->schedule(schedule_selector(Nivel::spawnNube), 0.5);
 }
 
 void Nivel::displayArmasArsenal()
 {
 
 	for (int i = 0; i < Global::getInstance()->armasArsenal.size(); i++) {
-		CCLOG("arma con daño: %d", Global::getInstance()->armasArsenal[i]->getDaño());
+		//CCLOG("arma con daño: %d", Global::getInstance()->armasArsenal[i]->getDaño());
 		Arma* arma = Global::getInstance()->armasArsenal[i];
 		if (!this->getChildren().contains(arma)) {
 			arma->enNivel = false;
 			arma->childEnNivel = true;
-			CCLOG("el daño de este arma, que no esta añadida es = %d", Global::getInstance()->armasArsenal[i]->getDaño());
+			//CCLOG("el daño de este arma, que no esta añadida es = %d", Global::getInstance()->armasArsenal[i]->getDaño());
 			this->addChild(arma, 5);
 			arma->setVisible(false);
 		}
@@ -181,6 +213,13 @@ void Nivel::goToPause(Ref *pSender){
 	Director::getInstance()->pushScene(scene);
 }
 
+void Nivel::goToWinScene()
+{
+	auto scene = WinScene::createScene();
+	Director::getInstance()->pushScene(scene);
+
+}
+
 void Nivel::goToGameOver(Ref * pSender)
 {
 	auto scene = GameOverScene::createScene();
@@ -239,7 +278,10 @@ void Nivel::simulacion(Ref *pSender){
 		
 		
 		((ZerrinClass *)Global::getInstance()->zerrin)->setCorrer(true);
-		this->runAction(Follow::create(Global::getInstance()->zerrin));
+	
+
+		this->runAction(Follow::create(Global::getInstance()->zerrin,background->getBoundingBox()));
+
 		
 	}
 	else{
@@ -247,16 +289,6 @@ void Nivel::simulacion(Ref *pSender){
 	}
 	
 }
-/*
-void Nivel::displayArmasNivel(){
-
-	for (int i = Global::getInstance()->ArmasNivel.size(); i >0 ; i--){
-		if (Global::getInstance()->ArmasNivel[i] != nullptr){
-			
-		}
-	}
-
-}*/
 
 void Nivel::activaDesactivaBoton(MenuItemImage* boton, bool estado)
 {
@@ -271,7 +303,8 @@ void Nivel::recorreArmas(int iterador,int posicion,int ancho,int alto,int iterac
 		posicion++;
 		if (vueltasArsenal == Global::getInstance()->armasArsenal.size()) vueltasArsenal = 0;
 		Arma* arma = Global::getInstance()->armasArsenal[vueltasArsenal];
-		arma->setPosition((((posicion + 1)*ancho) / 7) - arma->getContentSize().width, alto / 2 + 2 * vueltasArsenal);
+		//arma->setPosition((((posicion + 1)*ancho) / 7) - arma->getContentSize().width, alto / 2 + 2 * vueltasArsenal);
+		arma->setPosition((((posicion + 1)*ancho) / 7) /*+ arma->getContentSize().width*/, alto / 2 + 2 * vueltasArsenal);
 		activaDesactivaArma(arma, true);
 		CCLOG("muestro la %d", vueltasArsenal);
 
@@ -301,7 +334,13 @@ void Nivel::colocaObjetos(int i_objetos, int u_objetos)
 	for (int i = i_objetos; i < u_objetos; i++) {
 		addChild(Global::getInstance()->ObjetosTotalesEscenarios[i],3);
 		Global::getInstance()->ObjetosTotalesEscenarios[i]->setVisible(true);
-
+		Vec2 punto = Vec2(((i + 1)*3020) / 10 - 
+					Global::getInstance()->ObjetosTotalesEscenarios[i]->getContentSize().width,
+					Director::getInstance()->getVisibleSize().height / 2);
+		if (Global::getInstance()->ObjetosTotalesEscenarios[i]->getPhysicsBody() == nullptr) {
+			Global::getInstance()->ObjetosTotalesEscenarios[i]->assignBody();
+		}
+		Global::getInstance()->ObjetosTotalesEscenarios[i]->setPosition(punto);
 	}
 }
 
@@ -328,11 +367,28 @@ void Nivel::colocaBotones()
 	listenerPause->onKeyPressed = [=](EventKeyboard::KeyCode keyCode, Event* event) {
 		switch (keyCode) {
 		case EventKeyboard::KeyCode::KEY_ESCAPE:
-			Nivel::goToPause(Global::getInstance()->nivel);
+			Nivel::goToPause(this);
+			break;
+		/*case EventKeyboard::KeyCode::KEY_A:
+			Global::getInstance()->zerrin->getPhysicsBody()->applyImpulse(Vec2(-100000000,0));
+			break;
+		case EventKeyboard::KeyCode::KEY_S:
+			Global::getInstance()->zerrin->getPhysicsBody()->applyForce(Vec2(-100000, 100000));
+			break;
+		case EventKeyboard::KeyCode::KEY_D:
+			Global::getInstance()->zerrin->getPhysicsBody()->setVelocity(Vec2(0 ,100));
+			break;
+		case EventKeyboard::KeyCode::KEY_X:
+			auto armadeturno = Global::getInstance()->armasTotales[random(0, 10)];
+			auto armadeturno2 = armadeturno->ClonarArma(armadeturno);
+			this->addChild(armadeturno2,3);
+			armadeturno2->setPosition(Global::getInstance()->zerrin->getPositionX()+ 1024/random(1, 5), visibleSize.height);
+			armadeturno2->setPhysicsBody(PhysicsBody::createBox(armadeturno2->getContentSize(), PhysicsMaterial(random(1,10)*10000,random(0,10)/10, random(0, 10)/10)));
+
+			break;*/
 		}
 
 	};
-	//listenerPause->onKeyReleased = CC_CALLBACK_2(Nivel::onKeyReleased, this);
 	menu1 = Menu::create(pauseBtn, tiendaBtn, vestuarioBtn, NULL);
 	menu1->setPosition(Point(150, visibleSize.height - pauseBtn->getContentSize().height));
 	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listenerPause, this);
@@ -374,29 +430,35 @@ void Nivel::colocaBotones()
 	menuArsenal->setVisible(false);
 }
 
-void Nivel::colocaFondo(std::vector<std::string> fondos)
-{
+void Nivel::colocaFondo(std::vector<std::string> fondos){
+
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	/*for (int i = 0; i < fondos.size(); i++) {
-		auto fondoi = cocos2d::Sprite::create(fondos[i]);
-		fondosVector.push_back(fondoi);
-		addChild(fondoi, i);
-		fondosVector[i]->retain();
-	}*/
 
 	background = Sprite::create(fondos[0]);
-	addChild(background, 0);
 
-	background->setPosition(background->getContentSize().width, visibleSize.height);
-	background->setAnchorPoint(Vec2(1,1));
+	auto limitesEscenario = PhysicsBody::createEdgeBox(Size(background->getContentSize().width,568), PHYSICSBODY_MATERIAL_DEFAULT,0.3);
+	limitesEscenario->setPositionOffset(Vec2(0, 200));
 	background->retain();
+	background->setPosition(background->getContentSize().width, visibleSize.height);
+	background->setAnchorPoint(Vec2(1, 1));
+	background->setPhysicsBody(limitesEscenario);
+	addChild(background,0);
+
+	/*cocos2d::Sprite* limites = cocos2d::Sprite::create();
+	limites->setPhysicsBody(limitesEscenario);
+	addChild(limites, 1);*/
+
+
+	//background->retain();
 
 	background1 = Sprite::create(fondos[1]);
+
 	addChild(background1, 1);
 
 	background1->setPosition(background1->getContentSize().width, visibleSize.height);
 	background1->setAnchorPoint(Vec2(1, 1));
 	background1->retain();
+
 
 	background2 = Sprite::create(fondos[3]);
 	addChild(background2, 3);
@@ -413,44 +475,57 @@ void Nivel::colocaFondo(std::vector<std::string> fondos)
 	muralla->retain();
 }
 
+void Nivel::setPhysicsWorld(cocos2d::PhysicsWorld * world)
+{
+	nivelPhysics = world;
+	nivelPhysics->setGravity(Vec2(0, -9.8));
+}
+
 
 int Nivel::getBackgroundWidth()
 {
-	auto s = background->getContentSize();
+	auto s =background2->getContentSize();
 	return s.width;
 }
 
+Nivel::Nivel(std::vector<std::string> fondos, int i_objetos, int u_objetos)
+{
+	preparaNivel(fondos, i_objetos, u_objetos);
+}
+
+Nivel::~Nivel()
+{
+}
+
+cocos2d::Rect Nivel::getBackgroundSize()
+{
+	return 	background->getBoundingBox();
+
+}
 void Nivel::spawnNube(float dt)
 {
 	auto visibleSize = Director::getInstance()->getVisibleSize();
-	auto Nube = Nube::create();
-	this->addChild(Nube, 1);
+	auto Nubecita = Nube::create();
+	this->addChild(Nubecita, 1);
 	auto rand = random(1, 3);
-	Nube->setPosition(Point(Global::getInstance()->zerrin->getPosition().x +visibleSize.width/2 +Nube->getContentSize().width,
-						visibleSize.height - Nube->getContentSize().height*rand));
-	Nube->spawnNube(dt);
+	Nubecita->setPosition(Point(Global::getInstance()->zerrin->getPosition().x +visibleSize.width +Nubecita->getContentSize().width,
+						visibleSize.height - Nubecita->getContentSize().height*rand));
+	Nubecita->spawnNube(dt);
 
 }
 
-/*void Nivel::removeScheduler()
+/*void Nivel::stopCamara()
 {
-	this->unschedule(schedule_selector(Nivel::spawnNube));
+	this->stopAction(Global::getInstance()->getCamara());
 }*/
 
-void Nivel::mueveFondo(int v) {
-	/*background->setPositionX(background->getPositionX()- v);
-	background1->setPositionX(background1->getPositionX() - v);
-	background2->setPositionX(background2->getPositionX() - v);
-	muralla->setPositionX(muralla->getPositionX() - v);*/
 
+void Nivel::mueveFondo(int v) {
+	
 	for (auto a : Global::getInstance()->ArmasNivel) {
-		if(!a->colocada) a->setPositionX(a->getPositionX()+v);
+		if(a->colocada ) a->setPositionX(a->getPositionX()-v);
 	}
 
-
-	/*for (int i = 0; i < fondosVector.size(); i++) {
-		fondosVector[i]->setPositionX(fondosVector[i]->getPositionX()-v);
-	}*/
 }
 
 
@@ -458,6 +533,99 @@ int Nivel::getPosXFondo()
 {
 	return background->getPositionX();
 }
+
+bool Nivel::onContactBegin(cocos2d::PhysicsContact & contact) {
+	PhysicsBody*a = contact.getShapeA()->getBody();
+	PhysicsBody*b = contact.getShapeB()->getBody();
+
+
+	/*if (a->getCategoryBitmask()==0x01 ||  b->getCategoryBitmask() == 0x01) {
+	CCLOG("Soy zerrin");
+	}*/
+	
+//	if (a->getContactTestBitmask()==true && b->getContactTestBitmask()==true && b->getContactTestBitmask()==true && a->getContactTestBitmask()==true) {
+	//if ((a->getCategoryBitmask() && b->getCategoryBitmask()) ==0 
+	//	|| ( b->getContactTestBitmask() && a->getContactTestBitmask()) == 0 ) {
+
+		cocos2d::String* sa = cocos2d::String::create(a->getNode()->getName());
+		cocos2d::String* sb = cocos2d::String::create(b->getNode()->getName());
+		CCLOG("contacto de %s con %s",sa->getCString(),sb->getCString());
+
+		if (a->getNode()->getName() == "Arma") {
+			CCLOG("entro en arma");
+			if (b->getNode()->getName() == "Zerrin") {
+				a->getNode()->setPhysicsBody(nullptr);
+				Global::getInstance()->zerrin->muestraDaño(((Arma*)a->getNode())->getDaño());
+				Global::getInstance()->zerrin->setVida((Global::getInstance()->zerrin)->getVida() - ((Arma*)a->getNode())->getDaño());
+				if (Global::getInstance()->zerrin->getVida() <= 0) {
+					if (Global::getInstance()->zerrin->getChildrenCount() > 0) Global::getInstance()->zerrin->removeAllChildren();
+					Global::getInstance()->katahi->modificaOro(100);
+					goToWinScene();
+				}
+				CCLOG("arma con zerrin"); 
+			}
+			else CCLOG("Con obj");
+		}
+		else if (b->getNode()->getName() == "Arma") {
+			if (a->getNode()->getName() == "Zerrin") {
+				b->getNode()->setPhysicsBody(nullptr);
+				Global::getInstance()->zerrin->muestraDaño(((Arma*)b->getNode())->getDaño());
+				Global::getInstance()->zerrin->setVida((Global::getInstance()->zerrin)->getVida() - ((Arma*)b->getNode())->getDaño());
+				if (Global::getInstance()->zerrin->getVida() <= 0) {
+					if (Global::getInstance()->zerrin->getChildrenCount() > 0) Global::getInstance()->zerrin->removeAllChildren();
+					Global::getInstance()->katahi->modificaOro(100);
+					goToWinScene();
+				}
+			}
+			else{ CCLOG("arma con objeto"); }
+		}
+
+		else if (b->getNode()->getName() == "Zerrin") {
+			CCLOG("vida antes: %d", Global::getInstance()->zerrin->getVida());
+			if (a->getNode()->getName() == "Objeto") {
+				CCLOG("objeto daño %d", ((ObjetoEscenario*)a->getNode())->getDaño());
+				CCLOG("b es zerrin");
+				b->setVelocity(Vec2(-100, 100));
+				a->getNode()->setPhysicsBody(nullptr);
+				Global::getInstance()->zerrin->muestraDaño(((ObjetoEscenario*)b->getNode())->getDaño());
+				Global::getInstance()->zerrin->setVida((Global::getInstance()->zerrin)->getVida() - ((ObjetoEscenario*)a->getNode())->getDaño());
+				if (Global::getInstance()->zerrin->getVida() <= 0) {
+					if (Global::getInstance()->zerrin->getChildrenCount() > 0) Global::getInstance()->zerrin->removeAllChildren();
+					Global::getInstance()->katahi->modificaOro(100);
+					goToWinScene();
+				}
+			} 
+		}
+		else if (a->getNode()->getName() == "Zerrin") {
+			CCLOG("a es zerrin");
+			CCLOG("vida antes: %d", Global::getInstance()->zerrin->getVida());
+			if (b->getNode()->getName() == "Objeto") {
+
+				CCLOG("objeto daño %d", ((ObjetoEscenario*)b->getNode())->getDaño());
+				Global::getInstance()->zerrin->setVida((Global::getInstance()->zerrin)->getVida() - ((ObjetoEscenario*)b->getNode())->getDaño());
+				Global::getInstance()->zerrin->muestraDaño(((ObjetoEscenario*)b->getNode())->getDaño());
+				CCLOG("vida antes: %d", Global::getInstance()->zerrin->getVida());
+				a->setVelocity(Vec2(-100, 100));
+				b->getNode()->setPhysicsBody(nullptr);
+				if (Global::getInstance()->zerrin->getVida() <= 0) {
+					if (Global::getInstance()->zerrin->getChildrenCount() > 0) Global::getInstance()->zerrin->removeAllChildren();
+					Global::getInstance()->katahi->modificaOro(100);
+					goToWinScene();
+				}
+			}
+		
+		}
+	return true;
+}
+
+
+void Nivel::addContactListener()
+{
+	this->listenerColision = EventListenerPhysicsContact::create();
+	this->listenerColision->onContactBegin = CC_CALLBACK_1(Nivel::onContactBegin, this);
+	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listenerColision, this);
+}
+
 
 
 

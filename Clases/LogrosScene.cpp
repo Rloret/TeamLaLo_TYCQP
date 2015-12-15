@@ -7,10 +7,12 @@ USING_NS_CC;
 Scene* LogrosScene::createScene()
 {
 	// 'scene' is an autorelease object
-	auto scene = Scene::create();
+	auto scene = Scene::createWithPhysics();
+	scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
 
 	// 'layer' is an autorelease object
-	auto layer = LogrosScene::create();
+	auto layer = LogrosScene ::create();
+	layer->setPhysicsWorld(scene->getPhysicsWorld());
 
 	// add layer as a child to scene
 	scene->addChild(layer);
@@ -39,13 +41,16 @@ bool LogrosScene::init()
 	menu->setPosition(Point(visibleSize.width - 20, visibleSize.height - 20));
 	addChild(menu, 2);
 
-
+	auto pruebaZ = cocos2d::Sprite::create("images/LogrosScene/fondo_LogrosScene.png");
+	pruebaZ->setPhysicsBody(PhysicsBody::createCircle(pruebaZ->getBoundingBox().size.width / 2));
+	pruebaZ->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
+	addChild(pruebaZ, 0);
 
 
 	//Fondo
-	auto background = Sprite::create("images/LogrosScene/fondo_LogrosScene.png");
+	/*auto background = Sprite::create("images/LogrosScene/fondo_LogrosScene.png");
 	background->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
-	addChild(background, 0);
+	addChild(background, 0);*/
 
 	return true;
 }
@@ -55,4 +60,11 @@ bool LogrosScene::init()
 void LogrosScene::returnToScene(Ref *pSender){
 
 	Director::getInstance()->popScene();
+}
+
+void LogrosScene::setPhysicsWorld(cocos2d::PhysicsWorld * world)
+{
+
+		nivelPhysics = world;
+		nivelPhysics->setGravity(Vec2(0, -9.8));
 }

@@ -39,6 +39,12 @@ bool GameOverScene::init()
 	menu->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
 	addChild(menu, 2);
 
+	auto goLabel = Label::createWithSystemFont("GAME OVER.", "Arial", 60);
+	goLabel->setColor(Color3B::RED);
+	goLabel->enableShadow();
+	goLabel->setPosition(Global::getInstance()->visibleSize.width / 2, Global::getInstance()->visibleSize.height / 2 + goLabel->getContentSize().height * 2);
+
+	this->addChild(goLabel,4);
 	//Fondo
 	auto background = Sprite::create("images/MainMenuScene/fondo_mainMenu.png");
 	background->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
@@ -50,12 +56,7 @@ void GameOverScene::goToMenuStartScene(Ref * pSender)
 {
 	Global::getInstance()->vaciaArmasNivel();
 	Global::getInstance()->juegoEnCurso = false;
-	//((Nivel*)Global::getInstance()->nivel)->removeScheduler();
-	//unschedule(schedule_selector(Nivel::spawnNube));
-	((Nivel*)Global::getInstance()->nivel)->unscheduleAllSelectors();
-	Global::getInstance()->nivel->removeAllChildren();
-	Director::getInstance()->popScene();
-	Director::getInstance()->popScene();
+	Director::getInstance()->popToRootScene();
 }
 
 

@@ -9,11 +9,10 @@ USING_NS_CC;
 
 
 ZerrinClass::ZerrinClass() {
-	velocidad = 2;
-	vida = 10;
-	//this->setPositionY(Director::getInstance()->getVisibleSize().height);
-	//visibleSize = Director::getInstance()->getVisibleSize();
+	velocidad = 0.2;
+	vida = 1000;
 	this->retain();
+	this->setName("Zerrin");
 }
 
 ZerrinClass::~ZerrinClass()
@@ -57,16 +56,29 @@ void ZerrinClass::setCorrer(bool c)
 	}
 	else {
 	
-		CCLOG("paro de correr");
+		//CCLOG("paro de correr");
 		haLlegado = true;
 	}
 }
+
+void ZerrinClass::muestraDaño(int daño)
+{
+	auto dañoLabel = Label::createWithSystemFont((String::createWithFormat("- %d",daño)->getCString()), "Arial", 35);
+	dañoLabel->setColor(Color3B::RED);
+	dañoLabel->enableShadow();
+	dañoLabel->retain();
+	this->addChild(dañoLabel);
+	auto seq = Sequence::create(MoveTo::create(4.0, Vec2(this->getParent()->getParent()->getPositionX(), this->getParent()->getContentSize().height)),NULL);
+	dañoLabel->runAction(seq);
+}
+
+
 
 
 
 void ZerrinClass::correr()
 {
-	CCLOG("Voy a correr");
+	//CCLOG("Voy a correr");
 	corriendo = true;
 
 	this->scheduleUpdate();
@@ -74,32 +86,26 @@ void ZerrinClass::correr()
 }
 
 
+
 void ZerrinClass::update(float dt)
 {
 	
 	if (corriendo) {
-		/*if (this->getPositionX() > Director::getInstance()->getVisibleSize().width/2 && 
-				(((Nivel *)Global::getInstance()->nivel)->getPosXFondo() >Director::getInstance()->getVisibleSize().width)) {
-			((Nivel *)Global::getInstance()->nivel)->mueveFondo(velocidad);
-			//((Nivel *)Global::getInstance()->nivel)->mueveNubes(-velocidad*1.5);
 
-		}*/
-		((Nivel *)Global::getInstance()->nivel)->mueveFondo(velocidad);
-
-		if (this->getPositionX()> ((Nivel*)Global::getInstance()->nivel)->getBackgroundWidth()-450) {
+		if ((this->getPositionX())  >  3072 - this->getBoundingBox().size.width) {
 			this->corriendo = false;
 			Global::getInstance()->zerrin->haLlegado = true;
-			CCLOG("jhiuh");
+			//CCLOG("Zerrin esta burladisimo %d",this->getRotation());
+			((Nivel*)Director::getInstance()->getRunningScene())->goToGameOver(this);
 
-			((Nivel*)Global::getInstance()->nivel)->goToGameOver(this);
 		}
-		
 		else {
-			this->setPositionX(this->getPositionX() + velocidad);
-			//((Nivel *)Global::getInstance()->nivel)->mueveNubes(-velocidad/2);
+			this->setPositionX(this->getPositionX() + velocidad * Director::getInstance()->getVisibleSize().width * dt);
+			//Global::getInstance()->zerrin->getPhysicsBody()->setVelocity(Vec2(100, 0));
 		}
 
 
+		((Nivel*)(Director::getInstance()->getRunningScene()))->mueveFondo(velocidad * Director::getInstance()->getVisibleSize().width * dt);
 
 	}
 }

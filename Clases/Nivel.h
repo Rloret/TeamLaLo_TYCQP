@@ -3,32 +3,49 @@
 #include "cocos2d.h"
 #include "Arma.h"
 
+
+
+
 class Nivel : public cocos2d::Layer
 {
 public:
-	static cocos2d::Scene* createScene();
+	static cocos2d::Scene* createScene(std::vector<std::string> fondos, int i_objetos, int u_objetos);
 	// es int temporalmente debe ser de 
 	virtual bool init();
-	int ContadorArmas;
+	//int ContadorArmas;
 
 
-	int vueltasArsenal;
+
 	cocos2d::Sprite* rectangulo;
 	void preparaNivel(std::vector<std::string> fondos, int i_objetos, int u_objetos);
 	void displayArmasArsenal();
 	void goToGameOver(Ref *pSender);
 	void goToPause(Ref *pSender);
+	void goToWinScene();
 	void spawnNube(float dt);
-	//void removeScheduler();
-
 	void mueveFondo(int v);
+	void addContactListener();
+
+	cocos2d::Rect getBackgroundSize();
+
+
+
 	int getPosXFondo();
+
+	int vueltasArsenal;
+	bool onContactBegin(cocos2d::PhysicsContact & contact);
+
 	int getBackgroundWidth();
 
+	cocos2d::EventListenerPhysicsContact * listenerColision;
+
+	static Nivel* create(std::vector<std::string> fondos, int i_objetos, int u_objetos);
+	Nivel(std::vector<std::string> fondos, int i_objetos, int u_objetos);
+	~Nivel();
+
+	cocos2d::Sprite* background;
 
 
-	// implement the "static create()" method manually
-	CREATE_FUNC(Nivel);
 
 private:
 	static int tiempoDelNivel;
@@ -56,13 +73,7 @@ private:
 	void colocaBotones();
 	void colocaFondo(std::vector<std::string> fondos);
 
-	/*void onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
-	void onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);*/
-	
-	//void update(float dt);
 
-	//std::list<cocos2d::Node *> Nubes;
-	//virtual void update(float dt);
 
 	cocos2d::MenuItemImage* masBtn;
 	cocos2d::MenuItemImage* menosBtn;
@@ -77,13 +88,14 @@ private:
 
 
 
-	cocos2d::Sprite* background;
 	cocos2d::Sprite* background1;
 	cocos2d::Sprite* background2;
 	cocos2d::Sprite* muralla;
 	cocos2d::Sprite* nubes;
 	
-
+	cocos2d::PhysicsWorld *nivelPhysics;
+	
+	void setPhysicsWorld(cocos2d::PhysicsWorld* world);
 
 
 };

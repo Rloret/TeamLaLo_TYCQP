@@ -26,10 +26,14 @@ void Nube::spawnNube(float dt)
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	//auto rand = random(this->getContentSize().height, this->getContentSize().height + 80);
 	//this->setPosition(Point(visibleSize.width,rand));
+	auto rand = random(20,30);
+	if (Global::getInstance()->zerrin->getPositionX() < visibleSize.width / 2 || Global::getInstance()->zerrin->getPositionX() > 3072 - 1024 / 2) {
+		rand = random(30,40);
+		//CCLOG("mas lenta");
+	}
 
-	auto rand = random(5, 7);
 	auto *move = (FiniteTimeAction *)MoveBy::create(rand, //mueve una nube hasta -width en un tiempo random
-	Point(-visibleSize.width-this->getContentSize().width,0));
+	Point(-visibleSize.width*3-this->getContentSize().width,0));
 	move->retain();
 
 	auto *seq = Sequence::create(move,
@@ -41,7 +45,7 @@ void Nube::spawnNube(float dt)
 }
 
 void Nube::nubeDone(Node* pSender) {
-	Global::getInstance()->nivel->removeChild(pSender);
+	Director::getInstance()->getRunningScene()->removeChild(pSender);
 	this->stopAllActions();
 
 }
