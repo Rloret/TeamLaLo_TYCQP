@@ -219,6 +219,7 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 		cene = Nivel::createScene(fondosPasar, 0, 10);
 		Director::getInstance()->pushScene(cene);
 		Global::getInstance()->colocaObjetos(0, 10);
+		Global::getInstance()->abreEstanteria();
 		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar,0, 10);	
 		break;
 
@@ -233,6 +234,7 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 		cene = Nivel::createScene(fondosPasar, 0, 10);
 		Director::getInstance()->pushScene(cene);
 		Global::getInstance()->colocaObjetos(0, 10);
+		Global::getInstance()->abreEstanteria();
 		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);	
 		break;
 
@@ -246,6 +248,7 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 		cene = Nivel::createScene(fondosPasar, 0, 10);
 		Director::getInstance()->pushScene(cene);
 		Global::getInstance()->colocaObjetos(0, 10);
+		Global::getInstance()->abreEstanteria();
 
 		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);	
 		break;
@@ -260,6 +263,7 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 		cene = Nivel::createScene(fondosPasar, 0, 10);
 		Director::getInstance()->pushScene(cene);
 		Global::getInstance()->colocaObjetos(0, 10);
+		Global::getInstance()->abreEstanteria();
 		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);	
 		break;
 
@@ -274,6 +278,7 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 		cene = Nivel::createScene(fondosPasar, 0, 10);
 		Director::getInstance()->pushScene(cene);
 		Global::getInstance()->colocaObjetos(0, 10);
+		Global::getInstance()->abreEstanteria();
 		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);		
 		break;
 
@@ -287,6 +292,7 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 		cene = Nivel::createScene(fondosPasar, 0, 10);
 		Director::getInstance()->pushScene(cene);
 		Global::getInstance()->colocaObjetos(0, 10);
+		Global::getInstance()->abreEstanteria();
 		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);
 		break;
 
@@ -300,6 +306,7 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 		cene = Nivel::createScene(fondosPasar, 0, 10);
 		Director::getInstance()->pushScene(cene);
 		Global::getInstance()->colocaObjetos(0, 10);
+		Global::getInstance()->abreEstanteria();
 		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);
 		break;
 	}

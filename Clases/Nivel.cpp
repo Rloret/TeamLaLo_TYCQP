@@ -293,14 +293,12 @@ void Nivel::recorreArmas(int iterador,int posicion,int ancho,int alto,int iterac
 		if (vueltasArsenal == Global::getInstance()->armasArsenal.size()) vueltasArsenal = 0;
 		Arma* arma = Global::getInstance()->armasArsenal[vueltasArsenal];
 		//arma->setPosition((((posicion + 1)*ancho) / 7) - arma->getContentSize().width, alto / 2 + 2 * vueltasArsenal);
-		arma->setPosition((((posicion + 1)*ancho) / 7) /*+ arma->getContentSize().width*/, alto / 2 + 2 * vueltasArsenal);
+		arma->setPosition((((posicion + 1)*ancho) / 7) - arma->getContentSize().width/2, alto / 2 );
 		activaDesactivaArma(arma, true);
 		CCLOG("muestro la %d", vueltasArsenal);
 
 		iterador++;
 		vueltasArsenal++;
-
-
 	}
 }
 
@@ -410,7 +408,7 @@ void Nivel::colocaFondo(std::vector<std::string> fondos){
 
 	background = Sprite::create(fondos[0]);
 
-	auto limitesEscenario = PhysicsBody::createEdgeBox(Size(background->getContentSize().width,668), PHYSICSBODY_MATERIAL_DEFAULT,0.3);
+	auto limitesEscenario = PhysicsBody::createEdgeBox(Size(background->getContentSize().width,668), PhysicsMaterial(0.5f,0.0f,0.5f),0.3);
 	limitesEscenario->setPositionOffset(Vec2(0, 200));
 	background->retain();
 	background->setPosition(background->getContentSize().width, visibleSize.height);
@@ -571,6 +569,7 @@ bool Nivel::onContactBegin(cocos2d::PhysicsContact & contact) {
 			zerrin->muestraDaño(((Arma*)a->getNode())->getDaño());
 			zerrin->setVida((zerrin)->getVida() - ((Arma*)a->getNode())->getDaño());
 			zerrin->getPhysicsBody()->setVelocity(Vec2(0, 30));
+			((Arma*)a->getNode())->EnableListener(false);
 			if (a->getNode()->getPositionX() >= zerrin->getPositionX()) {
 				zerrin->setState(zerrin->ZERRINFSM::GOLPEADO_ATRAS);
 				a->setCollisionBitmask(false);
@@ -600,6 +599,7 @@ bool Nivel::onContactBegin(cocos2d::PhysicsContact & contact) {
 			zerrin->muestraDaño(((Arma*)b->getNode())->getDaño());
 			zerrin->setVida(zerrin->getVida() - ((Arma*)b->getNode())->getDaño());
 			zerrin->getPhysicsBody()->setVelocity(Vec2(0, 30));
+			((Arma*)b->getNode())->EnableListener(false);
 			if (b->getNode()->getPositionX() >= zerrin->getPositionX()) {
 				zerrin->setState(zerrin->ZERRINFSM::GOLPEADO_ATRAS);
 				b->setCollisionBitmask(false);

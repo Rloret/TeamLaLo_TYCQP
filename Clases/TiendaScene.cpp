@@ -52,17 +52,6 @@ bool TiendaScene::init()
 	this->preparaLabels();
 	listenerTienda->setEnabled(true);
 
-	/*CCString * score = CCString::createWithFormat("%i", _
-		player1Score);
-	_player1ScoreLabel->setString(score->getCString());*/
-	
-	/*char oro_buffer[10];
-	sprintf(oro_buffer, "%i", Global::getInstance()->katahi->getOro());
-	auto dinero_oro= Label::createWithSystemFont("ORO: ", "Arial", 30);
-	auto dinero_oro_int = Label::createWithSystemFont("", "Arial", 30);
-	dinero_oro_int->setString(oro_buffer);
-	dinero_oro->setColor(Color3B::WHITE);
-	dinero_oro_int->setColor(Color3B::WHITE);*/
 	return true;
 
 }
@@ -131,14 +120,9 @@ void TiendaScene::hacerCompra(Ref *pSender)
 				textoCompra->setVisible(true);
 				Global::getInstance()->armaAComprar->childEnTienda = false;
 
-			}
-			
+			}	
 		}
-	
-	}
-
-	
-	
+	}	
 }
 
 void TiendaScene::colocaArmasTotales()
@@ -151,21 +135,21 @@ void TiendaScene::colocaArmasTotales()
 	for (int i = 0; i < Global::getInstance()->armasTotales.size(); i++) {
 		
 		Arma* arma = Global::getInstance()->armasTotales[i];
-
 		if (!arma->childEnTienda) {
 			this->addChild(arma, 3);
 			arma->setVisible(true);
 			arma->EnableSwallow(true);
 			if (i >= 5) {
 				iterador = floor(i / 5);
-				anchoCorrespondiente = ((i - (iterador * 5))*arma->getContentSize().width) * 2;
+				anchoCorrespondiente = ((i - (iterador * 5))*arma->getBoundingBox().size.width) *2;
 				altoCorrespondiente = arma->getContentSize().height *floor(i / 5);
 			}
 			else {
-				anchoCorrespondiente = (i*arma->getContentSize().width * 2);
+				anchoCorrespondiente = (i*arma->getBoundingBox().size.width * 2);
 				altoCorrespondiente = arma->getContentSize().height *floor(i / 5);
 			}
 			arma->setPosition(margenesX + anchoCorrespondiente, margenesY + altoCorrespondiente + altoCorrespondiente *0.5);
+			CCLOG("arma colocada en %f, %f", arma->getPositionX(), arma->getPositionY());
 			//arma->setColor(Color3B(i * 50, i * 10 + 60, 10));
 		}
 		arma->setDesdeTienda(true);

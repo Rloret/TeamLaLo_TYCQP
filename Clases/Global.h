@@ -31,6 +31,8 @@ public:
 	void quitaArmaDeNivel(Arma* a);
 	void colocaObjetos(int i_objetos, int u_objetos);
 	bool juegoEnCurso;
+	void abreEstanteria();
+	void recolocaArmasNivel();
 
 	Arma* armaAComprar;
 	int ContadorArmas=0;

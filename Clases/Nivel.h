@@ -64,7 +64,7 @@ private:
 	void goToVestuario(Ref *pSender);
 	void abrirArsenal(Ref *pSender);
 	void simulacion(Ref *pSender);
-	//void displayArmasNivel();
+
 	void activaDesactivaBoton(cocos2d::MenuItemImage* boton, bool estado);
 
 	void recorreArmas(int iterador, int posicion, int ancho, int alto, int iteraciones);

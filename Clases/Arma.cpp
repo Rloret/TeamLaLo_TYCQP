@@ -60,10 +60,16 @@ void Arma::AddListener()
 		cocos2d::Point p = touch->getLocation();
 		cocos2d::Point pprueba = convertToWorldSpace(Vec2(touch->getLocation()));
 		cocos2d::Rect rect2 = this->getBoundingBox();
-		cocos2d::Rect rectprueba = this->getBoundingBox();
-		rectprueba.origin =Vec2(convertToWorldSpace(rect2.origin));
+		//cocos2d::Rect rectprueba = this->getBoundingBox();
+		cocos2d::Rect rectprueba = Rect(this->getPositionX(),this->getPositionY(),this->getBoundingBox().size.width,this->getBoundingBox().size.height);
+		
 
-		if (this->isVisible() && (rectprueba.containsPoint(pprueba)))
+		rectprueba.origin = Vec2(convertToWorldSpace(rect2.origin));
+		//CCLOG("rect prueba origin %f %f y mide %f %f", rectprueba.origin.x, rectprueba.origin.y, rectprueba.size.width, rectprueba.size.height);
+		//CCLOG("toque originalen   %f %f",p.x,p.y);
+		//CCLOG("toque convertido   %f %f", pprueba.x, pprueba.y);
+
+		if (this->isVisible() && rectprueba.containsPoint(pprueba))
 		{
 
 			return true;
@@ -120,10 +126,14 @@ void Arma::accionTouch(){
 				Global::getInstance()->ContadorArmas += 1;
 				//llamar a global
 				Arma* a = this->ClonarArma(this);
+				CCLOG("size antes %d", Global::getInstance()->ArmasNivel.size());
 				Global::getInstance()->añadeArmasANivel(a);
 				a->colocada = false;
-				a->setPosition(Point(Global::getInstance()->ArmasNivel.size() * 80 + 500,Director::getInstance()->getVisibleSize().height-70));
+				//a->setPosition(Point(Global::getInstance()->ArmasNivel.size() * 80 + 500,Director::getInstance()->getVisibleSize().height-70));
+				CCLOG("size despues %d",Global::getInstance()->ArmasNivel.size());
+				a->setPosition(Point(Global::getInstance()->ArmasNivel.size() * 512 /5  +512 -this->getContentSize().width/2, Director::getInstance()->getVisibleSize().height -this->getBoundingBox().size.height/2-20));
 				this->enNivel = true;
+				Global::getInstance()->recolocaArmasNivel();
 			}
 			else if (this->enNivel) CCLOG("ya esta metida");
 
@@ -179,6 +189,13 @@ void Arma::accion(Arma * a)
 		a->getPhysicsBody()->setCategoryBitmask(0x02);
 		a->getPhysicsBody()->setCategoryBitmask(0x01);*/
 		a->getPhysicsBody()->setContactTestBitmask(true);
+		break;
+
+	case 2: //bola demolicion
+		//a->setPhysicsBody(PhysicsBody::createBox(a->getBoundingBox().size, cocos2d::PhysicsMaterial(10.0, 0.2, 1)));
+		a->setPhysicsBody(PhysicsBody::createCircle(a->getBoundingBox().size.width / 2));
+		a->getPhysicsBody()->setContactTestBitmask(true);
+
 		break;
 	default:
 		break;
