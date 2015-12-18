@@ -129,6 +129,7 @@ void TiendaScene::hacerCompra(Ref *pSender)
 				rectangulo->setVisible(true);
 				textoCompra->setString("Pero...si no tienes suficiente.\nNo me hagas perder el tiempo.");
 				textoCompra->setVisible(true);
+				Global::getInstance()->armaAComprar->childEnTienda = false;
 
 			}
 			

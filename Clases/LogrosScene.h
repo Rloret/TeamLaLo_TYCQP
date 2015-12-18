@@ -19,8 +19,6 @@ public:
 private:
 	cocos2d::PhysicsWorld *nivelPhysics;
 
-	void setPhysicsWorld(cocos2d::PhysicsWorld* world);
-
 
 };
 

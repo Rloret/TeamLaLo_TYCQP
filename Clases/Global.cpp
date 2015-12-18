@@ -11,12 +11,12 @@ static Global* global = nullptr;
 
 Global::Global(){
 	//inicializar escenas a null
-	 //nivel = nullptr;
+	 nivel = nullptr;
 	 levelsMenuScene = LevelsMenuScene::createScene();
 
 	 zerrin = ZerrinClass::create();
 	 katahi = KatahiClass::create();
-
+	 
 	// nivel->retain();
 	 levelsMenuScene->retain();
 
@@ -29,9 +29,9 @@ Global::Global(){
 	// CCLOG("me he iniciado por primera vez");
 }
 void Global::añadeArmasANivel(Arma* a){
-	((Nivel*)Director::getInstance()->getRunningScene())->addChild(a, 2);
-	auto rand = random(0, 19);
-	a->setPosition(Point(200+rand*10, 500));
+	Director::getInstance()->getRunningScene()->addChild(a, 2);
+	CCLOG("tag de la current sin type %d tag de la current con type %d", Director::getInstance()->getRunningScene()->getTag(), ((Nivel*)Director::getInstance()->getRunningScene())->getTag());
+	CCLOG("tag de la almacenada en global %d ", this->nivel->getTag());
 	ArmasNivel.push_back(a);
 	//CCLOG("tamaño %d", ArmasNivel.size());
 }
@@ -68,7 +68,7 @@ void Global::creaObjetosEscenario()
 		nombre += i;
 
 		//ObjetosTotalesEscenarioPosiciones.push_back(&Vec2(((i + 1)*visiblesize.width) / 10, visiblesize.height / 2));
-		ObjetoEscenario* objetoaux = ObjetoEscenario::create("images/ObjetosEscenario/Baul.png", random(9,12), nombre,1);
+		ObjetoEscenario* objetoaux = ObjetoEscenario::create("images/ObjetosEscenario/Baul.png", random(9,12), nombre,i%2==0?1:2);
 		Vec2 punto = Vec2(((i*5 + 100)*visiblesize.width) / 10 - objetoaux->getContentSize().width, visiblesize.height / 2);
 		objetoaux->setPosition(punto);
 		objetoaux->setColor(Color3B(i * 25, i * 25, i * 25));
@@ -108,9 +108,24 @@ void Global::quitaArmaDeNivel(Arma*a){
 	}
 }
 
-
-void Global::modificaNivel(Nivel* elnivel)
+void Global::colocaObjetos(int i_objetos, int u_objetos)
 {
-	nivel = elnivel;
+	for (int i = i_objetos; i < u_objetos; i++) {
+		//CCLOG("Posicion antes %f %f ", Global::getInstance()->ObjetosTotalesEscenarios[i]->getPositionX(), Global::getInstance()->ObjetosTotalesEscenarios[i]->getPositionY());
+		auto objetodeturno = Global::getInstance()->ObjetosTotalesEscenarios[i];
+		objetodeturno->setVisible(true);
+		Vec2 punto = Vec2(((i + 1) * 1024 * 2) / (u_objetos - i_objetos)
+			+ 1024 / 2
+			- Global::getInstance()->ObjetosTotalesEscenarios[i]->getContentSize().width
+			,(objetodeturno->getTipo()==1)? Director::getInstance()->getVisibleSize().height / 2: Director::getInstance()->getVisibleSize().height -objetodeturno->getContentSize().height*2);
+		objetodeturno->setPosition(punto);
+		objetodeturno->setPhysicsBody(nullptr);
+		nivel->addChild(objetodeturno, 3);
+		
+		//CCLOG("Posicion dsps %f %f ", Global::getInstance()->ObjetosTotalesEscenarios[i]->getPositionX(), Global::getInstance()->ObjetosTotalesEscenarios[i]->getPositionY());
+
+	}
 }
+
+
 

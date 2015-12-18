@@ -23,8 +23,9 @@ public:
 	void goToPause(Ref *pSender);
 	void goToWinScene();
 	void spawnNube(float dt);
-	void mueveFondo(int v);
+	void mueveFondo(float v);
 	void addContactListener();
+	//void colocaObjetos(int i_objetos, int u_objetos);
 
 	cocos2d::Rect getBackgroundSize();
 
@@ -34,6 +35,7 @@ public:
 
 	int vueltasArsenal;
 	bool onContactBegin(cocos2d::PhysicsContact & contact);
+	bool onContactPreSolve(cocos2d::PhysicsContact & contact, cocos2d::PhysicsContactPreSolve & solve);
 
 	int getBackgroundWidth();
 
@@ -69,10 +71,10 @@ private:
 	void activaDesactivaArma(Arma* arma, bool estado);
 	void quitaArmas();
 
-	void colocaObjetos(int i_objetos, int u_objetos);
+
 	void colocaBotones();
 	void colocaFondo(std::vector<std::string> fondos);
-
+	void colocaZerrin();
 
 
 	cocos2d::MenuItemImage* masBtn;

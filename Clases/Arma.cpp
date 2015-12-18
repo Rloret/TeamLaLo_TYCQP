@@ -58,21 +58,13 @@ void Arma::AddListener()
 
 	listener->onTouchBegan = [&](cocos2d::Touch* touch, cocos2d::Event* event) {
 		cocos2d::Point p = touch->getLocation();
-		cocos2d::Point p2 = Point(0, 0);
-		auto posi = this->getPosition();
-		cocos2d::Rect rect = Rect(this->getPosition().x- this->getBoundingBox().size.width/2, this->getPosition().y- this->getBoundingBox().size.height/2,
-							this->getBoundingBox().size.width, this->getBoundingBox().size.height);
+		cocos2d::Point pprueba = convertToWorldSpace(Vec2(touch->getLocation()));
+		cocos2d::Rect rect2 = this->getBoundingBox();
+		cocos2d::Rect rectprueba = this->getBoundingBox();
+		rectprueba.origin =Vec2(convertToWorldSpace(rect2.origin));
 
-
-		if (Global::getInstance()->juegoEnCurso) {
-			p2 = Point(Global::getInstance()->zerrin->getPosition().x-Director::getInstance()->getVisibleSize().width/2 + p.x, p.y);
-			//CCLOG("(%f,%f)",p.x, p2.x);
-		}
-
-		if (this->isVisible() && (rect.containsPoint(p)|| rect.containsPoint(p2)))
+		if (this->isVisible() && (rectprueba.containsPoint(pprueba)))
 		{
-			//CCLOG("He tocado el arma que cuesta:  %d ", this->getPrecio());
-			setPointY(p.y);
 
 			return true;
 		}
@@ -81,16 +73,10 @@ void Arma::AddListener()
 	};
 	listener->onTouchMoved = [=](Touch* touch, Event* event) {
 		cocos2d::Point p = touch->getLocation();
-		if (Global::getInstance()->juegoEnCurso && this->getPosition().y >50 && !this->colocada && !this->getDesdeTienda()) {
+		if (Global::getInstance()->juegoEnCurso && /*this->getPosition().y >50 &&*/ !this->colocada && !this->getDesdeTienda()) {
 			arrastrando = true;
-			if (Global::getInstance()->juegoEnCurso)	//Arma::arrastraArma(p);
-				if(Global::getInstance()->zerrin->getPositionX()>1024){
-					Arma::arrastraArma(Point(Global::getInstance()->zerrin->getPosition().x -
-										Director::getInstance()->getVisibleSize().width / 2 + p.x, p.y));
+			Arma::arrastraArma(p);
 
-				}
-				
-				else		Arma::arrastraArma(p);
 			
 		}
 	};
@@ -110,13 +96,11 @@ void Arma::arrastraArma(cocos2d::Vec2 vector)
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto zerrinpos = Global::getInstance()->zerrin->getPosition();
 	
-	if (vector.y >768 - this->getBoundingBox().size.height) vector.y = 768-this->getBoundingBox().size.height;
+	if (vector.y >768 - this->getBoundingBox().size.height) vector.y = 768-this->getBoundingBox().size.height/2;
 	else if (vector.y < 200+ this->getBoundingBox().size.height/2) vector.y = 200+ this->getBoundingBox().size.height/2;
 
-	if (vector.x > visibleSize.width-50) vector.x = visibleSize.width- 50;
-	else if (vector.x < 50) vector.x = 50;
-	//if (vector.x < zerrinpos.x-visibleSize.width/2+20) vector.x = zerrinpos.x - visibleSize.width / 2+20;
-	//else if (vector.x>zerrinpos.x + visibleSize.width / 2-20) vector.x = zerrinpos.x + visibleSize.width / 2-20;
+	if (vector.x > visibleSize.width- this->getBoundingBox().size.width) vector.x = visibleSize.width- this->getBoundingBox().size.width/2;
+	else if (vector.x < this->getBoundingBox().size.width) vector.x = this->getBoundingBox().size.height/2;
 
 	this->setPosition(vector);
 	//CCLOG("ARMAA %f %f",vector.x,vector.y);
@@ -182,7 +166,7 @@ void Arma::accion(Arma * a)
 	switch (a->tipo)
 	{
 	case 0:  //las que caen
-		a->setPhysicsBody(PhysicsBody::createCircle(a->getBoundingBox().size.height / 2, cocos2d::PhysicsMaterial(100000000000000, 1, 0.5)));
+		a->setPhysicsBody(PhysicsBody::createBox(a->getBoundingBox().size, cocos2d::PhysicsMaterial(10000, 1, 0.5)));
 		/*a->getPhysicsBody()->setCollisionBitmask(0x02);
 		a->getPhysicsBody()->setCategoryBitmask(0x02);
 		a->getPhysicsBody()->setCategoryBitmask(0x01);
@@ -190,7 +174,7 @@ void Arma::accion(Arma * a)
 		a->getPhysicsBody()->setContactTestBitmask(true);
 		break;
 	case 1:  //las que caen
-		a->setPhysicsBody(PhysicsBody::createCircle(a->getBoundingBox().size.height / 2, cocos2d::PhysicsMaterial(10.0, 0.2, 1)));
+		a->setPhysicsBody(PhysicsBody::createBox(a->getBoundingBox().size, cocos2d::PhysicsMaterial(10.0, 0.2, 1)));
 		/*a->getPhysicsBody()->setCollisionBitmask(0x02);
 		a->getPhysicsBody()->setCategoryBitmask(0x02);
 		a->getPhysicsBody()->setCategoryBitmask(0x01);*/
@@ -199,6 +183,7 @@ void Arma::accion(Arma * a)
 	default:
 		break;
 	}
+	a->getPhysicsBody()->setVelocity(Vec2(0, -100));
 
 }
 

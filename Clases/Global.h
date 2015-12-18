@@ -12,7 +12,7 @@ class Global
 {
 public:
 	static Global* getInstance();
-	Nivel* nivel;
+	cocos2d::Scene* nivel;
 	cocos2d::Scene* levelsMenuScene;
 	//cocos2d::Scene* tienda;
 
@@ -29,7 +29,7 @@ public:
 	void añadeArmasANivel(Arma* a);
 	void vaciaArmasNivel();
 	void quitaArmaDeNivel(Arma* a);
-	void modificaNivel(Nivel* elnivel);
+	void colocaObjetos(int i_objetos, int u_objetos);
 	bool juegoEnCurso;
 
 	Arma* armaAComprar;

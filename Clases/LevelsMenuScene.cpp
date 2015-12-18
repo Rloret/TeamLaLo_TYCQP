@@ -14,6 +14,7 @@ Scene* LevelsMenuScene::createScene()
 
 	// add layer as a child to scene
 	scene->addChild(layer);
+	scene->setTag(100);
 
 	// return the scene
 	return scene;
@@ -217,6 +218,7 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 		fondosPasar.push_back("images/Nivel/Castillo_Primer_Plano.png");
 		cene = Nivel::createScene(fondosPasar, 0, 10);
 		Director::getInstance()->pushScene(cene);
+		Global::getInstance()->colocaObjetos(0, 10);
 		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar,0, 10);	
 		break;
 
@@ -230,6 +232,7 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 		fondosPasar.push_back("images/Nivel/Castillo_Primer_Plano.png");
 		cene = Nivel::createScene(fondosPasar, 0, 10);
 		Director::getInstance()->pushScene(cene);
+		Global::getInstance()->colocaObjetos(0, 10);
 		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);	
 		break;
 
@@ -242,6 +245,7 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 		fondosPasar.push_back("images/Nivel/Castillo_Primer_Plano.png");
 		cene = Nivel::createScene(fondosPasar, 0, 10);
 		Director::getInstance()->pushScene(cene);
+		Global::getInstance()->colocaObjetos(0, 10);
 
 		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);	
 		break;
@@ -255,6 +259,7 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 		fondosPasar.push_back("images/Nivel/Castillo_Primer_Plano.png");
 		cene = Nivel::createScene(fondosPasar, 0, 10);
 		Director::getInstance()->pushScene(cene);
+		Global::getInstance()->colocaObjetos(0, 10);
 		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);	
 		break;
 
@@ -268,6 +273,7 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 		fondosPasar.push_back("images/Nivel/Castillo_Primer_Plano.png");
 		cene = Nivel::createScene(fondosPasar, 0, 10);
 		Director::getInstance()->pushScene(cene);
+		Global::getInstance()->colocaObjetos(0, 10);
 		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);		
 		break;
 
@@ -280,6 +286,7 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 		fondosPasar.push_back("images/Nivel/Castillo_Primer_Plano.png");
 		cene = Nivel::createScene(fondosPasar, 0, 10);
 		Director::getInstance()->pushScene(cene);
+		Global::getInstance()->colocaObjetos(0, 10);
 		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);
 		break;
 
@@ -292,6 +299,7 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 		fondosPasar.push_back("images/Nivel/Castillo_Primer_Plano.png");
 		cene = Nivel::createScene(fondosPasar, 0, 10);
 		Director::getInstance()->pushScene(cene);
+		Global::getInstance()->colocaObjetos(0, 10);
 		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);
 		break;
 	}
