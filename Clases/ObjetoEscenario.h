@@ -12,7 +12,6 @@ public:
 	static ObjetoEscenario* create(const std::string &fileName, int daño, std::string nombre, int tipo);
 
 	//void initOptions();
-	bool soyObjeto();
 
 	void AddListener();
 	void TouchEvent(cocos2d::Touch* touch, cocos2d::Point _p);

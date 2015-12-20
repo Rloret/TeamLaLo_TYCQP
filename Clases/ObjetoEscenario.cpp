@@ -76,10 +76,6 @@ int ObjetoEscenario::getDaño()
 	return daño;
 }
 
-bool ObjetoEscenario::soyObjeto()
-{
-	return true;
-}
 
 
 void ObjetoEscenario::assignBody()

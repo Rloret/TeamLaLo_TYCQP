@@ -24,6 +24,7 @@ public:
 
 	void accion(Arma* a);
 
+	void intervalo(int signo);
 	Arma* clon;
 	Arma* getArma();
 	Arma* ClonarArma(Arma*a);
@@ -33,6 +34,8 @@ public:
 	int getDaño();
 	int getPrecio();
 	int getMechones();
+	int parpadeo=1;
+
 	bool getDesdeTienda();
 	bool enNivel = false; 
 	bool colocada = false;
@@ -40,8 +43,8 @@ public:
 	bool childEnNivel = false; 
 	bool arrastrando = false;
 
-	bool soyObjeto();
 	
+
 private:
 	bool desdeTienda;
 	int daño;

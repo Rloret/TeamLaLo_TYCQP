@@ -3,7 +3,9 @@
 #include"Global.h"
 #include "TiendaScene.h"
 
+
 USING_NS_CC;
+
 
 Arma::Arma( int daño, std::string nombre, int tipo,int precio,int mechones)
 {
@@ -60,14 +62,9 @@ void Arma::AddListener()
 		cocos2d::Point p = touch->getLocation();
 		cocos2d::Point pprueba = convertToWorldSpace(Vec2(touch->getLocation()));
 		cocos2d::Rect rect2 = this->getBoundingBox();
-		//cocos2d::Rect rectprueba = this->getBoundingBox();
 		cocos2d::Rect rectprueba = Rect(this->getPositionX(),this->getPositionY(),this->getBoundingBox().size.width,this->getBoundingBox().size.height);
-		
-
+	
 		rectprueba.origin = Vec2(convertToWorldSpace(rect2.origin));
-		//CCLOG("rect prueba origin %f %f y mide %f %f", rectprueba.origin.x, rectprueba.origin.y, rectprueba.size.width, rectprueba.size.height);
-		//CCLOG("toque originalen   %f %f",p.x,p.y);
-		//CCLOG("toque convertido   %f %f", pprueba.x, pprueba.y);
 
 		if (this->isVisible() && rectprueba.containsPoint(pprueba))
 		{
@@ -79,7 +76,7 @@ void Arma::AddListener()
 	};
 	listener->onTouchMoved = [=](Touch* touch, Event* event) {
 		cocos2d::Point p = touch->getLocation();
-		if (Global::getInstance()->juegoEnCurso && /*this->getPosition().y >50 &&*/ !this->colocada && !this->getDesdeTienda()) {
+		if (Global::getInstance()->juegoEnCurso && !this->colocada && !this->getDesdeTienda()) {
 			arrastrando = true;
 			Arma::arrastraArma(p);
 
@@ -100,13 +97,32 @@ void Arma::AddListener()
 void Arma::arrastraArma(cocos2d::Vec2 vector)
 {
 	auto visibleSize = Director::getInstance()->getVisibleSize();
-	auto zerrinpos = Global::getInstance()->zerrin->getPosition();
-	
-	if (vector.y >768 - this->getBoundingBox().size.height) vector.y = 768-this->getBoundingBox().size.height/2;
-	else if (vector.y < 200+ this->getBoundingBox().size.height/2) vector.y = 200+ this->getBoundingBox().size.height/2;
 
-	if (vector.x > visibleSize.width- this->getBoundingBox().size.width) vector.x = visibleSize.width- this->getBoundingBox().size.width/2;
-	else if (vector.x < this->getBoundingBox().size.width) vector.x = this->getBoundingBox().size.height/2;
+	//Checkar el tipo por si necesita escalado ->funcion que segun el tipo devuelve un factor de escala
+	//configurar arma como desactivada si el tipo lo requiere
+	//Añadir sprites auxiliares;-> funcion que segfun el añade y coloca sprites auxiliares
+	auto zerrinpos = Global::getInstance()->zerrin->getPosition();
+	switch (tipo) {
+	case 3:
+		vector.y = 270;
+
+		if (vector.x > visibleSize.width - this->getBoundingBox().size.width) vector.x = visibleSize.width - this->getBoundingBox().size.width / 2;
+		else if (vector.x < this->getBoundingBox().size.width) vector.x = this->getBoundingBox().size.height / 2;
+		break;
+	case 0:
+	case 1:
+	case 2:
+	default:
+
+		if (vector.y >768 - this->getBoundingBox().size.height) vector.y = 768 - this->getBoundingBox().size.height / 2;
+		else if (vector.y < 200 + this->getBoundingBox().size.height / 2) vector.y = 200 + this->getBoundingBox().size.height / 2;
+
+		if (vector.x > visibleSize.width - this->getBoundingBox().size.width) vector.x = visibleSize.width - this->getBoundingBox().size.width / 2;
+		else if (vector.x < this->getBoundingBox().size.width) vector.x = this->getBoundingBox().size.height / 2;
+		break;
+
+	}
+
 
 	this->setPosition(vector);
 	//CCLOG("ARMAA %f %f",vector.x,vector.y);
@@ -147,6 +163,7 @@ void Arma::accionTouch(){
 		else if (Global::getInstance()->juegoEnCurso) {
 			if (!colocada) this->colocada = true;
 			accion(this);
+			//segun el tipo configurar timers o no->
 		}
 	}
 }
@@ -173,35 +190,65 @@ void Arma::setArma(Arma* arma)
 
 void Arma::accion(Arma * a)
 {
+	cocos2d::CallFunc* accion;
+	cocos2d::RepeatForever* secuencia;
+	cocos2d::Vector<cocos2d::Node*> hijos;
+	//cocos2d::Sequence* secuencia;
 	switch (a->tipo)
 	{
 	case 0:  //las que caen
 		a->setPhysicsBody(PhysicsBody::createBox(a->getBoundingBox().size, cocos2d::PhysicsMaterial(10000, 1, 0.5)));
-		/*a->getPhysicsBody()->setCollisionBitmask(0x02);
-		a->getPhysicsBody()->setCategoryBitmask(0x02);
-		a->getPhysicsBody()->setCategoryBitmask(0x01);
-		a->getPhysicsBody()->setCategoryBitmask(0x03);*/
 		a->getPhysicsBody()->setContactTestBitmask(true);
 		break;
-	case 1:  //las que caen
-		a->setPhysicsBody(PhysicsBody::createBox(a->getBoundingBox().size, cocos2d::PhysicsMaterial(10.0, 0.2, 1)));
-		/*a->getPhysicsBody()->setCollisionBitmask(0x02);
-		a->getPhysicsBody()->setCategoryBitmask(0x02);
-		a->getPhysicsBody()->setCategoryBitmask(0x01);*/
+	case 1:  //las que caen ligeras
+		a->setPhysicsBody(PhysicsBody::createBox(a->getBoundingBox().size, cocos2d::PhysicsMaterial(10.0, 0.2, 1.0)));
 		a->getPhysicsBody()->setContactTestBitmask(true);
 		break;
 
 	case 2: //bola demolicion
-		//a->setPhysicsBody(PhysicsBody::createBox(a->getBoundingBox().size, cocos2d::PhysicsMaterial(10.0, 0.2, 1)));
 		a->setPhysicsBody(PhysicsBody::createCircle(a->getBoundingBox().size.width / 2));
 		a->getPhysicsBody()->setContactTestBitmask(true);
 
+		break;
+	case 3:
+		hijos = Director::getInstance()->getRunningScene()->getChildren();
+		for (int i = 0; i < Director::getInstance()->getRunningScene()->getChildrenCount(); i++) {
+			if (hijos.at(i) == a) {
+				Director::getInstance()->getRunningScene()->removeChild(a);
+				Director::getInstance()->getRunningScene()->getChildByTag(102)->addChild(a, 3);
+				break;
+			}
+		}
+		a->setPhysicsBody(PhysicsBody::createBox(a->getBoundingBox().size/2 ));
+		a->getPhysicsBody()->setCollisionBitmask(false);
+		a->getPhysicsBody()->setContactTestBitmask(true);
+		a->getPhysicsBody()->setDynamic(false);
+		a->setScale(231 / 84);
+
+		accion = CallFunc::create(CC_CALLBACK_0(Arma::intervalo,this,-1));//funcion del negativo;
+		secuencia = RepeatForever::create(Sequence::create(DelayTime::create(1.5), accion,nullptr));
+		//secuencia = Sequence::create(DelayTime::create(0.5), accion,nullptr);
+		this->runAction(secuencia);
 		break;
 	default:
 		break;
 	}
 	a->getPhysicsBody()->setVelocity(Vec2(0, -100));
 
+}
+
+void Arma::intervalo(int signo)
+{
+	parpadeo *= signo;
+	CCLOG("ENTROOOO %d", signo);
+	if (parpadeo < 0) {
+		this->setTexture(Director::getInstance()->getTextureCache()->addImage("images/Armas/pinchos_activos.png"));
+		this->getPhysicsBody()->setContactTestBitmask(true);
+	}
+	else {
+		this->setTexture(Director::getInstance()->getTextureCache()->addImage("images/Armas/pinchos_no_activos.png"));
+		this->getPhysicsBody()->setContactTestBitmask(false);
+	}
 }
 
 Arma* Arma::getArma()
@@ -239,10 +286,7 @@ bool Arma::getDesdeTienda()
 	return desdeTienda;
 }
 
-bool Arma::soyObjeto()
-{
-	return false;
-}
+
 
 
 void Arma::setDesdeTienda(bool estado)

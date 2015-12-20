@@ -101,7 +101,9 @@ cocos2d::Sprite* ZerrinClass::creaAnimacionesZerrin(const char * format, int cou
 	auto animFrames = this->getAnimation(format,count);
 	auto sprite = cocos2d::Sprite::createWithSpriteFrame(animFrames.front());
 
-	(sprite==nullptr)? CCLOG("Nulooo"): this->addChild(sprite);
+	if (sprite == nullptr) CCLOG("Nulooo");
+	else { this->addChild(sprite);
+	}
 	sprite->setAnchorPoint(Vec2(0, 0));
 
 	cocos2d::Animation* animation = cocos2d::Animation::createWithSpriteFrames(animFrames, 1.0/(count*multiplicadorvelocidad));
@@ -191,6 +193,7 @@ ZerrinClass::ZERRINFSM ZerrinClass::getEstado()
 
 void ZerrinClass::update(float dt)
 {
+	Global::getInstance()->currentTime += dt;
 	float velocidadactual = velocidad * Director::getInstance()->getVisibleSize().width * dt;
 	if (estadoz == ENTRANDO) {
 		CCLOG("ENTRANDO");

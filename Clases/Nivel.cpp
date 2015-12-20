@@ -28,8 +28,10 @@ Scene* Nivel::createScene(std::vector<std::string> fondos, int i_objetos, int u_
 	auto layer = Nivel::create(fondos, i_objetos, u_objetos);
 	layer->setTag(102);
 	Global::getInstance()->nivel = scene;
+
 	CCLOG("Layer mide : %f, %f", layer->getBoundingBox().size.width, layer->getBoundingBox().size.height);
 	scene->addChild(layer);
+
 
 
 	return scene;
@@ -82,11 +84,10 @@ void Nivel::preparaNivel(std::vector<std::string> fondos, int i_objetos, int u_o
 	displayArmasArsenal();
 	colocaFondo(fondos);
 	this->addContactListener();
-	//colocaObjetos(i_objetos, u_objetos);
-	addChild(Global::getInstance()->zerrin, 3);
+	addChild(Global::getInstance()->zerrin, 4);
 	colocaZerrin();
 
-	this->schedule(schedule_selector(Nivel::spawnNube), 0.5);
+	this->schedule(schedule_selector(Nivel::spawnNube), 1.0);
 }
 
 void Nivel::displayArmasArsenal()
@@ -99,7 +100,7 @@ void Nivel::displayArmasArsenal()
 			arma->enNivel = false;
 			arma->childEnNivel = true;
 			//CCLOG("el daño de este arma, que no esta añadida es = %d", Global::getInstance()->armasArsenal[i]->getDaño());
-			this->addChild(arma, 5);
+			this->addChild(arma, 7);
 			arma->setVisible(false);
 		}
 
@@ -329,7 +330,7 @@ void Nivel::colocaBotones()
 	rectangulo->setScaleY(alto / rectangulo->getContentSize().height);
 	rectangulo->setPosition(Point(ancho / 2, alto / 2));
 	rectangulo->setVisible(false);
-	addChild(rectangulo, 5);
+	addChild(rectangulo, 6);
 
 	auto pauseBtn = MenuItemImage::create("images/Nivel/pause_btn.png", "images/Nivel/pause_btn.png", CC_CALLBACK_1(Nivel::goToPause, this));
 
@@ -370,7 +371,7 @@ void Nivel::colocaBotones()
 	menu1->setPosition(Point(150, visibleSize.height - pauseBtn->getContentSize().height));
 	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listenerPause, this);
 	menu1->alignItemsHorizontally();
-	addChild(menu1, 5);
+	addChild(menu1, 6);
 
 	auto arsenalBtn = MenuItemImage::create("images/Nivel/back_btn.png", "images/Nivel/back_btn.png", CC_CALLBACK_1(Nivel::abrirArsenal, this));
 	arsenalBtn->setColor(Color3B(100, 100, 100));
@@ -380,7 +381,7 @@ void Nivel::colocaBotones()
 	menu2 = Menu::create(arsenalBtn, simulacionBtn, NULL);
 	menu2->setPosition(Point(visibleSize.width / 2 + visibleSize.width / 3, arsenalBtn->getContentSize().height/2));
 	menu2->alignItemsHorizontally();
-	addChild(menu2, 5);
+	addChild(menu2, 6);
 
 	masBtn = MenuItemImage::create("images/LevelsMenuScene/Flecha.png", "images/LevelsMenuScene/Flecha.png", CC_CALLBACK_1(Nivel::muestraUnoMas, this));
 
@@ -398,7 +399,7 @@ void Nivel::colocaBotones()
 	menosBtn->setPosition((-visibleSize.width / 2.0) + 40, -visibleSize.height / 2.0 + 30);
 
 	menuArsenal = Menu::create(masBtn, menosBtn, NULL);
-	addChild(menuArsenal, 5);
+	addChild(menuArsenal, 6);
 	menuArsenal->setVisible(false);
 }
 
@@ -437,7 +438,7 @@ void Nivel::colocaFondo(std::vector<std::string> fondos){
 	background2->retain();
 
 	muralla = Sprite::create(fondos[4]);
-	addChild(muralla, 4);
+	addChild(muralla, 5);
 
 	muralla->setPosition(muralla->getContentSize().width, visibleSize.height);
 	muralla->setAnchorPoint(Vec2(1, 1));
@@ -516,14 +517,10 @@ void Nivel::spawnNube(float dt)
 
 void Nivel::mueveFondo(float v) {
 	
-
 	if ((Global::getInstance()->zerrin->getEstado()!=Global::getInstance()->zerrin->ZERRINFSM::IDLE) && Global::getInstance()->zerrin->getEstado() != Global::getInstance()->zerrin->ZERRINFSM::SALIENDO) {
 		for (int i = 0; i < 10; i++) {
 			//CCLOG("los objetos se mueven %f", - (v));
 			Global::getInstance()->ObjetosTotalesEscenarios[i]->setPositionX(Global::getInstance()->ObjetosTotalesEscenarios[i]->getPositionX() - (v));
-		}
-		for (auto a : Global::getInstance()->ArmasNivel) {
-			if (a->colocada) a->setPositionX(a->getPositionX() - (v));
 		}
 	}
 }
@@ -572,6 +569,8 @@ bool Nivel::onContactBegin(cocos2d::PhysicsContact & contact) {
 			((Arma*)a->getNode())->EnableListener(false);
 			if (a->getNode()->getPositionX() >= zerrin->getPositionX()) {
 				zerrin->setState(zerrin->ZERRINFSM::GOLPEADO_ATRAS);
+				//LLamar a funcion en arma que te devuelva segun el tipo que has de hacer->devuelve el vector que modifica posicion a zerrin
+				//Activar las animaciones correspondientes-> otra funcion que segun el tipo hagan los efectos
 				a->setCollisionBitmask(false);
 				a->setContactTestBitmask(false);
 				a->setVelocity(Vec2(-50, 70));
@@ -584,7 +583,8 @@ bool Nivel::onContactBegin(cocos2d::PhysicsContact & contact) {
 				a->setVelocity(Vec2(50, 70));
 				a->setAngularVelocity(30);
 			}
-			a->getNode()->runAction(FadeOut::create(1.5));
+		//	a->getNode()->runAction(FadeOut::create(1.5));
+			Global::getInstance()->ellapsedTime = Global::getInstance()->currentTime;
 			if (zerrin->getVida() <= 0) {
 				if (zerrin->getChildrenCount() > 0) zerrin->removeAllChildren();
 				Global::getInstance()->katahi->modificaOro(100);
@@ -618,7 +618,8 @@ bool Nivel::onContactBegin(cocos2d::PhysicsContact & contact) {
 
 
 			}
-			b->getNode()->runAction(FadeOut::create(1.5));
+			Global::getInstance()->ellapsedTime = Global::getInstance()->currentTime;
+			//b->getNode()->runAction(FadeOut::create(1.5));
 			//b->getNode()->setPhysicsBody(nullptr);
 			if (zerrin->getVida() <= 0) {
 				if (zerrin->getChildrenCount() > 0) Global::getInstance()->zerrin->removeAllChildren();
@@ -695,8 +696,17 @@ bool Nivel::onContactPreSolve(cocos2d::PhysicsContact & contact, cocos2d::Physic
 {
 	PhysicsBody*a = contact.getShapeA()->getBody();
 	PhysicsBody*b = contact.getShapeB()->getBody();
-
-	if ((a->getNode()->getPositionY() < 768 / 2) || (a->getNode()->getPositionY() < 768 / 2)) solve.setRestitution(0);
+	cocos2d::String* sa = cocos2d::String::create(a->getNode()->getName());
+	cocos2d::String* sb = cocos2d::String::create(b->getNode()->getName());
+	auto zerrin = Global::getInstance()->zerrin;
+	//CCLOG("presolve de %s con %s", sa->getCString(), sb->getCString());
+	if ((a->getNode()->getPositionY() < 768 / 2) || (b->getNode()->getPositionY() < 768 / 2)) solve.setRestitution(0.0);
+	if ((Global::getInstance()->currentTime - Global::getInstance()->ellapsedTime > 3.0)
+		&& ((zerrin->getEstado() != zerrin->ZERRINFSM::GOLPEADO_ATRAS) || (zerrin->getEstado() != zerrin->ZERRINFSM::GOLPEADO_ALANTE))
+		&& (zerrin->getPositionY() < 768 / 2)) {
+		zerrin->setState(zerrin->ZERRINFSM::SUELO);
+		Global::getInstance()->ellapsedTime = Global::getInstance()->currentTime;
+	}
 	return true;
 }
 

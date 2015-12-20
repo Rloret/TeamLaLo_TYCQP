@@ -58,9 +58,18 @@ void Global::creaArmas()
 	//bola->setScale(84/ bola->getContentSize().width, 84 / bola->getContentSize().height);
 	armasTotales.push_back(bola);
 
+	Texture2D *c = Director::getInstance()->getTextureCache()->addImage("images/Armas/pinchos_activos.png");
+	Arma* pinchos = Arma::create(c, 100, "pinchos", 3, 0, 0);
+	pinchos->setVisible(false);
+	pinchos->setPosition(-200, -200);
+	pinchos->setColor(Color3B::RED);
+	//bola->setAnchorPoint(Vec2(0.5, 0.5));
+	//bola->setScale(84/ bola->getContentSize().width, 84 / bola->getContentSize().height);
+	armasTotales.push_back(pinchos);
+
 	Texture2D* t = Director::getInstance()->getTextureCache()->addImage("images/Armas/arma.png");
 	//provisional crea un array genérico, en un futuro hay que meter las armas 1 a una
-	for (int i = 2; i <20; i++){
+	for (int i = 3; i <20; i++){
 		char* nombre = "espada Bastarda numero: ";
 		nombre += i;
 		Arma* armaaux = Arma::create(t, 15+i, nombre, 1,i*10+1,random(0,1));
@@ -132,7 +141,7 @@ void Global::colocaObjetos(int i_objetos, int u_objetos)
 		auto objetodeturno = Global::getInstance()->ObjetosTotalesEscenarios[i];
 		objetodeturno->setVisible(true);
 		Vec2 punto = Vec2(((i + 1) * 1024 * 2) / (u_objetos - i_objetos)
-			+ 1024 / 2
+			+ 1024 
 			- Global::getInstance()->ObjetosTotalesEscenarios[i]->getContentSize().width
 			,(objetodeturno->getTipo()==1)? Director::getInstance()->getVisibleSize().height / 2: Director::getInstance()->getVisibleSize().height -objetodeturno->getContentSize().height*2);
 		objetodeturno->setPosition(punto);
@@ -143,6 +152,7 @@ void Global::colocaObjetos(int i_objetos, int u_objetos)
 
 	}
 }
+
 
 void Global::abreEstanteria()
 {

@@ -32,12 +32,11 @@ public:
 
 
 	int getPosXFondo();
-
+	int getBackgroundWidth();
 	int vueltasArsenal;
+
 	bool onContactBegin(cocos2d::PhysicsContact & contact);
 	bool onContactPreSolve(cocos2d::PhysicsContact & contact, cocos2d::PhysicsContactPreSolve & solve);
-
-	int getBackgroundWidth();
 
 	cocos2d::EventListenerPhysicsContact * listenerColision;
 
