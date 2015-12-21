@@ -33,7 +33,7 @@ ObjetoEscenario * ObjetoEscenario::create(const std::string & fileName, int daño
 
 void ObjetoEscenario::AddListener()
 {
-	auto listener = cocos2d::EventListenerTouchOneByOne::create();
+	listener = cocos2d::EventListenerTouchOneByOne::create();
 	listener->setSwallowTouches(false);
 
 	listener->onTouchBegan = [&](cocos2d::Touch* touch, cocos2d::Event* event) {
@@ -46,10 +46,6 @@ void ObjetoEscenario::AddListener()
 		
 		if (this->isVisible() && (rectprueba.containsPoint(pprueba)))
 		{
-			/*CCLOG("toque en local  %f %f ", pprueba.x, pprueba.y);
-			CCLOG("rect en local  %f %f  y ocupa  %f %f ", rectprueba.origin.x, rectprueba.origin.y, rectprueba.size.width, rectprueba.size.height);
-			CCLOG("toque en global  %f %f ", p.x, p.y);
-			CCLOG("rect en global %f %f  y ocupa  %f %f ", rect2.origin.x, rect2.origin.y, rect2.size.width, rect2.size.height);*/
 			return true;
 		}
 
@@ -64,16 +60,40 @@ void ObjetoEscenario::AddListener()
 
 }
 
-void ObjetoEscenario::TouchEvent(cocos2d::Touch * touch, cocos2d::Point _p)
+void ObjetoEscenario::TouchEvent(cocos2d::Touch * touch, cocos2d::Point _p){assignBody();}
+
+int ObjetoEscenario::getDaño(){	return daño;}
+
+void ObjetoEscenario::enableListener(bool estado)
 {
-	assignBody();
-	CCLOG("LE PONGO UN PHYSICS");
+	listener->setEnabled(estado);
 }
 
-int ObjetoEscenario::getDaño()
+void ObjetoEscenario::accionColision(Node* objeto)
 {
-	CCLOG("daño %d ",daño);
-	return daño;
+	auto cuerpoFisicas = objeto->getPhysicsBody();
+	//CCLOG("obj con tipo %d" , ((ObjetoEscenario*)objeto)->getTipo());
+
+	switch (((ObjetoEscenario*)objeto)->tipo) {
+		
+	case 1: //abajo
+		CCLOG("Arma tipo 1/abajo y quito fisicas");
+		objeto->setPhysicsBody(nullptr);
+		break;
+
+	case 2://arriba
+		CCLOG("Arma tipo 2/arriba , quito fisicas y listner");
+
+		objeto->runAction(FadeOut::create(0.4));
+		objeto->setPhysicsBody(nullptr);
+		((ObjetoEscenario*)objeto)->enableListener(false);
+		break;
+
+	default:
+		CCLOG("Arma default y quito fisicas");
+		objeto->setPhysicsBody(nullptr);
+		break;
+	}
 }
 
 

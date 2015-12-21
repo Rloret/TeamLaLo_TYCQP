@@ -13,6 +13,7 @@ class Global
 public:
 	static Global* getInstance();
 	cocos2d::Scene* nivel;
+	cocos2d::Layer* layerObjects;
 	cocos2d::Scene* levelsMenuScene;
 	//cocos2d::Scene* tienda;
 
@@ -32,6 +33,7 @@ public:
 	void vaciaArmasNivel();
 	void quitaArmaDeNivel(Arma* a);
 	void colocaObjetos(int i_objetos, int u_objetos);
+	void colocaFondo(std::vector<std::string> fondos);
 	void abreEstanteria();
 	void recolocaArmasNivel();
 	
@@ -39,7 +41,7 @@ public:
 
 	int ContadorArmas=0;
 	float currentTime =0.0;
-	float ellapsedTime=0.0;
+	float ellapsedTime=999.0;
 
 	//std::vector<Vec2*> ObjetosTotalesEscenarioPosiciones;
 	

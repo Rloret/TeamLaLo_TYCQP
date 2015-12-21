@@ -12,6 +12,7 @@ static Global* global = nullptr;
 Global::Global(){
 	//inicializar escenas a null
 	 nivel = nullptr;
+	 layerObjects = nullptr;
 	 levelsMenuScene = LevelsMenuScene::createScene();
 
 	 zerrin = ZerrinClass::create();
@@ -29,16 +30,16 @@ Global::Global(){
 	// CCLOG("me he iniciado por primera vez");
 }
 void Global::añadeArmasANivel(Arma* a){
-	Director::getInstance()->getRunningScene()->addChild(a, 2);
-	CCLOG("tag de la current sin type %d tag de la current con type %d", Director::getInstance()->getRunningScene()->getTag(), ((Nivel*)Director::getInstance()->getRunningScene())->getTag());
-	CCLOG("tag de la almacenada en global %d ", this->nivel->getTag());
+	layerObjects->addChild(a, 3);
+	//CCLOG("tag de la current sin type %d tag de la current con type %d", Director::getInstance()->getRunningScene()->getTag(), ((Nivel*)Director::getInstance()->getRunningScene())->getTag());
+	//CCLOG("tag de la almacenada en global %d ", this->nivel->getTag());
 	ArmasNivel.push_back(a);
 	//CCLOG("tamaño %d", ArmasNivel.size());
 }
 
 void Global::creaArmas()
 {
-	//TAMAÑO ESTANDARD ARMAS 35x84
+	//TAMAÑO ESTANDARD ARMAS 84x84
 
 	//Prueba dagas
 	Texture2D* d = Director::getInstance()->getTextureCache()->addImage("images/Armas/dagas.png");
@@ -99,12 +100,6 @@ void Global::creaObjetosEscenario()
 		ObjetosTotalesEscenarios.push_back(objetoaux);
 	}
 }
-/*
-void Global::creaCamara()
-{
-	Camara = Follow::create(Global::getInstance()->zerrin,Rect(0,0,3072,768));
-	Camara->retain();
-}*/
 
 Global* Global::getInstance(){
 
@@ -123,7 +118,7 @@ void Global::quitaArmaDeNivel(Arma*a){
 
 	for (int i = 0; i<ArmasNivel.size(); i++) {
 		if (ArmasNivel[i] == a) {
-			Director::getInstance()->getRunningScene()->removeChild(a);
+			layerObjects->removeChild(a);
 			a->clon->enNivel = false;
 			a->clon = nullptr;
 			ArmasNivel.erase(ArmasNivel.begin() + i);
@@ -140,17 +135,48 @@ void Global::colocaObjetos(int i_objetos, int u_objetos)
 		//CCLOG("Posicion antes %f %f ", Global::getInstance()->ObjetosTotalesEscenarios[i]->getPositionX(), Global::getInstance()->ObjetosTotalesEscenarios[i]->getPositionY());
 		auto objetodeturno = Global::getInstance()->ObjetosTotalesEscenarios[i];
 		objetodeturno->setVisible(true);
-		Vec2 punto = Vec2(((i + 1) * 1024 * 2) / (u_objetos - i_objetos)
+		Vec2 punto = Vec2(((i + 1) * 1024 * 1.5) / (u_objetos - i_objetos)
 			+ 1024 
 			- Global::getInstance()->ObjetosTotalesEscenarios[i]->getContentSize().width
 			,(objetodeturno->getTipo()==1)? Director::getInstance()->getVisibleSize().height / 2: Director::getInstance()->getVisibleSize().height -objetodeturno->getContentSize().height*2);
 		objetodeturno->setPosition(punto);
 		objetodeturno->setPhysicsBody(nullptr);
-		nivel->addChild(objetodeturno, 3);
+		layerObjects->addChild(objetodeturno, 3);
 		
 		//CCLOG("Posicion dsps %f %f ", Global::getInstance()->ObjetosTotalesEscenarios[i]->getPositionX(), Global::getInstance()->ObjetosTotalesEscenarios[i]->getPositionY());
 
 	}
+}
+
+void Global::colocaFondo(std::vector<std::string> fondos) {
+
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+
+	auto background = Sprite::create(fondos[0]);
+
+	//CCLOG("COLOCOLOSFONDOSSSS");
+	background->retain();
+	background->setPosition(background->getContentSize().width, visibleSize.height);
+	background->setAnchorPoint(Vec2(1, 1));
+	background->setName("Limites");
+	nivel->addChild(background,0);
+
+	auto background1 = Sprite::create(fondos[1]);
+
+	nivel->addChild(background1, 1);
+
+	background1->setPosition(background1->getContentSize().width, visibleSize.height);
+	background1->setAnchorPoint(Vec2(1, 1));
+	background1->retain();
+
+
+	auto background2 = Sprite::create(fondos[3]);
+	nivel->addChild(background2, 3);
+
+	background2->setPosition(background2->getContentSize().width, visibleSize.height);
+	background2->setAnchorPoint(Vec2(1, 1));
+	background2->retain();
+
 }
 
 
@@ -165,7 +191,7 @@ void Global::abreEstanteria()
 	//rectangulo2->setPosition(Point(visibleSize.width / 2, visibleSize.height - rectangulo2->getBoundingBox().size.height / 2));
 	rectangulo2->setPosition(Point(visibleSize.width,visibleSize.height));
 	rectangulo2->setVisible(true);
-	nivel->addChild(rectangulo2, 2);
+	layerObjects->addChild(rectangulo2, 2);
 }
 
 void Global::recolocaArmasNivel()

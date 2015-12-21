@@ -19,11 +19,15 @@ public:
 
 	int getTipo();
 	int getDaño();
+	void accionColision(Node* objeto);
+	void enableListener(bool estado);
+
 
 private:
 	int daño;
 	int tipo;
 	std::string nombre;
+	cocos2d::EventListenerTouchOneByOne* listener;
 
 
 };

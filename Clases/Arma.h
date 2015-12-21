@@ -22,7 +22,7 @@ public:
 	void setDesdeTienda(bool estado);
 	void setArma(Arma* arma);
 
-	void accion(Arma* a);
+	void accion(Arma* a, cocos2d::Touch* touch);
 
 	void intervalo(int signo);
 	Arma* clon;
@@ -42,7 +42,7 @@ public:
 	bool childEnTienda = false; //esta activa en tienda
 	bool childEnNivel = false; 
 	bool arrastrando = false;
-
+	void accionColision();
 	
 
 private:
@@ -54,13 +54,14 @@ private:
     
 	cocos2d::EventListenerTouchOneByOne* listener;
 
-	int tipo; // 0- las que caen   1-punzantes
+	int tipo; 
 
 	std::string nombre;
 	
 	Arma* esteArma;
 
-	void accionTouch();
+	void accionTouch(cocos2d::Touch* touch);
+
 
 	//void caer(float dt);
 };

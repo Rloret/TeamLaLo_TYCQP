@@ -220,6 +220,7 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 		Director::getInstance()->pushScene(cene);
 		Global::getInstance()->colocaObjetos(0, 10);
 		Global::getInstance()->abreEstanteria();
+		Global::getInstance()->colocaFondo(fondosPasar);
 		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar,0, 10);	
 		break;
 
@@ -235,6 +236,7 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 		Director::getInstance()->pushScene(cene);
 		Global::getInstance()->colocaObjetos(0, 10);
 		Global::getInstance()->abreEstanteria();
+		Global::getInstance()->colocaFondo(fondosPasar);
 		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);	
 		break;
 
@@ -249,7 +251,7 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 		Director::getInstance()->pushScene(cene);
 		Global::getInstance()->colocaObjetos(0, 10);
 		Global::getInstance()->abreEstanteria();
-
+		Global::getInstance()->colocaFondo(fondosPasar);
 		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);	
 		break;
 
@@ -264,6 +266,7 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 		Director::getInstance()->pushScene(cene);
 		Global::getInstance()->colocaObjetos(0, 10);
 		Global::getInstance()->abreEstanteria();
+		Global::getInstance()->colocaFondo(fondosPasar);
 		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);	
 		break;
 
@@ -279,6 +282,7 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 		Director::getInstance()->pushScene(cene);
 		Global::getInstance()->colocaObjetos(0, 10);
 		Global::getInstance()->abreEstanteria();
+		Global::getInstance()->colocaFondo(fondosPasar);
 		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);		
 		break;
 
@@ -293,6 +297,7 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 		Director::getInstance()->pushScene(cene);
 		Global::getInstance()->colocaObjetos(0, 10);
 		Global::getInstance()->abreEstanteria();
+		Global::getInstance()->colocaFondo(fondosPasar);
 		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);
 		break;
 
@@ -307,6 +312,7 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 		Director::getInstance()->pushScene(cene);
 		Global::getInstance()->colocaObjetos(0, 10);
 		Global::getInstance()->abreEstanteria();
+		Global::getInstance()->colocaFondo(fondosPasar);
 		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);
 		break;
 	}

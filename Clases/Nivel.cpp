@@ -24,13 +24,22 @@ Scene* Nivel::createScene(std::vector<std::string> fondos, int i_objetos, int u_
 	auto scene = Scene::createWithPhysics();
 	scene->setTag(101);
 	scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
+
+	auto layerObjects = Layer::create();
+	layerObjects->setTag(103);
+	
+	scene->addChild(layerObjects,20);
+	Global::getInstance()->layerObjects = layerObjects;
+
 	CCLOG("scene mide : %f, %f", scene->getBoundingBox().size.width, scene->getBoundingBox().size.height);
 	auto layer = Nivel::create(fondos, i_objetos, u_objetos);
 	layer->setTag(102);
+	
+	layer->setPhysicsWorld(scene->getPhysicsWorld());
 	Global::getInstance()->nivel = scene;
 
 	CCLOG("Layer mide : %f, %f", layer->getBoundingBox().size.width, layer->getBoundingBox().size.height);
-	scene->addChild(layer);
+	scene->addChild(layer,10);
 
 
 
@@ -74,6 +83,8 @@ bool Nivel::init()
 
 
 void Nivel::preparaNivel(std::vector<std::string> fondos, int i_objetos, int u_objetos) {  // nivel=numero nivel para colocar
+	Global::getInstance()->ellapsedTime = 999.0;
+	Global::getInstance()->currentTime = 0.0;
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	vueltasArsenal = 0;
 	auto ancho = ANCHOARSENAL;
@@ -87,7 +98,7 @@ void Nivel::preparaNivel(std::vector<std::string> fondos, int i_objetos, int u_o
 	addChild(Global::getInstance()->zerrin, 4);
 	colocaZerrin();
 
-	this->schedule(schedule_selector(Nivel::spawnNube), 1.0);
+	this->schedule(schedule_selector(Nivel::spawnNube), 2.0);
 }
 
 void Nivel::displayArmasArsenal()
@@ -270,7 +281,7 @@ void Nivel::simulacion(Ref *pSender){
 		((ZerrinClass *)Global::getInstance()->zerrin)->setCorrer(true);
 	
 
-		this->runAction(Follow::create(Global::getInstance()->zerrin,background->getBoundingBox()));
+		this->runAction(Follow::create(Global::getInstance()->zerrin,muralla->getBoundingBox()));
 
 		
 	}
@@ -409,15 +420,10 @@ void Nivel::colocaFondo(std::vector<std::string> fondos){
 
 	background = Sprite::create(fondos[0]);
 
-	auto limitesEscenario = PhysicsBody::createEdgeBox(Size(background->getContentSize().width,668), PhysicsMaterial(0.5f,0.0f,0.5f),0.3);
-	limitesEscenario->setPositionOffset(Vec2(0, 200));
+	
 	background->retain();
 	background->setPosition(background->getContentSize().width, visibleSize.height);
 	background->setAnchorPoint(Vec2(1, 1));
-	background->setPhysicsBody(limitesEscenario);
-	background->getPhysicsBody()->setContactTestBitmask(true);
-	background->getPhysicsBody()->setCollisionBitmask(true);
-	background->getPhysicsBody()->setDynamic(false);
 	background->setName("Limites");
 	addChild(background,0);
 
@@ -439,6 +445,13 @@ void Nivel::colocaFondo(std::vector<std::string> fondos){
 
 	muralla = Sprite::create(fondos[4]);
 	addChild(muralla, 5);
+	auto limitesEscenario = PhysicsBody::createEdgeBox(Size(background->getContentSize().width, 668), PhysicsMaterial(0.5f, 0.0f, 0.5f), 0.3);
+	limitesEscenario->setPositionOffset(Vec2(0, 200));
+	muralla->setPhysicsBody(limitesEscenario);
+	muralla->getPhysicsBody()->setContactTestBitmask(true);
+	muralla->getPhysicsBody()->setCollisionBitmask(true);
+	muralla->getPhysicsBody()->setDynamic(false);
+	muralla->setName("Limites");
 
 	muralla->setPosition(muralla->getContentSize().width, visibleSize.height);
 	muralla->setAnchorPoint(Vec2(1, 1));
@@ -452,11 +465,12 @@ void Nivel::colocaZerrin()
 	zerrin->setPosition(Point(350 + Global::getInstance()->zerrin->getContentSize().width / 2
 		, visibleSize.height / 3 + zerrin->getContentSize().height/2));
 	zerrin->setRotation(0);
-	zerrin->setPhysicsBody(PhysicsBody::createBox(Global::getInstance()->zerrin->getBoundingBox().size, PhysicsMaterial(20, 0.1, 0)));
+	zerrin->setPhysicsBody(PhysicsBody::createBox(Global::getInstance()->zerrin->getBoundingBox().size, PhysicsMaterial(70, 0.1, 0)));
 	zerrin->getPhysicsBody()->setDynamic(true);
 	zerrin->getPhysicsBody()->setCollisionBitmask(true);
 	zerrin->getPhysicsBody()->setContactTestBitmask(true);
 	zerrin->getPhysicsBody()->setVelocity(Vec2(0.0, 0.0));
+	zerrin->getPhysicsBody()->setVelocityLimit(500.0);
 	zerrin->setState(zerrin->ZERRINFSM::IDLE);
 	zerrin->setVida(10000);
 	zerrin->haLlegado = false;
@@ -465,13 +479,13 @@ void Nivel::colocaZerrin()
 void Nivel::setPhysicsWorld(cocos2d::PhysicsWorld * world)
 {
 	nivelPhysics = world;
-	nivelPhysics->setGravity(Vec2(0, -9.8));
+	nivelPhysics->setGravity(Vec2(0, -200.0));
 }
 
 
 int Nivel::getBackgroundWidth()
 {
-	auto s =background2->getContentSize();
+	auto s =muralla->getContentSize();
 	return s.width;
 }
 
@@ -528,7 +542,7 @@ void Nivel::mueveFondo(float v) {
 
 int Nivel::getPosXFondo()
 {
-	return background->getPositionX();
+	return muralla->getPositionX();
 }
 
 bool Nivel::onContactBegin(cocos2d::PhysicsContact & contact) {
@@ -540,115 +554,70 @@ bool Nivel::onContactBegin(cocos2d::PhysicsContact & contact) {
 	auto nombreb = b->getNode()->getName();
 	auto zerrin = Global::getInstance()->zerrin;
 	if (a->getNode()->getName() == "Limites") {
-		CCLOG("con limites");
 		if (b->getNode()->getName() == "Zerrin") {
 			if ((zerrin->getEstado() == zerrin->ZERRINFSM::GOLPEADO_ALANTE) || (zerrin->getEstado() == zerrin->ZERRINFSM::GOLPEADO_ATRAS)) {
-				CCLOG("posy %f", zerrin->getPositionY());
 				if(zerrin->getPositionY()<=768/2)zerrin->setState(zerrin->ZERRINFSM::SUELO);
 			}
 		}
+		else if (b->getNode()->getName() == "Arma") return false;
 
 	}
 	else if (b->getNode()->getName() == "Limites") {
-		CCLOG("con limites");
-
 		if (a->getNode()->getName() == "Zerrin") {
 			if ((zerrin->getEstado() == zerrin->ZERRINFSM::GOLPEADO_ALANTE) || (zerrin->getEstado() == zerrin->ZERRINFSM::GOLPEADO_ATRAS)) {
-				CCLOG("posy %f", zerrin->getPositionY());
 				if (zerrin->getPositionY()<=768 / 2)zerrin->setState(zerrin->ZERRINFSM::SUELO);
 			}
 		}
+		else if (a->getNode()->getName() == "Arma") return false;
 
 	}
 	else if (a->getNode()->getName() == "Arma") {
-		CCLOG("entro en arma");
 		if (b->getNode()->getName() == "Zerrin") {
 			zerrin->muestraDaño(((Arma*)a->getNode())->getDaño());
-			zerrin->setVida((zerrin)->getVida() - ((Arma*)a->getNode())->getDaño());
-			zerrin->getPhysicsBody()->setVelocity(Vec2(0, 30));
-			((Arma*)a->getNode())->EnableListener(false);
-			if (a->getNode()->getPositionX() >= zerrin->getPositionX()) {
-				zerrin->setState(zerrin->ZERRINFSM::GOLPEADO_ATRAS);
-				//LLamar a funcion en arma que te devuelva segun el tipo que has de hacer->devuelve el vector que modifica posicion a zerrin
-				//Activar las animaciones correspondientes-> otra funcion que segun el tipo hagan los efectos
-				a->setCollisionBitmask(false);
-				a->setContactTestBitmask(false);
-				a->setVelocity(Vec2(-50, 70));
-				a->setAngularVelocity(-20);
-			}
-			else {
-				zerrin->setState(zerrin->ZERRINFSM::GOLPEADO_ALANTE);
-				a->setCollisionBitmask(false);
-				a->setContactTestBitmask(false);
-				a->setVelocity(Vec2(50, 70));
-				a->setAngularVelocity(30);
-			}
-		//	a->getNode()->runAction(FadeOut::create(1.5));
-			Global::getInstance()->ellapsedTime = Global::getInstance()->currentTime;
+			zerrin->setVida(zerrin->getVida() - ((Arma*)b->getNode())->getDaño());
+			zerrin->accionColision(b->getNode()->getPositionX() >= zerrin->getPositionX());
+			((Arma*)a->getNode())->accionColision();
+
 			if (zerrin->getVida() <= 0) {
 				if (zerrin->getChildrenCount() > 0) zerrin->removeAllChildren();
 				Global::getInstance()->katahi->modificaOro(100);
 				goToWinScene();
 			}
-			CCLOG("arma con zerrin"); 
 		}
-		else CCLOG("Con obj");
 	}
 	else if (b->getNode()->getName() == "Arma") {
 		if (a->getNode()->getName() == "Zerrin") {
 			zerrin->muestraDaño(((Arma*)b->getNode())->getDaño());
 			zerrin->setVida(zerrin->getVida() - ((Arma*)b->getNode())->getDaño());
-			zerrin->getPhysicsBody()->setVelocity(Vec2(0, 30));
-			((Arma*)b->getNode())->EnableListener(false);
-			if (b->getNode()->getPositionX() >= zerrin->getPositionX()) {
-				zerrin->setState(zerrin->ZERRINFSM::GOLPEADO_ATRAS);
-				b->setCollisionBitmask(false);
-				b->setContactTestBitmask(false);
-				b->setVelocity(Vec2(-50, 70));
-				b->setAngularVelocity(-20);
-
-
-			}
-			else { 
-				zerrin->setState(zerrin->ZERRINFSM::GOLPEADO_ALANTE);
-				b->setCollisionBitmask(false);
-				b->setContactTestBitmask(false);
-				b->setVelocity(Vec2(50, 70));
-				b->setAngularVelocity(30);
-
-
-			}
-			Global::getInstance()->ellapsedTime = Global::getInstance()->currentTime;
-			//b->getNode()->runAction(FadeOut::create(1.5));
-			//b->getNode()->setPhysicsBody(nullptr);
+			zerrin->accionColision(b->getNode()->getPositionX() >= zerrin->getPositionX());
+			((Arma*)b->getNode())->accionColision();
 			if (zerrin->getVida() <= 0) {
 				if (zerrin->getChildrenCount() > 0) Global::getInstance()->zerrin->removeAllChildren();
 				Global::getInstance()->katahi->modificaOro(100);
 				goToWinScene();
 			}
 		}
-		else{ CCLOG("arma con objeto"); }
 	}
 	else if (b->getNode()->getName() == "Zerrin") {
-		CCLOG("vida antes: %d", Global::getInstance()->zerrin->getVida());
 		if (a->getNode()->getName() == "Objeto") {
-			CCLOG("b es zerrin");
 			zerrin->posicionAnterior =zerrin->getPositionX();
 			if (((ObjetoEscenario*)a->getNode())->getTipo() == 1) {
-				zerrin->setState(zerrin->ZERRINFSM::GOLPEADO_ALANTE);
+				zerrin->setState(zerrin->ZERRINFSM::GOLPEADO_ATRAS);
 				b->setVelocity(Vec2(-300, 100));
-				zerrin->getPhysicsBody()->setAngularVelocity(-10);
-			}
+				zerrin->getPhysicsBody()->setAngularVelocity(-30);
+				}
 
 			else if (((ObjetoEscenario*)a->getNode())->getTipo() == 2) {
 				zerrin->setState(zerrin->ZERRINFSM::GOLPEADO_ATRAS);
 				b->setVelocity(Vec2(-100, 100));
 				zerrin->getPhysicsBody()->setAngularVelocity(10);
-				a->getNode()->runAction(FadeOut::create(0.4));
 			}
+
 			zerrin->muestraDaño(((ObjetoEscenario*)a->getNode())->getDaño());
 			zerrin->setVida(zerrin->getVida() - ((ObjetoEscenario*)a->getNode())->getDaño());
-			a->getNode()->setPhysicsBody(nullptr);
+			//a->getNode()->setPhysicsBody(nullptr);
+			((ObjetoEscenario *)a)->accionColision(a->getNode());
+
 			if (zerrin->getVida() <= 0) {
 				if (zerrin->getChildrenCount() > 0) Global::getInstance()->zerrin->removeAllChildren();
 				Global::getInstance()->katahi->modificaOro(100);
@@ -657,28 +626,26 @@ bool Nivel::onContactBegin(cocos2d::PhysicsContact & contact) {
 		} 
 	}
 	else if (a->getNode()->getName() == "Zerrin") {
-		CCLOG("a es zerrin");
-		CCLOG("vida antes: %d", Global::getInstance()->zerrin->getVida());
-		CCLOG("vida antes: %d", Global::getInstance()->zerrin->getVida());
 		if (b->getNode()->getName() == "Objeto") {
-			CCLOG("b es zerrin");
 			zerrin->posicionAnterior =zerrin->getPositionX();
+
 			if (((ObjetoEscenario*)b->getNode())->getTipo() == 1) {
-				zerrin->setState(zerrin->ZERRINFSM::GOLPEADO_ALANTE);
+				zerrin->setState(zerrin->ZERRINFSM::GOLPEADO_ATRAS);
 				a->setVelocity(Vec2(-300, 100));
-				zerrin->getPhysicsBody()->setAngularVelocity(10);
+				zerrin->getPhysicsBody()->setAngularVelocity(-30);
 			}
 
 			else if (((ObjetoEscenario*)b->getNode())->getTipo() == 2) {
 				zerrin->setState(zerrin->ZERRINFSM::GOLPEADO_ATRAS);
 				a->setVelocity(Vec2(-100, 100));
 				zerrin->getPhysicsBody()->setAngularVelocity(-10);
-				b->getNode()->runAction(FadeOut::create(0.4));
 			}
-		
+
 			zerrin->muestraDaño(((ObjetoEscenario*)b->getNode())->getDaño());
 			zerrin->setVida(zerrin->getVida() - ((ObjetoEscenario*)b->getNode())->getDaño());
-			b->getNode()->setPhysicsBody(nullptr);
+			//b->getNode()->setPhysicsBody(nullptr);
+			((ObjetoEscenario *)b)->accionColision(b->getNode());
+
 			if (zerrin->getVida() <= 0) {
 				if (zerrin->getChildrenCount() > 0) zerrin->removeAllChildren();
 				Global::getInstance()->katahi->modificaOro(100);
@@ -700,10 +667,14 @@ bool Nivel::onContactPreSolve(cocos2d::PhysicsContact & contact, cocos2d::Physic
 	cocos2d::String* sb = cocos2d::String::create(b->getNode()->getName());
 	auto zerrin = Global::getInstance()->zerrin;
 	//CCLOG("presolve de %s con %s", sa->getCString(), sb->getCString());
-	if ((a->getNode()->getPositionY() < 768 / 2) || (b->getNode()->getPositionY() < 768 / 2)) solve.setRestitution(0.0);
-	if ((Global::getInstance()->currentTime - Global::getInstance()->ellapsedTime > 3.0)
-		&& ((zerrin->getEstado() != zerrin->ZERRINFSM::GOLPEADO_ATRAS) || (zerrin->getEstado() != zerrin->ZERRINFSM::GOLPEADO_ALANTE))
+	if ((a->getNode()->getPositionY() < 768 / 2) || (b->getNode()->getPositionY() < 768 / 2)) {
+		solve.setRestitution(0.0);
+		zerrin->getPhysicsBody()->setVelocity(Vec2(zerrin->getPhysicsBody()->getVelocity().x,0));
+	}
+	if (((zerrin->getEstado() == zerrin->ZERRINFSM::GOLPEADO_ATRAS) || (zerrin->getEstado() == zerrin->ZERRINFSM::GOLPEADO_ALANTE))
+		&& (Global::getInstance()->currentTime - Global::getInstance()->ellapsedTime >1.0)
 		&& (zerrin->getPositionY() < 768 / 2)) {
+		CCLOG("Entro coin tiempo %f - %f = %f  ", Global::getInstance()->currentTime, Global::getInstance()->ellapsedTime, Global::getInstance()->currentTime- Global::getInstance()->ellapsedTime);
 		zerrin->setState(zerrin->ZERRINFSM::SUELO);
 		Global::getInstance()->ellapsedTime = Global::getInstance()->currentTime;
 	}

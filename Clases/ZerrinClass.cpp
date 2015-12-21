@@ -73,7 +73,7 @@ void ZerrinClass::muestraDaño(int daño)
 	dañoLabel->enableShadow();
 	dañoLabel->retain();
 	dañoLabel->setPosition(this->getParent()->getParent()->getPositionX() + 1024 / 2, this->getPositionY());
-	this->getParent()->getParent()->addChild(dañoLabel,5);
+	this->getParent()->getParent()->addChild(dañoLabel,90);
 	auto seq = Sequence::create(MoveTo::create(4.0, Vec2(this->getParent()->getParent()->getPositionX()+1024/2, this->getParent()->getContentSize().height+dañoLabel->getContentSize().height)),NULL);
 	dañoLabel->runAction(seq);
 }
@@ -81,6 +81,16 @@ void ZerrinClass::muestraDaño(int daño)
 void ZerrinClass::setCurrentAnimation(cocos2d::Node * anim)
 {
 	this->currentAnimation = (Sprite*)anim;
+}
+
+void ZerrinClass::accionColision(bool atras)
+{
+	//Si interesa añadir un tipo y según si es arma o objeto y su tipo  hacer x cosa
+	if (atras) {
+		this->setState(GOLPEADO_ATRAS);
+	}
+	else this->setState(GOLPEADO_ALANTE);
+	this->getPhysicsBody()->setVelocity(Vec2(0, 30));
 }
 
 
@@ -135,14 +145,17 @@ void ZerrinClass::setState(ZERRINFSM estado)
 	cocos2d::Sprite*zerrinani;
 	switch (estadoz) {
 	case SUELO:
+		this->getPhysicsBody()->setContactTestBitmask(false);
 		CCLOG("me levantare y esas cosis y empiezo a correr");
 		this->getPhysicsBody()->setVelocity(Vec2(0.0,0.0));
 		this->getPhysicsBody()->setAngularVelocity(0);
 		this->runAction(RotateTo::create(1.0, 0));
+		this->getPhysicsBody()->setContactTestBitmask(true);
 		setState(CORRIENDO);
+
 		break;
 	case IDLE:
-		CCLOG("IDLEEEEEEEEEEEEEEEEEEEE");
+		//CCLOG("IDLEEEEEEEEEEEEEEEEEEEE");
 		if (currentAnimation != nullptr) {
 			currentAnimation->stopAllActions();
 			this->removeChild(currentAnimation,true);
@@ -151,7 +164,7 @@ void ZerrinClass::setState(ZERRINFSM estado)
 		break;
 		
 	case CORRIENDO:
-		CCLOG("CORRIENDOOOOOOOOOOOO");
+		//CCLOG("CORRIENDOOOOOOOOOOOO");
 		if (currentAnimation != nullptr) {
 			currentAnimation->stopAllActions();
 			this->removeChild(currentAnimation, true);
@@ -166,7 +179,8 @@ void ZerrinClass::setState(ZERRINFSM estado)
 		velocidad = 0.15;
 		break;
 	case GOLPEADO_ALANTE:
-		CCLOG("GOLPE ALANTE");
+		//CCLOG("GOLPE ALANTE");
+		Global::getInstance()->ellapsedTime = Global::getInstance()->currentTime;
 		if (currentAnimation != nullptr) {
 			currentAnimation->stopAllActions();
 			this->removeChild(currentAnimation, true);
@@ -174,7 +188,8 @@ void ZerrinClass::setState(ZERRINFSM estado)
 		currentAnimation = creaAnimacionesZerrin("cannon__%03d.png", 9, 1.0);
 		break;
 	case GOLPEADO_ATRAS:
-		CCLOG("GOLPE ATRAS");
+		//CCLOG("GOLPE ATRAS");
+		Global::getInstance()->ellapsedTime = Global::getInstance()->currentTime;
 		if (currentAnimation != nullptr) {
 			currentAnimation->stopAllActions();
 			this->removeChild(currentAnimation, true);
@@ -194,15 +209,16 @@ ZerrinClass::ZERRINFSM ZerrinClass::getEstado()
 void ZerrinClass::update(float dt)
 {
 	Global::getInstance()->currentTime += dt;
+	
 	float velocidadactual = velocidad * Director::getInstance()->getVisibleSize().width * dt;
 	if (estadoz == ENTRANDO) {
-		CCLOG("ENTRANDO");
+		//CCLOG("ENTRANDO");
 		velocidad = 0.15;
 		velocidadactual = velocidad * Director::getInstance()->getVisibleSize().width * dt;
 		posicionAnterior = this->getPositionX();
 		this->setPositionX(this->getPositionX() + velocidadactual);
 		if (this->getPositionX() >= 1024 / 4) {
-			CCLOG("lo pongo a correr");
+			//CCLOG("lo pongo a correr");
 			setState(CORRIENDO);
 		}
 		
@@ -235,7 +251,7 @@ void ZerrinClass::update(float dt)
 			velocidadactual = velocidad * Director::getInstance()->getVisibleSize().width * dt;
 			((Nivel*)(Director::getInstance()->getRunningScene()))->mueveFondo(velocidadactual);
 			posicionAnterior = this->getPositionX();
-			CCLOG("rotation %f", this->getRotation());
+			//CCLOG("rotation %f", this->getRotation());
 		
 	}
 	if (estadoz == GOLPEADO_ALANTE) {
