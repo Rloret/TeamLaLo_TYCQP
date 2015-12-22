@@ -43,7 +43,8 @@ public:
 	static Nivel* create(std::vector<std::string> fondos, int i_objetos, int u_objetos);
 	Nivel(std::vector<std::string> fondos, int i_objetos, int u_objetos);
 	~Nivel();
-
+	cocos2d::PhysicsWorld *nivelPhysics;
+	cocos2d::PhysicsWorld * getPhysicsWorld();
 	cocos2d::Sprite* background;
 
 
@@ -94,7 +95,7 @@ private:
 	cocos2d::Sprite* muralla;
 	cocos2d::Sprite* nubes;
 	
-	cocos2d::PhysicsWorld *nivelPhysics;
+
 	
 	void setPhysicsWorld(cocos2d::PhysicsWorld* world);
 

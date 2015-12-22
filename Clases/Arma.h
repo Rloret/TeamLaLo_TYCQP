@@ -23,18 +23,20 @@ public:
 	void setArma(Arma* arma);
 
 	void accion(Arma* a, cocos2d::Touch* touch);
-
+	void accionColision(int tipoDelArma);
 	void intervalo(int signo);
+	void reactivaBitmasks();
 	Arma* clon;
 	Arma* getArma();
 	Arma* ClonarArma(Arma*a);
 
 	int getTipo();
-	std::string getNombre();
 	int getDaño();
 	int getPrecio();
 	int getMechones();
 	int parpadeo=1;
+
+	std::string getNombre();
 
 	bool getDesdeTienda();
 	bool enNivel = false; 
@@ -42,7 +44,11 @@ public:
 	bool childEnTienda = false; //esta activa en tienda
 	bool childEnNivel = false; 
 	bool arrastrando = false;
-	void accionColision();
+
+	cocos2d::Sprite* pivote;
+	cocos2d::PhysicsJointDistance* jointDemolicion;
+	Arma* bolaDemolicion;
+
 	
 
 private:

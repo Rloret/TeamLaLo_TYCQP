@@ -45,9 +45,7 @@ void Global::creaArmas()
 	Texture2D* d = Director::getInstance()->getTextureCache()->addImage("images/Armas/dagas.png");
 	Arma* dagas = Arma::create(d,20,"dagas",0,50, random(0, 1));
 	dagas->setVisible(false);
-	//dagas->setScale(84/dagas->getContentSize().width,84/dagas->getContentSize().height);
 	dagas->setPosition(-200, -200);
-	//dagas->setAnchorPoint(Vec2(0.5,0.5));
 	armasTotales.push_back(dagas);
 
 	//Bola de demolicion
@@ -63,9 +61,6 @@ void Global::creaArmas()
 	Arma* pinchos = Arma::create(c, 100, "pinchos", 3, 0, 0);
 	pinchos->setVisible(false);
 	pinchos->setPosition(-200, -200);
-	pinchos->setColor(Color3B::RED);
-	//bola->setAnchorPoint(Vec2(0.5, 0.5));
-	//bola->setScale(84/ bola->getContentSize().width, 84 / bola->getContentSize().height);
 	armasTotales.push_back(pinchos);
 
 	Texture2D* t = Director::getInstance()->getTextureCache()->addImage("images/Armas/arma.png");
@@ -138,7 +133,7 @@ void Global::colocaObjetos(int i_objetos, int u_objetos)
 		Vec2 punto = Vec2(((i + 1) * 1024 * 1.5) / (u_objetos - i_objetos)
 			+ 1024 
 			- Global::getInstance()->ObjetosTotalesEscenarios[i]->getContentSize().width
-			,(objetodeturno->getTipo()==1)? Director::getInstance()->getVisibleSize().height / 2: Director::getInstance()->getVisibleSize().height -objetodeturno->getContentSize().height*2);
+			,(objetodeturno->getTipo()==1)? Director::getInstance()->getVisibleSize().height / 2: Director::getInstance()->getVisibleSize().height -objetodeturno->getContentSize().height*1.5);
 		objetodeturno->setPosition(punto);
 		objetodeturno->setPhysicsBody(nullptr);
 		layerObjects->addChild(objetodeturno, 3);

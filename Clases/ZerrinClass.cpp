@@ -83,14 +83,53 @@ void ZerrinClass::setCurrentAnimation(cocos2d::Node * anim)
 	this->currentAnimation = (Sprite*)anim;
 }
 
-void ZerrinClass::accionColision(bool atras)
+void ZerrinClass::accionColision(bool atras,int objeto, int tipoObjeto) // 1 armas 0 objetos
 {
 	//Si interesa añadir un tipo y según si es arma o objeto y su tipo  hacer x cosa
 	if (atras) {
 		this->setState(GOLPEADO_ATRAS);
 	}
-	else this->setState(GOLPEADO_ALANTE);
-	this->getPhysicsBody()->setVelocity(Vec2(0, 30));
+	else {
+		this->setState(GOLPEADO_ALANTE);
+	}
+	if (objeto == 0) {
+		switch (tipoObjeto)
+		{
+		case 1:
+			this->getPhysicsBody()->setVelocity(Vec2(-300, 200));
+			this->getPhysicsBody()->setAngularVelocity(-30);
+			break;
+		case 2:
+			this->getPhysicsBody()->setVelocity(Vec2(-100, 200));
+			this->getPhysicsBody()->setAngularVelocity(-10);
+			break;
+		case 3:
+			this->getPhysicsBody()->setVelocity(Vec2(0, 10));
+			break;
+		default:
+			break;
+		}
+	}
+	else if (objeto == 1) {
+	
+		switch (tipoObjeto)
+		{
+		case 2:
+			CCLOG("HELLLO?");
+			this->getPhysicsBody()->setVelocity(Vec2(0, 200));
+			break;
+		case 3:
+
+			this->getPhysicsBody()->setVelocity(Vec2(0, 100));
+			break;
+		case 1:
+		case 4:
+		default:
+			this->getPhysicsBody()->setVelocity(Vec2(0, 30));
+			break;
+		}
+	}
+
 }
 
 
@@ -149,7 +188,7 @@ void ZerrinClass::setState(ZERRINFSM estado)
 		CCLOG("me levantare y esas cosis y empiezo a correr");
 		this->getPhysicsBody()->setVelocity(Vec2(0.0,0.0));
 		this->getPhysicsBody()->setAngularVelocity(0);
-		this->runAction(RotateTo::create(1.0, 0));
+		this->runAction(RotateTo::create(0.5, 0));
 		this->getPhysicsBody()->setContactTestBitmask(true);
 		setState(CORRIENDO);
 

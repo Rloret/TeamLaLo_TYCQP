@@ -29,7 +29,7 @@ public:
 	void setCorrer(bool c);
 	void muestraDaño(int daño);
 	void setCurrentAnimation(cocos2d::Node* anim);
-	void accionColision(bool atras);
+	void accionColision(bool atras,int objeto,int tipoObjeto);
 	cocos2d::Sprite* creaAnimacionesZerrin(const char * format, int count,float multiplicadorvelocidad);
 	cocos2d::Vector<cocos2d::SpriteFrame *> getAnimation(const char *format, int count);
 	cocos2d::Sprite aspecto;

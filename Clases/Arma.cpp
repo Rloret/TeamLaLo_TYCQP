@@ -101,9 +101,15 @@ void Arma::arrastraArma(cocos2d::Vec2 vector)
 		if (vector.x > visibleSize.width - this->getBoundingBox().size.width) vector.x = visibleSize.width - this->getBoundingBox().size.width / 2;
 		else if (vector.x < this->getBoundingBox().size.width) vector.x = this->getBoundingBox().size.height / 2;
 		break;
+	case 2:
+		vector.y = 640;
+
+		if (vector.x > visibleSize.width - this->getBoundingBox().size.width) vector.x = visibleSize.width - this->getBoundingBox().size.width / 2;
+		else if (vector.x < this->getBoundingBox().size.width) vector.x = this->getBoundingBox().size.height / 2;
+		break;
+		break;
 	case 0:
 	case 1:
-	case 2:
 	default:
 
 		if (vector.y >768 - this->getBoundingBox().size.height) vector.y = 768 - this->getBoundingBox().size.height / 2;
@@ -148,6 +154,7 @@ void Arma::accionTouch(cocos2d::Touch* touch){
 		else if (Global::getInstance()->juegoEnCurso) {
 			if (!colocada) this->colocada = true;
 			accion(this,touch);
+			this->EnableListener(false);//
 			//segun el tipo configurar timers o no->
 		}
 	}
@@ -175,6 +182,7 @@ void Arma::accion(Arma * a, cocos2d::Touch* touch)
 	case 0:  //las que caen
 		a->setPhysicsBody(PhysicsBody::createBox(a->getBoundingBox().size, cocos2d::PhysicsMaterial(10000, 1, 0.5)));
 		a->getPhysicsBody()->setContactTestBitmask(true);
+		a->getPhysicsBody()->setCollisionBitmask(false);
 		for (int i = 0; i < Global::getInstance()->layerObjects->getChildrenCount(); i++) {
 			if (hijos.at(i) == a) {
 				Global::getInstance()->layerObjects->removeChild(a);
@@ -188,6 +196,7 @@ void Arma::accion(Arma * a, cocos2d::Touch* touch)
 	case 1:  //las que caen ligeras
 		a->setPhysicsBody(PhysicsBody::createBox(a->getBoundingBox().size, cocos2d::PhysicsMaterial(10.0, 0.2, 1.0)));
 		a->getPhysicsBody()->setContactTestBitmask(true);
+		a->getPhysicsBody()->setCollisionBitmask(false);
 		for (int i = 0; i < Global::getInstance()->layerObjects->getChildrenCount(); i++) {
 			if (hijos.at(i) == a) {
 				Global::getInstance()->layerObjects->removeChild(a);
@@ -200,9 +209,7 @@ void Arma::accion(Arma * a, cocos2d::Touch* touch)
 		break;
 
 	case 2: //bola demolicion
-		a->setPhysicsBody(PhysicsBody::createCircle(a->getBoundingBox().size.width / 2,PhysicsMaterial(1000,0.5,0.1)));
-		a->getPhysicsBody()->setContactTestBitmask(true);
-		a->getPhysicsBody()->setVelocity(Vec2(0, 100));
+		//((Nivel*)Global::getInstance()->nivel)->getPhysicsWorld()->addJoint(jointDemolicion);
 		for (int i = 0; i < Global::getInstance()->layerObjects->getChildrenCount(); i++) {
 			if (hijos.at(i) == a) {
 				Global::getInstance()->layerObjects->removeChild(a);
@@ -211,7 +218,32 @@ void Arma::accion(Arma * a, cocos2d::Touch* touch)
 				break;
 			}
 		}
-		a->getPhysicsBody()->setVelocity(Vec2(0, -100));
+		bolaDemolicion = this->ClonarArma(this);
+		this->setTexture(Director::getInstance()->getTextureCache()->addImage("images/Armas/senuelo.png"));
+		pivote = Sprite::create("images/Armas/pivote.png");
+		pivote->setAnchorPoint(Vec2(0.5, 0.5));
+		//Global::getInstance()->nivel->getChildByTag(102)->addChild(bolaDemolicion, 80);
+		this->addChild(bolaDemolicion);
+		bolaDemolicion->setAnchorPoint(Vec2(-3.5, 0));
+		pivote->setPhysicsBody(PhysicsBody::createCircle(a->getBoundingBox().size.width / 2, PhysicsMaterial(1000, 0.5, 0.1)));
+		pivote->getPhysicsBody()->setContactTestBitmask(false);
+		pivote->getPhysicsBody()->setCollisionBitmask(false);
+		pivote->getPhysicsBody()->setDynamic(false);
+
+		this->addChild(pivote);
+
+		bolaDemolicion->setPhysicsBody(PhysicsBody::createCircle(a->getBoundingBox().size.width / 2, PhysicsMaterial(10000, 0.0, 0.0)));
+		bolaDemolicion->getPhysicsBody()->setContactTestBitmask(true);
+		bolaDemolicion->getPhysicsBody()->setCollisionBitmask(true);
+		bolaDemolicion->getPhysicsBody()->setVelocity(Vec2(0, -400));
+		bolaDemolicion->getPhysicsBody()->setLinearDamping(0.1f);
+		bolaDemolicion->setName("Arma");
+		bolaDemolicion->colocada = true;
+		bolaDemolicion->enNivel = true;
+
+		jointDemolicion = PhysicsJointDistance::construct(pivote->getPhysicsBody(), bolaDemolicion->getPhysicsBody(), Point::ZERO, Point::ZERO);
+
+		Global::getInstance()->zerrin->getPhysicsBody()->getWorld()->addJoint(jointDemolicion);
 		break;
 	case 3:	
 		a->setPhysicsBody(PhysicsBody::createBox(a->getBoundingBox().size/2,PhysicsMaterial(100,0.7,0.0)));
@@ -255,6 +287,13 @@ void Arma::intervalo(int signo)
 	}
 }
 
+void Arma::reactivaBitmasks()
+{
+	this->getPhysicsBody()->setCollisionBitmask(true);
+	this->getPhysicsBody()->setContactTestBitmask(true);
+
+}
+
 Arma* Arma::getArma()
 {
 	return esteArma;
@@ -290,10 +329,13 @@ bool Arma::getDesdeTienda()
 	return desdeTienda;
 }
 
-void Arma::accionColision()
+void Arma::accionColision(int tipoDelArma)
 {
-	auto cuerpoFisicas = this->getPhysicsBody();
+	PhysicsBody* cuerpoFisicas; 
+	cuerpoFisicas = this->getPhysicsBody();
 	this->EnableListener(false);
+
+
 	switch (tipo) {
 	case 3:
 		break;
@@ -301,13 +343,14 @@ void Arma::accionColision()
 	case 1:
 		cuerpoFisicas->setCollisionBitmask(false);
 		cuerpoFisicas->setContactTestBitmask(false);
-		this->getPhysicsBody()->setVelocity(Vec2(-10,0));
+		this->getPhysicsBody()->setVelocity(Vec2(-40,-40));
 		cuerpoFisicas->setAngularVelocity(-20);
 		this->runAction(FadeOut::create(1.5));
 		break;
 	case 2:
-		cuerpoFisicas->setCollisionBitmask(true);
-		cuerpoFisicas->setContactTestBitmask(false);
+		this->getPhysicsBody()->setCollisionBitmask(false);
+		this->getPhysicsBody()->setContactTestBitmask(false);
+		this->runAction(cocos2d::Sequence::create(cocos2d:: DelayTime::create(3.0), cocos2d::CallFunc::create(CC_CALLBACK_0(Arma::reactivaBitmasks, this)), NULL));
 		break;
 	default:
 		break;

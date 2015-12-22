@@ -498,6 +498,11 @@ Nivel::~Nivel()
 {
 }
 
+cocos2d::PhysicsWorld * Nivel::getPhysicsWorld()
+{
+	return nivelPhysics;
+}
+
 cocos2d::Rect Nivel::getBackgroundSize()
 {
 	return 	background->getBoundingBox();
@@ -575,8 +580,8 @@ bool Nivel::onContactBegin(cocos2d::PhysicsContact & contact) {
 		if (b->getNode()->getName() == "Zerrin") {
 			zerrin->muestraDaño(((Arma*)a->getNode())->getDaño());
 			zerrin->setVida(zerrin->getVida() - ((Arma*)b->getNode())->getDaño());
-			zerrin->accionColision(b->getNode()->getPositionX() >= zerrin->getPositionX());
-			((Arma*)a->getNode())->accionColision();
+			((Arma*)a->getNode())->accionColision(((Arma*)a->getNode())->getTipo());
+			zerrin->accionColision(b->getNode()->getPositionX() >= zerrin->getPositionX(),1, ((Arma*)a->getNode())->getTipo());
 
 			if (zerrin->getVida() <= 0) {
 				if (zerrin->getChildrenCount() > 0) zerrin->removeAllChildren();
@@ -589,8 +594,8 @@ bool Nivel::onContactBegin(cocos2d::PhysicsContact & contact) {
 		if (a->getNode()->getName() == "Zerrin") {
 			zerrin->muestraDaño(((Arma*)b->getNode())->getDaño());
 			zerrin->setVida(zerrin->getVida() - ((Arma*)b->getNode())->getDaño());
-			zerrin->accionColision(b->getNode()->getPositionX() >= zerrin->getPositionX());
-			((Arma*)b->getNode())->accionColision();
+			((Arma*)b->getNode())->accionColision(((Arma*)b->getNode())->getTipo());
+			zerrin->accionColision(b->getNode()->getPositionX() >= zerrin->getPositionX(), 1, ((Arma*)a->getNode())->getTipo());
 			if (zerrin->getVida() <= 0) {
 				if (zerrin->getChildrenCount() > 0) Global::getInstance()->zerrin->removeAllChildren();
 				Global::getInstance()->katahi->modificaOro(100);
@@ -600,22 +605,12 @@ bool Nivel::onContactBegin(cocos2d::PhysicsContact & contact) {
 	}
 	else if (b->getNode()->getName() == "Zerrin") {
 		if (a->getNode()->getName() == "Objeto") {
+
 			zerrin->posicionAnterior =zerrin->getPositionX();
-			if (((ObjetoEscenario*)a->getNode())->getTipo() == 1) {
-				zerrin->setState(zerrin->ZERRINFSM::GOLPEADO_ATRAS);
-				b->setVelocity(Vec2(-300, 100));
-				zerrin->getPhysicsBody()->setAngularVelocity(-30);
-				}
-
-			else if (((ObjetoEscenario*)a->getNode())->getTipo() == 2) {
-				zerrin->setState(zerrin->ZERRINFSM::GOLPEADO_ATRAS);
-				b->setVelocity(Vec2(-100, 100));
-				zerrin->getPhysicsBody()->setAngularVelocity(10);
-			}
-
 			zerrin->muestraDaño(((ObjetoEscenario*)a->getNode())->getDaño());
 			zerrin->setVida(zerrin->getVida() - ((ObjetoEscenario*)a->getNode())->getDaño());
-			//a->getNode()->setPhysicsBody(nullptr);
+
+			zerrin->accionColision(a->getNode()->getPositionX() >= zerrin->getPositionX(), 0, ((ObjetoEscenario*)a->getNode())->getTipo());
 			((ObjetoEscenario *)a)->accionColision(a->getNode());
 
 			if (zerrin->getVida() <= 0) {
@@ -628,23 +623,13 @@ bool Nivel::onContactBegin(cocos2d::PhysicsContact & contact) {
 	else if (a->getNode()->getName() == "Zerrin") {
 		if (b->getNode()->getName() == "Objeto") {
 			zerrin->posicionAnterior =zerrin->getPositionX();
-
-			if (((ObjetoEscenario*)b->getNode())->getTipo() == 1) {
-				zerrin->setState(zerrin->ZERRINFSM::GOLPEADO_ATRAS);
-				a->setVelocity(Vec2(-300, 100));
-				zerrin->getPhysicsBody()->setAngularVelocity(-30);
-			}
-
-			else if (((ObjetoEscenario*)b->getNode())->getTipo() == 2) {
-				zerrin->setState(zerrin->ZERRINFSM::GOLPEADO_ATRAS);
-				a->setVelocity(Vec2(-100, 100));
-				zerrin->getPhysicsBody()->setAngularVelocity(-10);
-			}
-
 			zerrin->muestraDaño(((ObjetoEscenario*)b->getNode())->getDaño());
 			zerrin->setVida(zerrin->getVida() - ((ObjetoEscenario*)b->getNode())->getDaño());
-			//b->getNode()->setPhysicsBody(nullptr);
+
+			zerrin->accionColision(b->getNode()->getPositionX() >= zerrin->getPositionX(), 0, ((ObjetoEscenario*)b->getNode())->getTipo());
 			((ObjetoEscenario *)b)->accionColision(b->getNode());
+
+			
 
 			if (zerrin->getVida() <= 0) {
 				if (zerrin->getChildrenCount() > 0) zerrin->removeAllChildren();
@@ -669,15 +654,16 @@ bool Nivel::onContactPreSolve(cocos2d::PhysicsContact & contact, cocos2d::Physic
 	//CCLOG("presolve de %s con %s", sa->getCString(), sb->getCString());
 	if ((a->getNode()->getPositionY() < 768 / 2) || (b->getNode()->getPositionY() < 768 / 2)) {
 		solve.setRestitution(0.0);
-		zerrin->getPhysicsBody()->setVelocity(Vec2(zerrin->getPhysicsBody()->getVelocity().x,0));
+		//zerrin->getPhysicsBody()->setVelocity(Vec2(zerrin->getPhysicsBody()->getVelocity().x,0));
 	}
-	if (((zerrin->getEstado() == zerrin->ZERRINFSM::GOLPEADO_ATRAS) || (zerrin->getEstado() == zerrin->ZERRINFSM::GOLPEADO_ALANTE))
+	/*if (((zerrin->getEstado() == zerrin->ZERRINFSM::GOLPEADO_ATRAS) || (zerrin->getEstado() == zerrin->ZERRINFSM::GOLPEADO_ALANTE))
+		&& (zerrin->posicionAnterior == zerrin->getPositionX())
 		&& (Global::getInstance()->currentTime - Global::getInstance()->ellapsedTime >1.0)
 		&& (zerrin->getPositionY() < 768 / 2)) {
 		CCLOG("Entro coin tiempo %f - %f = %f  ", Global::getInstance()->currentTime, Global::getInstance()->ellapsedTime, Global::getInstance()->currentTime- Global::getInstance()->ellapsedTime);
 		zerrin->setState(zerrin->ZERRINFSM::SUELO);
 		Global::getInstance()->ellapsedTime = Global::getInstance()->currentTime;
-	}
+	}*/
 	return true;
 }
 
