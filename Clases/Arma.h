@@ -24,8 +24,9 @@ public:
 
 	void accion(Arma* a, cocos2d::Touch* touch);
 	void accionColision(int tipoDelArma);
-	void intervalo(int signo);
+	void intervalo(int tipo);
 	void reactivaBitmasks();
+
 	Arma* clon;
 	Arma* getArma();
 	Arma* ClonarArma(Arma*a);

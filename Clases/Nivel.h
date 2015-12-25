@@ -25,6 +25,7 @@ public:
 	void spawnNube(float dt);
 	void mueveFondo(float v);
 	void addContactListener();
+
 	//void colocaObjetos(int i_objetos, int u_objetos);
 
 	cocos2d::Rect getBackgroundSize();
@@ -37,6 +38,7 @@ public:
 
 	bool onContactBegin(cocos2d::PhysicsContact & contact);
 	bool onContactPreSolve(cocos2d::PhysicsContact & contact, cocos2d::PhysicsContactPreSolve & solve);
+	void onContactPostSolve(cocos2d::PhysicsContact& contact, const cocos2d::PhysicsContactPostSolve& solve);
 
 	cocos2d::EventListenerPhysicsContact * listenerColision;
 

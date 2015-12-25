@@ -47,8 +47,6 @@ bool MenuStartScene::init()
 		CC_CALLBACK_1(MenuStartScene::goToTiendaScene, this));
 	auto levelsBtn = MenuItemImage::create("images/MenuStartScene/levels_btn.png", "images/MenuStartScene/levels_btn.png",
 		CC_CALLBACK_1(MenuStartScene::goToLevelsScene, this));
-	//Los listener revientan en funcion de las transiciones, como de momento no vamos a realizar nada con los listenrs y este fragmento de codigo era una prueba
-	//se comenta y se debugueará más adelante
 
 
 	auto menu1 = Menu::create( logrosBtn,vestuarioBtn,tiendaBtn,levelsBtn,NULL);
@@ -65,7 +63,7 @@ bool MenuStartScene::init()
 
 
 	//Fondo
-	auto background = Sprite::create("images/MenuStartScene/fondo_MenuStartScene.png");
+	auto background = Sprite::create("images/MenuStartScene/fondo_mainMenu.png");
 	background->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
 	addChild(background, 0);
 	return true;

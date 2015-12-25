@@ -10,6 +10,7 @@
 #include "ObjetoEscenario.h"
 #include "Arma.h"
 #include "WinScene.h"
+#include "chipmunk.h"
 USING_NS_CC;
 
 #define ANCHOARSENAL ((Global::getInstance()->visibleSize.width*4)/6);
@@ -456,6 +457,7 @@ void Nivel::colocaFondo(std::vector<std::string> fondos){
 	muralla->setPosition(muralla->getContentSize().width, visibleSize.height);
 	muralla->setAnchorPoint(Vec2(1, 1));
 	muralla->retain();
+
 }
 
 void Nivel::colocaZerrin()
@@ -465,12 +467,14 @@ void Nivel::colocaZerrin()
 	zerrin->setPosition(Point(350 + Global::getInstance()->zerrin->getContentSize().width / 2
 		, visibleSize.height / 3 + zerrin->getContentSize().height/2));
 	zerrin->setRotation(0);
-	zerrin->setPhysicsBody(PhysicsBody::createBox(Global::getInstance()->zerrin->getBoundingBox().size, PhysicsMaterial(70, 0.1, 0)));
+	zerrin->setPhysicsBody(PhysicsBody::createBox(Global::getInstance()->zerrin->getBoundingBox().size, PhysicsMaterial(70.0, 0.0f, 0)));
 	zerrin->getPhysicsBody()->setDynamic(true);
 	zerrin->getPhysicsBody()->setCollisionBitmask(true);
 	zerrin->getPhysicsBody()->setContactTestBitmask(true);
 	zerrin->getPhysicsBody()->setVelocity(Vec2(0.0, 0.0));
-	zerrin->getPhysicsBody()->setVelocityLimit(500.0);
+	zerrin->getPhysicsBody()->setVelocityLimit(1500.0);
+	zerrin->getPhysicsBody()->setAngularDamping(0.2);
+	zerrin->getPhysicsBody()->setLinearDamping(0.3);
 	zerrin->setState(zerrin->ZERRINFSM::IDLE);
 	zerrin->setVida(10000);
 	zerrin->haLlegado = false;
@@ -480,6 +484,8 @@ void Nivel::setPhysicsWorld(cocos2d::PhysicsWorld * world)
 {
 	nivelPhysics = world;
 	nivelPhysics->setGravity(Vec2(0, -200.0));
+	nivelPhysics->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
+
 }
 
 
@@ -563,6 +569,7 @@ bool Nivel::onContactBegin(cocos2d::PhysicsContact & contact) {
 			if ((zerrin->getEstado() == zerrin->ZERRINFSM::GOLPEADO_ALANTE) || (zerrin->getEstado() == zerrin->ZERRINFSM::GOLPEADO_ATRAS)) {
 				if(zerrin->getPositionY()<=768/2)zerrin->setState(zerrin->ZERRINFSM::SUELO);
 			}
+			else zerrin->getPhysicsBody()->setVelocity(Vec2(0, 0));
 		}
 		else if (b->getNode()->getName() == "Arma") return false;
 
@@ -572,6 +579,7 @@ bool Nivel::onContactBegin(cocos2d::PhysicsContact & contact) {
 			if ((zerrin->getEstado() == zerrin->ZERRINFSM::GOLPEADO_ALANTE) || (zerrin->getEstado() == zerrin->ZERRINFSM::GOLPEADO_ATRAS)) {
 				if (zerrin->getPositionY()<=768 / 2)zerrin->setState(zerrin->ZERRINFSM::SUELO);
 			}
+			else zerrin->getPhysicsBody()->setVelocity(Vec2(0, 0));
 		}
 		else if (a->getNode()->getName() == "Arma") return false;
 
@@ -581,7 +589,7 @@ bool Nivel::onContactBegin(cocos2d::PhysicsContact & contact) {
 			zerrin->muestraDaño(((Arma*)a->getNode())->getDaño());
 			zerrin->setVida(zerrin->getVida() - ((Arma*)b->getNode())->getDaño());
 			((Arma*)a->getNode())->accionColision(((Arma*)a->getNode())->getTipo());
-			zerrin->accionColision(b->getNode()->getPositionX() >= zerrin->getPositionX(),1, ((Arma*)a->getNode())->getTipo());
+			zerrin->accionColision(a->getNode()->getPositionX() >= zerrin->getPositionX(),1, ((Arma*)a->getNode())->getTipo());
 
 			if (zerrin->getVida() <= 0) {
 				if (zerrin->getChildrenCount() > 0) zerrin->removeAllChildren();
@@ -595,7 +603,7 @@ bool Nivel::onContactBegin(cocos2d::PhysicsContact & contact) {
 			zerrin->muestraDaño(((Arma*)b->getNode())->getDaño());
 			zerrin->setVida(zerrin->getVida() - ((Arma*)b->getNode())->getDaño());
 			((Arma*)b->getNode())->accionColision(((Arma*)b->getNode())->getTipo());
-			zerrin->accionColision(b->getNode()->getPositionX() >= zerrin->getPositionX(), 1, ((Arma*)a->getNode())->getTipo());
+			zerrin->accionColision(b->getNode()->getPositionX() >= zerrin->getPositionX(), 1, ((Arma*)b->getNode())->getTipo());
 			if (zerrin->getVida() <= 0) {
 				if (zerrin->getChildrenCount() > 0) Global::getInstance()->zerrin->removeAllChildren();
 				Global::getInstance()->katahi->modificaOro(100);
@@ -651,21 +659,24 @@ bool Nivel::onContactPreSolve(cocos2d::PhysicsContact & contact, cocos2d::Physic
 	cocos2d::String* sa = cocos2d::String::create(a->getNode()->getName());
 	cocos2d::String* sb = cocos2d::String::create(b->getNode()->getName());
 	auto zerrin = Global::getInstance()->zerrin;
-	//CCLOG("presolve de %s con %s", sa->getCString(), sb->getCString());
-	if ((a->getNode()->getPositionY() < 768 / 2) || (b->getNode()->getPositionY() < 768 / 2)) {
+	if ((a->getNode()->getName() == "Zerrin"&& b->getNode()->getName() == "Limites") || (b->getNode()->getName() == "Zerrin"&& a->getNode()->getName() == "Limites")) {
 		solve.setRestitution(0.0);
-		//zerrin->getPhysicsBody()->setVelocity(Vec2(zerrin->getPhysicsBody()->getVelocity().x,0));
 	}
-	/*if (((zerrin->getEstado() == zerrin->ZERRINFSM::GOLPEADO_ATRAS) || (zerrin->getEstado() == zerrin->ZERRINFSM::GOLPEADO_ALANTE))
-		&& (zerrin->posicionAnterior == zerrin->getPositionX())
-		&& (Global::getInstance()->currentTime - Global::getInstance()->ellapsedTime >1.0)
-		&& (zerrin->getPositionY() < 768 / 2)) {
-		CCLOG("Entro coin tiempo %f - %f = %f  ", Global::getInstance()->currentTime, Global::getInstance()->ellapsedTime, Global::getInstance()->currentTime- Global::getInstance()->ellapsedTime);
-		zerrin->setState(zerrin->ZERRINFSM::SUELO);
-		Global::getInstance()->ellapsedTime = Global::getInstance()->currentTime;
-	}*/
 	return true;
 }
+
+void Nivel::onContactPostSolve(PhysicsContact & contact, const PhysicsContactPostSolve & solve)
+{
+	PhysicsBody*a = contact.getShapeA()->getBody();
+	PhysicsBody*b = contact.getShapeB()->getBody();
+	if (((a->getNode()->getName() == "Zerrin"&& b->getNode()->getName() == "Limites") || (b->getNode()->getName() == "Zerrin"&& a->getNode()->getName() == "Limites"))
+		&& (Global::getInstance()->zerrin->getEstado() == Global::getInstance()->zerrin->ZERRINFSM::CORRIENDO ||
+			Global::getInstance()->zerrin->getEstado() == Global::getInstance()->zerrin->ZERRINFSM::IDLE)) {
+		if (Global::getInstance()->zerrin->getPhysicsBody()->getVelocity().y > 0)
+			Global::getInstance()->zerrin->getPhysicsBody()->setVelocity(Vec2(0, 0));
+	}
+}
+
 
 
 void Nivel::addContactListener()
@@ -674,6 +685,7 @@ void Nivel::addContactListener()
 
 	this->listenerColision->onContactBegin = CC_CALLBACK_1(Nivel::onContactBegin, this);
 	this->listenerColision->onContactPreSolve = CC_CALLBACK_2(Nivel::onContactPreSolve, this);
+	this->listenerColision->onContactPostSolve = CC_CALLBACK_2(Nivel::onContactPostSolve, this);
 	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listenerColision, this);
 }
 

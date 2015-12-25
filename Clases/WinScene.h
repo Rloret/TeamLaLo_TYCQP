@@ -2,6 +2,20 @@
 #define __WinScene_SCENE_H__
 #include "cocos2d.h"
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class WinScene : public cocos2d::Layer
 {
 public:

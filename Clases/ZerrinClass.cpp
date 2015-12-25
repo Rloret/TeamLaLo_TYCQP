@@ -3,6 +3,7 @@
 #include"proj.win32\levelsMenuScene.h"
 #include "Global.h"
 #include "Nivel.h"
+#include "Animacion.h"
 
 USING_NS_CC;
 
@@ -85,11 +86,13 @@ void ZerrinClass::setCurrentAnimation(cocos2d::Node * anim)
 
 void ZerrinClass::accionColision(bool atras,int objeto, int tipoObjeto) // 1 armas 0 objetos
 {
-	//Si interesa añadir un tipo y según si es arma o objeto y su tipo  hacer x cosa
+	int direccion;
 	if (atras) {
+		direccion = -1;
 		this->setState(GOLPEADO_ATRAS);
 	}
 	else {
+		direccion = 1;
 		this->setState(GOLPEADO_ALANTE);
 	}
 	if (objeto == 0) {
@@ -115,15 +118,21 @@ void ZerrinClass::accionColision(bool atras,int objeto, int tipoObjeto) // 1 arm
 		switch (tipoObjeto)
 		{
 		case 2:
-			CCLOG("HELLLO?");
 			this->getPhysicsBody()->setVelocity(Vec2(0, 200));
 			break;
 		case 3:
 
 			this->getPhysicsBody()->setVelocity(Vec2(0, 100));
 			break;
-		case 1:
 		case 4:
+			this->getPhysicsBody()->setAngularVelocity(100 * direccion);
+			this->getPhysicsBody()->setVelocity(Vec2(1000 * direccion, 400));
+			break;
+		case 5:
+			this->getPhysicsBody()->setVelocity(Vec2(300*direccion, 200));
+			this->getPhysicsBody()->setAngularVelocity(direccion *30);
+			break;
+		case 1:
 		default:
 			this->getPhysicsBody()->setVelocity(Vec2(0, 30));
 			break;
@@ -138,11 +147,8 @@ void ZerrinClass::accionColision(bool atras,int objeto, int tipoObjeto) // 1 arm
 
 void ZerrinClass::correr()
 {
-	//CCLOG("Voy a correr");
 	estadoz = ENTRANDO;
-
 	this->scheduleUpdate();
-	//Global::getInstance()->nivel->scheduleUpdate();
 }
 
 cocos2d::Sprite* ZerrinClass::creaAnimacionesZerrin(const char * format, int count,float multiplicadorvelocidad)
@@ -181,9 +187,11 @@ void ZerrinClass::setState(ZERRINFSM estado)
 {
 	if (estadoz == estado) return;
 	estadoz = estado;
-	cocos2d::Sprite*zerrinani;
+	Animacion* animacionDeTurno;
 	switch (estadoz) {
 	case SUELO:
+		CCLOG("SUELO");
+
 		this->getPhysicsBody()->setContactTestBitmask(false);
 		CCLOG("me levantare y esas cosis y empiezo a correr");
 		this->getPhysicsBody()->setVelocity(Vec2(0.0,0.0));
@@ -194,21 +202,25 @@ void ZerrinClass::setState(ZERRINFSM estado)
 
 		break;
 	case IDLE:
-		//CCLOG("IDLEEEEEEEEEEEEEEEEEEEE");
+		CCLOG("IDLEEEEEEEEEEEEEEEEEEEE");
 		if (currentAnimation != nullptr) {
 			currentAnimation->stopAllActions();
 			this->removeChild(currentAnimation,true);
 		}
-		currentAnimation =creaAnimacionesZerrin("Idle__%03d.png", 9,1.0);
+		animacionDeTurno = new Animacion("Idle__%03d.png", 9, 1.0, "images/Zerrin/Zerrin_Spritesheet.plist",true);
+		currentAnimation = animacionDeTurno->getAnimacionCreada();
+		this->addChild(currentAnimation);
 		break;
 		
 	case CORRIENDO:
-		//CCLOG("CORRIENDOOOOOOOOOOOO");
+		CCLOG("CORRIENDOOOOOOOOOOOO");
 		if (currentAnimation != nullptr) {
 			currentAnimation->stopAllActions();
 			this->removeChild(currentAnimation, true);
 		}
-		currentAnimation = creaAnimacionesZerrin("Walk__%03d.png", 9,12 / 9);
+		animacionDeTurno = new Animacion("Walk__%03d.png", 9, 12 / 9, "images/Zerrin/Zerrin_Spritesheet.plist", true);
+		currentAnimation = animacionDeTurno->getAnimacionCreada();
+		this->addChild(currentAnimation);
 		velocidad = 0.2;
 		break;
 	case HA_LLEGADO:
@@ -218,22 +230,26 @@ void ZerrinClass::setState(ZERRINFSM estado)
 		velocidad = 0.15;
 		break;
 	case GOLPEADO_ALANTE:
-		//CCLOG("GOLPE ALANTE");
+		CCLOG("GOLPE ALANTE");
 		Global::getInstance()->ellapsedTime = Global::getInstance()->currentTime;
 		if (currentAnimation != nullptr) {
 			currentAnimation->stopAllActions();
 			this->removeChild(currentAnimation, true);
 		}
-		currentAnimation = creaAnimacionesZerrin("cannon__%03d.png", 9, 1.0);
+		animacionDeTurno = new Animacion("cannon__%03d.png", 9, 1.0, "images/Zerrin/Zerrin_Spritesheet.plist",true);
+		currentAnimation = animacionDeTurno->getAnimacionCreada();
+		this->addChild(currentAnimation);
 		break;
 	case GOLPEADO_ATRAS:
-		//CCLOG("GOLPE ATRAS");
+		CCLOG("GOLPE ATRAS");
 		Global::getInstance()->ellapsedTime = Global::getInstance()->currentTime;
 		if (currentAnimation != nullptr) {
 			currentAnimation->stopAllActions();
 			this->removeChild(currentAnimation, true);
 		}
-		currentAnimation = creaAnimacionesZerrin("cannon__%03d.png", 9, 1.0);
+		animacionDeTurno = new Animacion("cannon__%03d.png", 9, 1.0, "images/Zerrin/Zerrin_Spritesheet.plist",true);
+		currentAnimation = animacionDeTurno->getAnimacionCreada();
+		this->addChild(currentAnimation);
 		break;
 	default:
 		break;
@@ -248,7 +264,8 @@ ZerrinClass::ZERRINFSM ZerrinClass::getEstado()
 void ZerrinClass::update(float dt)
 {
 	Global::getInstance()->currentTime += dt;
-	
+	auto zbody = this->getPhysicsBody();
+	//CCLOG("Velocidad: %f %f, momento: %f restitucion %f", zbody->getVelocity().x, zbody->getVelocity().y, zbody->getMoment(), zbody->getFirstShape()->getRestitution());
 	float velocidadactual = velocidad * Director::getInstance()->getVisibleSize().width * dt;
 	if (estadoz == ENTRANDO) {
 		//CCLOG("ENTRANDO");
@@ -272,9 +289,9 @@ void ZerrinClass::update(float dt)
 		}
 	}
 	if (estadoz==CORRIENDO /*|| estadoz==GOLPEADO_ALANTE*/) {
+		//if (this->getPhysicsBody()->getVelocity().y > 0)this->getPhysicsBody()->setVelocity(Vec2(0, 0));
 		if ((this->getPositionX())  >  3072-1024/2.65 - this->getBoundingBox().size.width) {
 			setState(SALIENDO);
-
 		}
 		else {
 			posicionAnterior = this->getPositionX();

@@ -53,8 +53,6 @@ void Global::creaArmas()
 	Arma* bola = Arma::create(b, 100, "bola", 2, 0, 0);
 	bola->setVisible(false);
 	bola->setPosition(-200, -200);
-	//bola->setAnchorPoint(Vec2(0.5, 0.5));
-	//bola->setScale(84/ bola->getContentSize().width, 84 / bola->getContentSize().height);
 	armasTotales.push_back(bola);
 
 	Texture2D *c = Director::getInstance()->getTextureCache()->addImage("images/Armas/pinchos_activos.png");
@@ -63,9 +61,23 @@ void Global::creaArmas()
 	pinchos->setPosition(-200, -200);
 	armasTotales.push_back(pinchos);
 
+	Texture2D *e = Director::getInstance()->getTextureCache()->addImage("images/Armas/mina_no_activa.png");
+	Arma* mina = Arma::create(e, 100, "mina", 4, 0, 0);
+	mina->setVisible(false);
+	mina->setPosition(-200, -200);
+	armasTotales.push_back(mina);
+
+	Texture2D *f = Director::getInstance()->getTextureCache()->addImage("images/Armas/trampilla.png");
+	Arma* trampilla = Arma::create(f, 100, "trampilla", 5, 0, 0);
+	trampilla->setVisible(false);
+	trampilla->setPosition(-200, -200);
+	armasTotales.push_back(trampilla);
+
+
 	Texture2D* t = Director::getInstance()->getTextureCache()->addImage("images/Armas/arma.png");
+
 	//provisional crea un array genérico, en un futuro hay que meter las armas 1 a una
-	for (int i = 3; i <20; i++){
+	for (int i = 5; i <20; i++){
 		char* nombre = "espada Bastarda numero: ";
 		nombre += i;
 		Arma* armaaux = Arma::create(t, 15+i, nombre, 1,i*10+1,random(0,1));
