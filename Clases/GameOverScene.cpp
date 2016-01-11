@@ -2,6 +2,10 @@
 #include"Global.h"
 #include "Nivel.h"
 #include "Animacion.h"
+#include "AudioEngine.h"
+
+using namespace cocos2d::experimental;
+
 USING_NS_CC;
 
 Scene* GameOverScene::createScene()
@@ -55,6 +59,9 @@ bool GameOverScene::init()
 	sombra->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
 	addChild(sombra, 2);
 	sombra->runAction(RepeatForever::create(Sequence::create(FadeTo::create(2.5, 255 / 2), FadeTo::create(2.5, 255), NULL)));
+
+	AudioEngine::stopAll();
+	
 	return true;
 }
 

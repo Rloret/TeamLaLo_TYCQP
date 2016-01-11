@@ -1,6 +1,10 @@
 #include "WinScene.h"
 #include"Global.h"
 #include "Nivel.h"
+#include "AudioEngine.h"
+
+using namespace cocos2d::experimental;
+
 USING_NS_CC;
 
 Scene* WinScene::createScene()
@@ -49,6 +53,8 @@ bool WinScene::init()
 	auto background = Sprite::create("images/MainMenuScene/fondo_mainMenu.png");
 	background->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
 	addChild(background, 0);
+
+	AudioEngine::stopAll();
 	return true;
 }
 

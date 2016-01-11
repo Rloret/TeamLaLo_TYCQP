@@ -4,8 +4,9 @@
 #include "proj.win32/MenuStartScene.h"
 #include "ui\UIButton.h"
 #include "SimpleAudioEngine.h"
+#include "AudioEngine.h"
 
-
+using namespace cocos2d::experimental;
 USING_NS_CC;
 
 Scene* MainMenuScene::createScene()
@@ -76,17 +77,13 @@ bool MainMenuScene::init()
 	background->runAction(secuencia);
 	background->runAction(RepeatForever::create(Sequence::create(DelayTime::create(cocos2d::random(5,15)/10.0),CallFunc::create(CC_CALLBACK_0(MainMenuScene::generaNota,this)),nullptr)));
 
-	/*CocosDenshion::SimpleAudioEngine::getInstance()->preloadBackgroundMusic("sounds/Escenarios/MenuStartScene.wav");
-	CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("sounds/Escenarios/MenuStartScene.wav", true);*/
-
-	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sounds/Botones/Home_Btn.wav");
-	CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sounds/Botones/Home_Btn.wav");
-
-
+	songMainMenuID=AudioEngine::play2d("sounds/MenuStartScene.mp3", true, 0.0);
+	AudioEngine::pause(songMainMenuID);
 
 	return true;
 }
 void MainMenuScene::goToCreditos(Ref *pSender){
+	AudioEngine::pause(songMainMenuID);
 
 	auto scene = CreditosScene::createScene();
 
@@ -95,6 +92,7 @@ void MainMenuScene::goToCreditos(Ref *pSender){
 
 
 void MainMenuScene::goToAjustes(Ref *pSender){
+	AudioEngine::pause(songMainMenuID);
 
 	auto scene = AjustesScene::createScene();
 
@@ -103,6 +101,8 @@ void MainMenuScene::goToAjustes(Ref *pSender){
 }
 
 void MainMenuScene::goToMenuStart(Ref *pSender){
+
+	AudioEngine::pause(songMainMenuID);
 
 	auto scene = MenuStartScene::createScene();
 
@@ -131,3 +131,9 @@ void MainMenuScene::generaNota()
 	nota->runAction(MoveTo::create(random(30, 40) / 10.0, Vec2(1024+nota->getContentSize().width*2,768+nota->getContentSize().height*2)));
 }
 
+void MainMenuScene::onEnterTransitionDidFinish()
+{
+	AudioEngine::setVolume(songMainMenuID ,1.0);
+	AudioEngine::resume(songMainMenuID);
+	
+}

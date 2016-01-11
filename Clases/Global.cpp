@@ -24,6 +24,13 @@ Global::Global(){
 	 visibleSize = Director::getInstance()->getVisibleSize();
 	 armaAComprar = nullptr;
 
+	 letraPersonajes.fontFilePath = "fonts/Slackey.ttf";
+	 letraPersonajes.fontSize = 120;
+	 letraPersonajes.glyphs = GlyphCollection::DYNAMIC;
+	 letraPersonajes.outlineSize = 0;
+	 letraPersonajes.customGlyphs = nullptr;
+	 letraPersonajes.distanceFieldEnabled = false;
+
 	 CreaFrases();
 
 }
@@ -40,39 +47,48 @@ void Global::creaArmas()
 	//TAMAÑO ESTANDARD ARMAS 84x84
 
 	Texture2D* d1 = Director::getInstance()->getTextureCache()->addImage("images/Armas/daga1.png");
-	Arma* daga1 = Arma::create(d1,20,"daga_simple",0,0, random(0, 1));
+	Arma* daga1 = Arma::create(d1,10,"daga_simple",0,10,0);
 	armasTotales.push_back(daga1);
+	daga1->SetRutaSonido("sounds/MainMenuScene.mp3");
+
 
 	Texture2D* d3 = Director::getInstance()->getTextureCache()->addImage("images/Armas/daga3.png");
-	Arma* daga3 = Arma::create(d3, 20, "daga_cara", 0, 0, random(0, 1));
+	Arma* daga3 = Arma::create(d3, 20, "daga_cara", 0, 20, 0);
 	armasTotales.push_back(daga3);
+	daga3->SetRutaSonido("sounds/MainMenuScene.mp3");
 
 	Texture2D* d2 = Director::getInstance()->getTextureCache()->addImage("images/Armas/daga2.png");
-	Arma* daga2 = Arma::create(d2, 20, "daga_dientes", 0, 50, random(0, 1));
+	Arma* daga2 = Arma::create(d2, 30, "daga_dientes", 0, 30, 0);
 	armasTotales.push_back(daga2);
+	daga2->SetRutaSonido("sounds/MainMenuScene.mp3");
 
 	Texture2D* d4 = Director::getInstance()->getTextureCache()->addImage("images/Armas/daga4.png");
-	Arma* daga4 = Arma::create(d4, 20, "daga_serpientes", 0, 50, random(0, 1));
+	Arma* daga4 = Arma::create(d4, 40, "daga_serpientes", 0, 40, 0);
 	armasTotales.push_back(daga4);
+	daga4->SetRutaSonido("sounds/MainMenuScene.mp3");
 
 	Texture2D *b= Director::getInstance()->getTextureCache()->addImage("images/Armas/bola.png");
-	Arma* bola = Arma::create(b, 100, "bola", 2, 0, 0);
+	Arma* bola = Arma::create(b, 60, "bola", 2, 80, 0);
 	armasTotales.push_back(bola);
+	bola->SetRutaSonido("sounds/Bola.mp3");
 
 	Texture2D *c = Director::getInstance()->getTextureCache()->addImage("images/Armas/pinchos_activos.png");
-	Arma* pinchos = Arma::create(c, 100, "pinchos", 3, 0, 0);
+	Arma* pinchos = Arma::create(c, 90, "pinchos", 3, 100, 0);
 	armasTotales.push_back(pinchos);
+	pinchos->SetRutaSonido("sounds/Pinchos.mp3");
 
 	Texture2D *e = Director::getInstance()->getTextureCache()->addImage("images/Armas/mina_no_activa.png");
-	Arma* mina = Arma::create(e, 100, "mina", 4, 0, 0);
+	Arma* mina = Arma::create(e, 100, "mina", 4, 80, 1);
 	armasTotales.push_back(mina);
+	mina->SetRutaSonido("sounds/Mina.mp3");
 
 	Texture2D *f = Director::getInstance()->getTextureCache()->addImage("images/Armas/trampilla_activa_izq.png");
-	Arma* trampilla = Arma::create(f, 100, "trampilla", 5, 0, 0);
+	Arma* trampilla = Arma::create(f, 10, "trampilla", 5, 50, 5);
 	armasTotales.push_back(trampilla);
+	trampilla->SetRutaSonido("sounds/Trampilla.mp3");
 
 
-	Texture2D* t = Director::getInstance()->getTextureCache()->addImage("images/Armas/arma.png");
+	//Texture2D* t = Director::getInstance()->getTextureCache()->addImage("images/Armas/arma.png");
 
 	for (int i = 0; i <armasTotales.size(); i++){
 		armasTotales[i]->setPosition(-200, -200);
@@ -87,18 +103,25 @@ void Global::creaObjetosEscenario()
 	std::vector<std::string> macetas;
 	ObjetoEscenario* ancla = ObjetoEscenario::create("images/ObjetosEscenario/ancla.png", 100, "ancla",2);
 	ObjetosTotalesEscenarios.push_back(ancla);
+	PosicionObjetos.push_back(std::make_pair(1700,550));
 
 	ObjetoEscenario* cactus = ObjetoEscenario::create("images/ObjetosEscenario/cactus.png", 100, "cactus", 2);
 	ObjetosTotalesEscenarios.push_back(cactus);
 	macetas.push_back("images/ObjetosEscenario/cactus.png");
+	PosicionObjetos.push_back(std::make_pair(1600, 550));
+
 	ObjetoEscenario* flor = ObjetoEscenario::create("images/ObjetosEscenario/flor.png", 100, "flor", 2);
 	ObjetosTotalesEscenarios.push_back(flor);
 	macetas.push_back("images/ObjetosEscenario/flor.png");
+	PosicionObjetos.push_back(std::make_pair(2000, 550));
+
 	ObjetoEscenario* planta = ObjetoEscenario::create("images/ObjetosEscenario/planta.png", 100, "planta", 2);
 	ObjetosTotalesEscenarios.push_back(planta);
 	macetas.push_back("images/ObjetosEscenario/planta.png");
+	PosicionObjetos.push_back(std::make_pair(2500, 550));
 
-	for (int i = 4; i < 10; i++) {
+
+	/*for (int i = 4; i < 10; i++) {
 		char* nombre = "Objeto Escenario numero: ";
 		nombre += i;
 		auto cadena = macetas[random(0, 2)];
@@ -107,7 +130,7 @@ void Global::creaObjetosEscenario()
 		objetoaux->setPosition(punto);
 		objetoaux->setColor(Color3B(i * 25, i * 25, i * 25));
 		ObjetosTotalesEscenarios.push_back(objetoaux);
-	}
+	}*/
 }
 
 Global* Global::getInstance(){
@@ -140,23 +163,31 @@ void Global::quitaArmaDeNivel(Arma*a){
 
 void Global::colocaObjetos(int i_objetos, int u_objetos)
 {
+	CCLOG("bucle desde %d hasta %d",i_objetos,u_objetos);
 	for (int i = i_objetos; i < u_objetos; i++) {
+		CCLOG("dentro bucle i :%d", i);
+
 		auto objetodeturno = Global::getInstance()->ObjetosTotalesEscenarios[i];
 		objetodeturno->setOpacity(255);
 		objetodeturno->setVisible(true);
 		objetodeturno->enableListener(true);
-		Vec2 punto = Vec2(((i + 1) * 1024 * 1.5) / (u_objetos - i_objetos)
+		/*Vec2 punto = Vec2(((i + 1) * 1024 * 1.5) / (u_objetos - i_objetos)
 			+ 1024 
 			- Global::getInstance()->ObjetosTotalesEscenarios[i]->getContentSize().width
-			,Director::getInstance()->getVisibleSize().height -objetodeturno->getContentSize().height*1.5);
-		objetodeturno->setPosition(punto);
+			,Director::getInstance()->getVisibleSize().height -objetodeturno->getContentSize().height*1.5);*/
+
+		Point p = Point(PosicionObjetos[i].first/1.0, PosicionObjetos[i].second/1.0);
+		CCLOG("posicion tupla x: %d y: %d        posicion point x:%f y:%f", PosicionObjetos[i].first, PosicionObjetos[i].second, p.x, p.y);
+		CCLOG("posicion objeto x: %f y: %f", objetodeturno->getPositionX(), objetodeturno->getPositionY());
+
+		objetodeturno->setPosition(p);
 		objetodeturno->setPhysicsBody(nullptr);
 		float v;
 		if (objetodeturno->isVisible()) {
 			v = 1;
 		}
 		else v = 0;
-		layerObjects->addChild(objetodeturno, 3);
+		nivel->getChildByTag(102)->addChild(objetodeturno, 3);
 		
 
 	}

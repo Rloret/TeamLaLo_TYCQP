@@ -12,6 +12,9 @@
 #include "WinScene.h"
 #include "chipmunk.h"
 #include "Animacion.h"
+#include"AudioEngine.h"
+
+using namespace cocos2d::experimental;
 
 USING_NS_CC;
 
@@ -27,7 +30,7 @@ Scene* Nivel::createScene(int nivel, std::vector<std::string> fondos, int i_obje
 	auto scene = Scene::createWithPhysics();
 	scene->setTag(101);
 	scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
-
+	Global::getInstance()->nivel = scene;
 	auto layerObjects = Layer::create();
 	layerObjects->setTag(103);
 	
@@ -39,10 +42,12 @@ Scene* Nivel::createScene(int nivel, std::vector<std::string> fondos, int i_obje
 	layer->setTag(102);
 	
 	layer->setPhysicsWorld(scene->getPhysicsWorld());
-	Global::getInstance()->nivel = scene;
+
 
 	CCLOG("Layer mide : %f, %f", layer->getBoundingBox().size.width, layer->getBoundingBox().size.height);
 	scene->addChild(layer,10);
+
+	Global::getInstance()->colocaObjetos(i_objetos, u_objetos);
 
 	return scene;
 }
@@ -95,6 +100,8 @@ void Nivel::preparaNivel(int nivel, std::vector<std::string> fondos, int i_objet
 	colocaFondo(fondos);
 	colocaZerrin();
 
+	
+
 	this->addContactListener();
 	
 	addChild(Global::getInstance()->zerrin, 4);
@@ -117,6 +124,8 @@ void Nivel::preparaNivel(int nivel, std::vector<std::string> fondos, int i_objet
 
 	switch (nivel) {
 		case 0:
+			Global::getInstance()->currentSongID = AudioEngine::play2d("sounds/Habitacion_Bckground_Ambient.mp3", true, 0.2);
+
 			señuelo->runAction(Sequence::create(CCCallFunc::create(CC_CALLBACK_0(Nivel::cargaFrasesZerrin, this, 0)), 
 				DelayTime::create(3.0),
 				MoveBy::create(2, Point(3000, 0)),
@@ -144,6 +153,7 @@ void Nivel::preparaNivel(int nivel, std::vector<std::string> fondos, int i_objet
 
 			break;
 		case 1:
+
 			señuelo->runAction(Sequence::create(CCCallFunc::create(CC_CALLBACK_0(Nivel::cargaFrasesZerrin, this, 4)),
 				DelayTime::create(3.0),
 				MoveBy::create(2, Point(3000, 0)),
@@ -159,7 +169,9 @@ void Nivel::preparaNivel(int nivel, std::vector<std::string> fondos, int i_objet
 				NULL));
 
 			break;
+
 		case 2:
+			Global::getInstance()->currentSongID = AudioEngine::play2d("sounds/Murallas_inicio.mp3", false, 0.2);
 			señuelo->runAction(Sequence::create(CCCallFunc::create(CC_CALLBACK_0(Nivel::cargaFrasesZerrin, this, 5)),
 				DelayTime::create(3.0),
 				MoveBy::create(2, Point(3000, 0)),
@@ -170,12 +182,23 @@ void Nivel::preparaNivel(int nivel, std::vector<std::string> fondos, int i_objet
 				CCCallFunc::create(CC_CALLBACK_0(Nivel::removeKatahi, this)), NULL));
 
 			break;
+
 		case 3:
-			colocaHUD();
-			removeKatahi();
+			Global::getInstance()->currentSongID = AudioEngine::play2d("sounds/Murallas_inicio.mp3", false, 0.2);
+			señuelo->runAction(Sequence::create(CCCallFunc::create(CC_CALLBACK_0(Nivel::cargaFrasesZerrin, this, 5)),
+				DelayTime::create(3.0),
+				MoveBy::create(2, Point(3000, 0)),
+				CCCallFunc::create(CC_CALLBACK_0(Nivel::cargaFrasesKatahi, this, 10)),
+				DelayTime::create(3.0),
+				MoveBy::create(2, Point(-3000, 0)),
+				CCCallFunc::create(CC_CALLBACK_0(Nivel::colocaHUD, this)),
+				CCCallFunc::create(CC_CALLBACK_0(Nivel::removeKatahi, this)), NULL));
+
 			break;
 
 		case 4:
+			Global::getInstance()->currentSongID = AudioEngine::play2d("sounds/Murallas_inicio.mp3", false, 0.2);
+
 			señuelo->runAction(Sequence::create(CCCallFunc::create(CC_CALLBACK_0(Nivel::cargaFrasesZerrin, this, 6)),
 				DelayTime::create(3.0),
 				CCCallFunc::create(CC_CALLBACK_0(Nivel::cargaFrasesZerrin, this, 7)),
@@ -192,11 +215,16 @@ void Nivel::preparaNivel(int nivel, std::vector<std::string> fondos, int i_objet
 				CCCallFunc::create(CC_CALLBACK_0(Nivel::colocaHUD, this)), CCCallFunc::create(CC_CALLBACK_0(Nivel::removeKatahi, this)), NULL));
 
 			break;
+
+	
+			
 		default:
 			señuelo->runAction(CCCallFunc::create(CC_CALLBACK_0(Nivel::colocaHUD, this)));
 			break;
 	
 	}
+	
+
 	
 }
 
@@ -221,7 +249,6 @@ void Nivel::displayArmasArsenal()
 
 void Nivel::muestraUnoMas(Ref *pSender)
 {
-
 	auto ancho = ANCHOARSENAL;
 	auto alto = ALTOARSENAL;
 
@@ -308,6 +335,11 @@ void Nivel::goToVestuario(Ref *pSender){
 }
 
 void Nivel::goToPause(Ref *pSender){
+/*
+	CocosDenshion::SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
+
+	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sounds/Pause.mp3");
+	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sounds/Pause.mp3");*/
 
 	auto scene = PauseScene::createScene();
 	Director::getInstance()->pushScene(scene);
@@ -435,15 +467,13 @@ void Nivel::colocaBotones()
 	auto ancho = ANCHOARSENAL;
 	auto alto = ALTOARSENAL;
 
-	//rectangulo->setScaleX(ancho / rectangulo->getContentSize().width);
-	//rectangulo->setScaleY(alto / rectangulo->getContentSize().height);
 	rectangulo->setPosition(Point(ancho / 2, alto / 2+30));
 	rectangulo->setVisible(false);
 	addChild(rectangulo, 8);
 
-	auto pauseBtn = MenuItemImage::create("images/Nivel/Botones/pause_btn_good_res_idle.png", "images/Nivel/Botones/pause_btn_good_res.png", CC_CALLBACK_1(Nivel::goToPause, this));
-	auto tiendaBtn = MenuItemImage::create("images/Nivel/Botones/tienda_btn_good_res_idle.png", "images/Nivel/Botones/tienda_btn_good_res.png", CC_CALLBACK_1(Nivel::goToTienda, this));
-	auto vestuarioBtn = MenuItemImage::create("images/Nivel/Botones/vestuario_btn_good_res_idle.png", "images/Nivel/Botones/vestuario_btn_good_res.png", CC_CALLBACK_1(Nivel::goToVestuario, this));
+	auto pauseBtn = MenuItemImage::create("images/Nivel/botones/pause_btn_good_res_idle.png", "images/Nivel/botones/pause_btn_good_res.png", CC_CALLBACK_1(Nivel::goToPause, this));
+	auto tiendaBtn = MenuItemImage::create("images/Nivel/botones/tienda_btn_good_res_idle.png", "images/Nivel/botones/tienda_btn_good_res.png", CC_CALLBACK_1(Nivel::goToTienda, this));
+	auto vestuarioBtn = MenuItemImage::create("images/Nivel/botones/vestuario_btn_good_res_idle.png", "images/Nivel/botones/vestuario_btn_good_res.png", CC_CALLBACK_1(Nivel::goToVestuario, this));
 
 	auto listenerPause = EventListenerKeyboard::create();
 	listenerPause->onKeyPressed = [=](EventKeyboard::KeyCode keyCode, Event* event) {
@@ -481,8 +511,8 @@ void Nivel::colocaBotones()
 	menu1->alignItemsHorizontally();
 	addChild(menu1, 6);
 
-	auto arsenalBtn = MenuItemImage::create("images/Nivel/Botones/arsenal_btn_good_res_idle.png", "images/Nivel/Botones/arsenal_btn_good_res.png", CC_CALLBACK_1(Nivel::abrirArsenal, this));
-	auto simulacionBtn = MenuItemImage::create("images/Nivel/Botones/play_btn_good_res_idle.png", "images/Nivel/Botones/play_btn_good_res.png", CC_CALLBACK_1(Nivel::simulacion, this));
+	auto arsenalBtn = MenuItemImage::create("images/Nivel/botones/arsenal_btn_good_res_idle.png", "images/Nivel/botones/arsenal_btn_good_res.png", CC_CALLBACK_1(Nivel::abrirArsenal, this));
+	auto simulacionBtn = MenuItemImage::create("images/Nivel/botones/play_btn_good_res_idle.png", "images/Nivel/botones/play_btn_good_res.png", CC_CALLBACK_1(Nivel::simulacion, this));
 
 
 	menu2 = Menu::create(arsenalBtn, simulacionBtn, NULL);
@@ -497,13 +527,13 @@ void Nivel::colocaBotones()
 
 	masBtn->setScaleX(-ancho1 / (masBtn->getContentSize().width * 11));
 	masBtn->setScaleY(alto1 / masBtn->getContentSize().height);
-	masBtn->setPosition((-visibleSize.width / 2.0) + ancho - 45, -visibleSize.height / 2.0 + 30);
+	masBtn->setPosition((-visibleSize.width / 2.0) + ancho - 45, -visibleSize.height / 2.0 + 90);
 	
 	menosBtn = MenuItemImage::create("images/LevelsMenuScene/Flecha.png", "images/LevelsMenuScene/Flecha.png", CC_CALLBACK_1(Nivel::muestraUnoMenos, this, vueltasArsenal));
 
 	menosBtn->setScaleX(ancho1 / (menosBtn->getContentSize().width * 11));
 	menosBtn->setScaleY(alto1 / menosBtn->getContentSize().height);
-	menosBtn->setPosition((-visibleSize.width / 2.0) + 40, -visibleSize.height / 2.0 + 30);
+	menosBtn->setPosition((-visibleSize.width / 2.0) + 40, -visibleSize.height / 2.0 +90);
 
 	menuArsenal = Menu::create(masBtn, menosBtn, NULL);
 	addChild(menuArsenal, 6);
@@ -579,18 +609,25 @@ void Nivel::colocaHUD()
 {
 	colocaBotones();
 	displayArmasArsenal();
+	for (int i = Global::getInstance()->inicioObj; i < Global::getInstance()->finalObj; i++) {
+		Global::getInstance()->ObjetosTotalesEscenarios[i]->removeFromParent();
+		Global::getInstance()->layerObjects->addChild(Global::getInstance()->ObjetosTotalesEscenarios[i], 3);
+	}
 }
 
 void Nivel::cargaFrasesKatahi(int n)
 {
+	AudioEngine::play2d("sounds/katahi_Habla.mp3", false, 0.5);
+
 	auto bocadillo = Sprite::create("images/Nivel/Bocadillo_Zerrin.png");
 	bocadillo->setAnchorPoint(Vec2(0.5, 0.5));
 	bocadillo->setScaleX(-1);
-	Label* fraseKatahi = Label::create();
+	Label* fraseKatahi = Label::createWithTTF(Global::getInstance()->letraPersonajes, "", TextHAlignment::CENTER);
+
 	fraseKatahi->setString(Global::getInstance()->BateriaFrasesKatahi[n]);
 	fraseKatahi->setAnchorPoint(Vec2(0.5,0.5));
 	fraseKatahi->setTextColor(Color4B(138,31,114,255));
-	fraseKatahi->setSystemFontSize(50.0);
+	//fraseKatahi->setSystemFontSize(50.0);
 	fraseKatahi->setPosition(Katahi->getPositionX(),Katahi->getPositionY()+Katahi->getBoundingBox().size.height+bocadillo->getBoundingBox().size.height/2);
 	bocadillo->setPosition(fraseKatahi->getPosition());
 
@@ -599,7 +636,9 @@ void Nivel::cargaFrasesKatahi(int n)
 
 void Nivel::cargaFrasesZerrin(int n)
 {
-	Label* fraseZerrin = Label::create();
+
+	AudioEngine::play2d("sounds/Zerrin_Habla.mp3", false, 0.4);
+	Label* fraseZerrin = Label::createWithTTF(Global::getInstance()->letraPersonajes, "", TextHAlignment::CENTER);
 	auto bocadillo = Sprite::create("images/Nivel/Bocadillo_Zerrin.png");
 	bocadillo->setAnchorPoint(Vec2(0.5, 0.5));
 	bocadillo->setScaleX(-1);
@@ -608,7 +647,7 @@ void Nivel::cargaFrasesZerrin(int n)
 
 	fraseZerrin->setPosition(Vec2(Global::getInstance()->zerrin->getPositionX(),Global::getInstance()->zerrin->getPositionY()+bocadillo->getBoundingBox().size.height));
 	fraseZerrin->setTextColor(Color4B(19,33,138,255));
-	fraseZerrin->setSystemFontSize(50.0);
+	//fraseZerrin->setSystemFontSize(50.0);
 	bocadillo->setPosition(fraseZerrin->getPosition());
 
 
@@ -624,7 +663,7 @@ void Nivel::colocaFrase(Sprite * Bocadillo, Label * Frase)
 	bool entra = false;
 	while (!entra) {
 		if (Frase->getBoundingBox().size.width > anchmax || Frase->getBoundingBox().size.height > altmax) {
-			Frase->setSystemFontSize(Frase->getSystemFontSize() / 2);
+			Frase->setScale(Frase->getScale() - 0.01);
 		}
 		else entra = true;
 	}
@@ -632,7 +671,7 @@ void Nivel::colocaFrase(Sprite * Bocadillo, Label * Frase)
 	addChild(Frase, 5);
 
 	Bocadillo->setPosition(Frase->getPosition());
-	Frase->runAction(Sequence::create(ScaleBy::create(0.5, 1.5), ScaleBy::create(1.5, 1), FadeOut::create(0.5),
+	Frase->runAction(Sequence::create(ScaleBy::create(0.5, 0.9), ScaleBy::create(1.5, 1.2), FadeOut::create(0.5),
 		CallFuncN::create(CC_CALLBACK_1(Nivel::borraElementoTemporal, this, true)), NULL));
 	Bocadillo->runAction(Sequence::create(DelayTime::create(2), FadeOut::create(0.5), CallFuncN::create(CC_CALLBACK_1(Nivel::borraElementoTemporal, this, true)), NULL));
 }
@@ -703,7 +742,7 @@ void Nivel::spawnNube(float dt)
 void Nivel::mueveFondo(float v) {
 	
 	if ((Global::getInstance()->zerrin->getEstado()!=Global::getInstance()->zerrin->ZERRINFSM::IDLE) && Global::getInstance()->zerrin->getEstado() != Global::getInstance()->zerrin->ZERRINFSM::SALIENDO) {
-		for (int i = 0; i < 10; i++) {
+		for (int i = Global::getInstance()->inicioObj; i < Global::getInstance()->finalObj; i++) {
 			//CCLOG("los objetos se mueven %f", - (v));
 			Global::getInstance()->ObjetosTotalesEscenarios[i]->setPositionX(Global::getInstance()->ObjetosTotalesEscenarios[i]->getPositionX() - (v));
 		}
@@ -751,6 +790,9 @@ bool Nivel::onContactBegin(cocos2d::PhysicsContact & contact) {
 			((Arma*)a->getNode())->accionColision(((Arma*)a->getNode())->getTipo());
 			zerrin->accionColision(a->getNode()->getPositionX() >= zerrin->getPositionX(),1, ((Arma*)a->getNode())->getTipo());
 
+			//CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect(((Arma*)a->getNode())->RutaSonido);
+			((Arma*)a->getNode())->PlayArmaSound();
+
 			if (zerrin->getVida() <= 0) {
 				if (zerrin->getChildrenCount() > 0) zerrin->removeAllChildren();
 				Global::getInstance()->katahi->modificaOro(100);
@@ -764,6 +806,10 @@ bool Nivel::onContactBegin(cocos2d::PhysicsContact & contact) {
 			zerrin->setVida(zerrin->getVida() - ((Arma*)b->getNode())->getDaño());
 			((Arma*)b->getNode())->accionColision(((Arma*)b->getNode())->getTipo());
 			zerrin->accionColision(b->getNode()->getPositionX() >= zerrin->getPositionX(), 1, ((Arma*)b->getNode())->getTipo());
+
+			//CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect(((Arma*)b->getNode())->RutaSonido);
+			((Arma*)b->getNode())->PlayArmaSound();
+
 			if (zerrin->getVida() <= 0) {
 				if (zerrin->getChildrenCount() > 0) Global::getInstance()->zerrin->removeAllChildren();
 				Global::getInstance()->katahi->modificaOro(100);

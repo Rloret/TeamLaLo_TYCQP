@@ -16,10 +16,15 @@ public:
 	void goToMenuStart(Ref *pSender);
 	void intervalo();
 	void generaNota();
+	virtual void onEnterTransitionDidFinish();
 
 	cocos2d::Sprite* Luces_1;
 	cocos2d::Sprite* Luces_2;
 	int parpadeo=1;
+	
+	
+private:
+	int songMainMenuID;
 
     
     // implement the "static create()" method manually

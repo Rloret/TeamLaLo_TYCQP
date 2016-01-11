@@ -3,6 +3,10 @@
 #include"Global.h"
 #include "TiendaScene.h"
 #include "Animacion.h"
+#include "SimpleAudioEngine.h"
+#include "AudioEngine.h"
+
+using namespace cocos2d::experimental;
 
 USING_NS_CC;
 
@@ -20,7 +24,7 @@ Arma::Arma( int daño, std::string nombre, int tipo,int precio,int mechones)
 	desdeTienda = false;
 
 	this->setName("Arma");
-
+	
 	this->retain();
 
 }
@@ -403,6 +407,8 @@ bool Arma::getDesdeTienda()
 	return desdeTienda;
 }
 
+
+
 void Arma::accionColision(int tipoDelArma)
 {
 	PhysicsBody* cuerpoFisicas; 
@@ -473,3 +479,18 @@ Arma* Arma::ClonarArma(Arma* a){
 	return nueva;
 }
 
+void Arma::PlayArmaSound()
+{
+	/*if (rutaSonido!=nullptr) {
+		CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect(rutaSonido);
+		CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(rutaSonido);
+	}
+	else CCLOG("no hay sonido");-*/
+
+	AudioEngine::play2d("sounds/Back_Btn.mp3",true,1.0);
+}
+
+void Arma::SetRutaSonido(std::string c)
+{
+	rutaSonido = c;
+}

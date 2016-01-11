@@ -27,7 +27,11 @@ public:
 	ZerrinClass* zerrin;
 	KatahiClass* katahi;
 
+	cocos2d::TTFConfig letraPersonajes;
+
 	std::vector<ObjetoEscenario*> ObjetosTotalesEscenarios;
+	std::vector<std::pair<int, int>> PosicionObjetos;
+
 	cocos2d::Size visibleSize;
 
 	Arma* armaAComprar;
@@ -47,6 +51,10 @@ public:
 	int ContadorArmas=0;
 	float currentTime =0.0;
 	float ellapsedTime=999.0;
+	int currentSongID;
+
+	int inicioObj;
+	int finalObj;
 
 	//std::vector<Vec2*> ObjetosTotalesEscenarioPosiciones;
 	

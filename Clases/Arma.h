@@ -39,6 +39,7 @@ public:
 	int parpadeo=1;
 
 	std::string getNombre();
+	
 
 	bool getDesdeTienda();
 	bool enNivel = false; 
@@ -51,7 +52,8 @@ public:
 	cocos2d::PhysicsJointDistance* jointDemolicion;
 	Arma* bolaDemolicion;
 
-	
+	void PlayArmaSound();
+	void SetRutaSonido(std::string c);
 
 private:
 	bool desdeTienda;
@@ -65,7 +67,7 @@ private:
 	int tipo; 
 
 	std::string nombre;
-	
+	std::string rutaSonido;
 	//Arma* esteArma;
 
 	void accionTouch(cocos2d::Touch* touch);

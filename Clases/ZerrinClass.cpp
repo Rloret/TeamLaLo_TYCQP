@@ -69,7 +69,7 @@ void ZerrinClass::setCorrer(bool c)
 
 void ZerrinClass::muestraDaño(int daño)
 {
-	auto dañoLabel = Label::createWithSystemFont((String::createWithFormat("- %d",daño)->getCString()), "Arial", 35);
+	auto dañoLabel = Label::createWithTTF(Global::getInstance()->letraPersonajes, (String::createWithFormat("- %d", daño)->getCString()));
 	dañoLabel->setColor(Color3B::RED);
 	dañoLabel->enableShadow();
 	dañoLabel->retain();
@@ -282,7 +282,7 @@ void ZerrinClass::update(float dt)
 			posicionAnterior = this->getPositionX();
 			this->setPositionX(this->getPositionX()+velocidadactual);
 			((Nivel*)(Director::getInstance()->getRunningScene()))->mueveFondo(velocidadactual);
-			//CCLOG("CORRIENDO");
+			//CCLOG("me muevo");
 			
 		}
 	}

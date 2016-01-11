@@ -44,6 +44,7 @@ private:
 	cocos2d::Label* dinero_oro_int;
 	cocos2d::Label* dinero_mechones_int;
 
+	cocos2d::TTFConfig letraGotica;
 
 	//virtual void onEnterTransitionDidFinish();
 };

@@ -5,8 +5,8 @@ USING_NS_CC;
 
 
 KatahiClass::KatahiClass() {
-	oro= 1000;
-	mechones = 1000;
+	oro= 350;
+	mechones = 10;
 	//this->setPositionY(Director::getInstance()->getVisibleSize().height);
 	//visibleSize = Director::getInstance()->getVisibleSize();
 	this->retain();

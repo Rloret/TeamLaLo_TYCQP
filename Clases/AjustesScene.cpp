@@ -1,5 +1,9 @@
 #include "AjustesScene.h"
 #include"MainMenuScene.h"
+#include"SimpleAudioEngine.h"
+#include "AudioEngine.h"
+
+using namespace cocos2d::experimental;
 
 USING_NS_CC;
 
@@ -56,6 +60,11 @@ bool AjustesScene::init()
 
 void AjustesScene::goToMainMenuScene(Ref *pSender){
 
+	AudioEngine::play2d("sounds/Back_Btn.mp3", false, 0.8);
+
+
 	Director::getInstance()->popScene();
+
+
 
 }

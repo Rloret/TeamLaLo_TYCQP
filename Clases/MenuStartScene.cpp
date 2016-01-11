@@ -8,7 +8,9 @@
 #include "proj.win32\ObjetoEscenario.h"
 #include "proj.win32\Global.h"
 #include "SimpleAudioEngine.h"
+#include "AudioEngine.h"
 
+using namespace cocos2d::experimental;
 USING_NS_CC;
 
 Scene* MenuStartScene::createScene()
@@ -71,8 +73,6 @@ bool MenuStartScene::init()
 	addChild(menu6, 2);
 	
 
-
-
 	//Fondo
 	auto background = Sprite::create("images/MenuStartScene/fondo_mainMenu.png");
 	background->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
@@ -90,15 +90,14 @@ bool MenuStartScene::init()
 	sombra->runAction(RepeatForever::create(Sequence::create(FadeTo::create(4, 80), FadeTo::create(4, 255),NULL)));
 
 	return true;
-
-
 }
 
 
 void MenuStartScene::goToMainMenuScene(Ref *pSender){
 
 	Director::getInstance()->popScene();
-
+	AudioEngine::play2d("sounds/Back_Btn.mp3", false, 0.8);
+	
 }
 
 
@@ -119,13 +118,11 @@ void MenuStartScene::goToTiendaScene(Ref *pSender){
 
 	auto scene = TiendaScene::createScene();
 	Director::getInstance()->pushScene(scene);
-	//Director::getInstance()->pushScene((Scene*)Global::getInstance()->tienda);
 }
 
 
 void MenuStartScene::goToLevelsScene(Ref *pSender){
 
-	//Scene* escena= Global::getInstance()->levelsMenuScene;
 	Director::getInstance()->pushScene(Global::getInstance()->levelsMenuScene);
 
 }

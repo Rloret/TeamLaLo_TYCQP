@@ -36,7 +36,8 @@ public:
 	void muestraUnoMenos(Ref *pSender); //funciones para la seleccion del nivel con dos botones fleacha
 	void muestraNivelesBtn();
 
-
+private:
+	int songLevelsMenuID;
 };
 
 #endif  

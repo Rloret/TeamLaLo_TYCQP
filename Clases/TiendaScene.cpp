@@ -2,6 +2,10 @@
 #include "Arma.h"
 #include "Global.h"
 #include "Nivel.h"
+#include "SimpleAudioEngine.h"
+
+#include "AudioEngine.h"
+using namespace cocos2d::experimental;
 USING_NS_CC;
 
 Scene* TiendaScene::createScene()
@@ -57,6 +61,7 @@ bool TiendaScene::init()
 }
 
 void TiendaScene::returnToScene(Ref *pSender){
+	AudioEngine::play2d("sounds/Back_Btn.mp3", false, 0.8);
 
 	Director::getInstance()->popScene();
 	for (int i = 0; i < Global::getInstance()->armasTotales.size(); i++) {
@@ -194,7 +199,17 @@ void TiendaScene::preparaBotones()
 	bocadillo->setPosition(Point(Global::getInstance()->visibleSize.width*3/4+bocadillo->getContentSize().width/2-20, Global::getInstance()->visibleSize.height*3/4-bocadillo->getContentSize().height/2));
 	bocadillo->setScale(1.7, 1.8);
 
-	textoCompra = Label::createWithSystemFont("QUIERES COMPRAR?", "Arial", 30);
+	letraGotica.fontFilePath = "fonts/OldLondon.ttf";
+	letraGotica.fontSize = 30;
+	letraGotica.glyphs = GlyphCollection::DYNAMIC;
+	letraGotica.outlineSize = 0;
+	letraGotica.customGlyphs = nullptr;
+	letraGotica.distanceFieldEnabled = false;
+
+	// create a TTF Label from the TTFConfig file.
+
+
+	textoCompra = Label::createWithTTF(letraGotica, "QUIERES COMPRAR?");
 	textoCompra->setColor(Color3B::GRAY);
 	textoCompra->enableShadow();
 	
@@ -212,13 +227,15 @@ void TiendaScene::preparaLabels()
 	
 	int y = visibleSize.height - 25;
 
-	dinero_oro_int = Label::createWithSystemFont((String::createWithFormat("Dinero : %i", Global::getInstance()->katahi->getOro())->getCString()), "Arial", 40);
-	dinero_oro_int->setColor(Color3B::BLACK);
+	dinero_oro_int = Label::createWithTTF(letraGotica, String::createWithFormat("Dinero : %i", Global::getInstance()->katahi->getOro())->getCString());
+	dinero_oro_int->setColor(Color3B(188, 116, 11));
 	dinero_oro_int->enableShadow();
+	dinero_oro_int->setScale(2);
 
-	dinero_mechones_int = Label::createWithSystemFont((String::createWithFormat("Mechones : %i", Global::getInstance()->katahi->getMechones())->getCString()), "Arial", 40);
-	dinero_mechones_int->setColor(Color3B::BLACK);
+	dinero_mechones_int = Label::createWithTTF(letraGotica, String::createWithFormat("Mechones : %i", Global::getInstance()->katahi->getMechones())->getCString());
+	dinero_mechones_int->setColor(Color3B(188, 116, 11));
 	dinero_mechones_int->enableShadow();
+	dinero_mechones_int->setScale(2);
 
 	this->addChild(dinero_oro_int, 2);
 	this->addChild(dinero_mechones_int, 2); 

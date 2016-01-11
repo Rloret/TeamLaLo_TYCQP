@@ -4,6 +4,10 @@
 #include"Global.h"
 #include"Nivel.h"
 #include "Animacion.h"
+#include "SimpleAudioEngine.h"
+#include "AudioEngine.h"
+
+using namespace cocos2d::experimental;
 
 USING_NS_CC;
 
@@ -73,6 +77,8 @@ bool PauseScene::init()
 	addChild(sombra, 2);
 	sombra->runAction(RepeatForever::create(Sequence::create(FadeTo::create(2.5, 255 / 2), FadeTo::create(2.5, 255), NULL)));
 
+	
+
 	return true;
 }
 
@@ -80,11 +86,16 @@ bool PauseScene::init()
 void PauseScene::resumeGameScene(Ref *pSender){
 
 	Director::getInstance()->popScene();
+	AudioEngine::play2d("sounds/Back_Btn.mp3", false, 0.8);
+
 }
 
 
 void PauseScene::goToMainMenuScene(Ref *pSender){
-	CCLOG("me voy a mainmenuScene");
+	
+	AudioEngine::stopAll();
+	AudioEngine::play2d("sounds/Home_Btn.mp3",false,1.0);
+
 	Global::getInstance()->vaciaArmasNivel();
 	Global::getInstance()->juegoEnCurso = false;
 	Director::getInstance()->popToRootScene();

@@ -2,6 +2,10 @@
 #include "proj.win32\Nivel.h"
 #include "proj.win32\Global.h"
 #include "Arma.h"
+#include "SimpleAudioEngine.h"
+#include"AudioEngine.h"
+
+using namespace cocos2d::experimental;
 USING_NS_CC;
 
 Scene* LevelsMenuScene::createScene()
@@ -164,12 +168,18 @@ bool LevelsMenuScene::init()
 	this->addChild(brightEffect, 5);
 	this->activaBrightEffect();
 
+
+	songLevelsMenuID=AudioEngine::play2d("sounds/LevelsMenuScene.mp3", true, 0.0);
+	AudioEngine::pause(songLevelsMenuID);
+
 	return true;
 }
 
 
 void LevelsMenuScene::goToMenuStart(Ref *pSender){
-
+	AudioEngine::play2d("sounds/Back_Btn.mp3", false, 0.8);
+	AudioEngine::pause(songLevelsMenuID);
+	
 	Director::getInstance()->popScene();
 }
 
@@ -273,17 +283,13 @@ void LevelsMenuScene::borraElementoTemporal(Node * emisor, bool limpia)
 
 void LevelsMenuScene::añadeNivel(cocos2d::Scene * nivel, int inicioObjetos, int finObjetos)
 {
-
+	Global::getInstance()->inicioObj = inicioObjetos;
+	Global::getInstance()->finalObj = finObjetos;
 	Director::getInstance()->pushScene(nivel);
-	Global::getInstance()->colocaObjetos(inicioObjetos, finObjetos);
 	Global::getInstance()->abreEstanteria();
 	Global::getInstance()->colocaFondo(fondosPasar);
 
-
 }
-
-
-
 
 void LevelsMenuScene::onEnterTransitionDidFinish()
 {
@@ -291,9 +297,14 @@ void LevelsMenuScene::onEnterTransitionDidFinish()
 	addListener();
 	activaBrightEffect();
 	brightEffect->setOpacity(0);
+	
+	
+	AudioEngine::setVolume(songLevelsMenuID ,1.0);
+	AudioEngine::resume(songLevelsMenuID);
 }
 
 void LevelsMenuScene::goToNivel(Ref *psender,int i){
+	AudioEngine::pause(songLevelsMenuID);
 	Label*	notAvailableLabel;
 	nivelpulsado = (MenuItemImage*)psender;
 	nivelpulsado->setEnabled(false);
@@ -306,12 +317,11 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 		if(fondosPasar.size()>0)fondosPasar.clear();
 		fondosPasar.push_back("images/Nivel/Escenarios/Habitacion_fondo.png");
 		fondosPasar.push_back("images/Nivel/Escenarios/Habitacion_segundo_plano.png");
-		//fondosPasar.push_back("images/Nivel/Castillo_Nubes.png");
 		fondosPasar.push_back("images/Nivel/Escenarios/Habitacion_tercer_plano.png");
 		fondosPasar.push_back("images/Nivel/Escenarios/Habitacion_primer_plano.png");
-		cene = Nivel::createScene(0,fondosPasar, 0, 10);
-		añadeNivel(cene, 0, 10);
-		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar,0, 10);	
+		cene = Nivel::createScene(0,fondosPasar, 0, 0);
+		añadeNivel(cene, 0, 0);
+
 		break;
 
 	case 2:
@@ -322,8 +332,15 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 		//fondosPasar.push_back("images/Nivel/Castillo_Nubes.png");
 		fondosPasar.push_back("images/Nivel/Escenarios/Castillo_Segundo_Plano.png");
 		fondosPasar.push_back("images/Nivel/Escenarios/Castillo_Primer_Plano.png");
-		cene = Nivel::createScene(2,fondosPasar, 0, 10);
-		añadeNivel(cene, 0, 10);
+		cene = Nivel::createScene(2,fondosPasar, 0, 1);
+		añadeNivel(cene, 0, 1);
+
+		/*CocosDenshion::SimpleAudioEngine::getInstance()->preloadBackgroundMusic("sounds/Murallas_inicio.mp3.mp3");
+		CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("sounds/Murallas_inicio.mp3", false);
+		CocosDenshion::SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(0.5);*/
+
+		
+
 		break;
 
 	case 3:
@@ -333,8 +350,8 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 		fondosPasar.push_back("images/Nivel/Escenarios/Castillo_Tercer_Plano.png");
 		fondosPasar.push_back("images/Nivel/Escenarios/Castillo_Segundo_Plano.png");
 		fondosPasar.push_back("images/Nivel/Escenarios/Castillo_Primer_Plano.png");
-		cene = Nivel::createScene(3,fondosPasar, 0, 10);
-		añadeNivel(cene, 0, 10);
+		cene = Nivel::createScene(3,fondosPasar, 1, 3);
+		añadeNivel(cene, 1,3);
 		break;
 
 	default:

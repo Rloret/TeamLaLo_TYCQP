@@ -1,5 +1,9 @@
 #include "CreditosScene.h"
 #include "MainMenuScene.h"
+#include "SimpleAudioEngine.h"
+#include "AudioEngine.h"
+
+using namespace cocos2d::experimental;
 
 USING_NS_CC;
 
@@ -47,6 +51,8 @@ bool CreditosScene::init()
 
 void CreditosScene::goToMainMenuScene(Ref *pSender){
 
-	Director::getInstance()->popScene();
+	AudioEngine::play2d("sounds/Back_Btn.mp3", false, 0.8);
 
+
+	Director::getInstance()->popScene();
 }
