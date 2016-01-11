@@ -21,6 +21,9 @@ public:
 	std::vector<Arma*> armasArsenal;
 	std::vector<Arma*> ArmasNivel;
 
+	std::vector<std::string> BateriaFrasesKatahi;
+	std::vector<std::string> BateriaFrasesZerrin;
+
 	ZerrinClass* zerrin;
 	KatahiClass* katahi;
 
@@ -36,6 +39,8 @@ public:
 	void colocaFondo(std::vector<std::string> fondos);
 	void abreEstanteria();
 	void recolocaArmasNivel();
+
+	void CreaFrases();
 	
 	bool juegoEnCurso;
 

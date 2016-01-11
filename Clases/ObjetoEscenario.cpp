@@ -64,6 +64,11 @@ void ObjetoEscenario::TouchEvent(cocos2d::Touch * touch, cocos2d::Point _p){assi
 
 int ObjetoEscenario::getDaño(){	return daño;}
 
+std::string ObjetoEscenario::getNombre()
+{
+	return nombre;
+}
+
 void ObjetoEscenario::enableListener(bool estado)
 {
 	listener->setEnabled(estado);
@@ -75,11 +80,6 @@ void ObjetoEscenario::accionColision(Node* objeto)
 	//CCLOG("obj con tipo %d" , ((ObjetoEscenario*)objeto)->getTipo());
 
 	switch (((ObjetoEscenario*)objeto)->tipo) {
-		
-	case 1: //abajo
-		CCLOG("Arma tipo 1/abajo y quito fisicas");
-		objeto->setPhysicsBody(nullptr);
-		break;
 
 	case 2://arriba
 		CCLOG("Arma tipo 2/arriba , quito fisicas y listner");

@@ -32,17 +32,23 @@ bool AjustesScene::init()
 	
 	
 	//menu
-	auto back_btn = MenuItemImage::create("images/AjustesScene/back_btn.png", "images/AjustesScene/back_btn.png",
+	auto back_btn = MenuItemImage::create("images/AjustesScene/flecha.png", "images/AjustesScene/flecha2.png",
 		CC_CALLBACK_1(AjustesScene::goToMainMenuScene, this));
 	auto menu = Menu::create(back_btn, NULL);
-
+	menu->setPosition(Point(visibleSize.width - 50, visibleSize.height - 50));
 	addChild(menu, 1);
 
 
 	//fondo
-	auto background = Sprite::create("images/AjustesScene/fondo_AjustesScene.png");
+	auto background = Sprite::create("images/AjustesScene/enconstruccion.png");
 	background->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
 	addChild(background, 0);
+
+	auto prompt = cocos2d::Sprite::create("images/AjustesScene/prompt.png");
+	prompt->setPosition(Point(80,480));
+	addChild(prompt, 1);
+
+	prompt->runAction(RepeatForever::create(Sequence::create(FadeOut::create(0.5),FadeIn::create(0.5),NULL)));
 
 	return true;
 }

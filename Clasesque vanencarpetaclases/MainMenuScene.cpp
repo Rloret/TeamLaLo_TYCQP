@@ -3,6 +3,7 @@
 #include"proj.win32/AjustesScene.h"
 #include "proj.win32/MenuStartScene.h"
 #include "ui\UIButton.h"
+#include "SimpleAudioEngine.h"
 
 
 USING_NS_CC;
@@ -74,7 +75,16 @@ bool MainMenuScene::init()
 	addChild(background, 0);
 	background->runAction(secuencia);
 	background->runAction(RepeatForever::create(Sequence::create(DelayTime::create(cocos2d::random(5,15)/10.0),CallFunc::create(CC_CALLBACK_0(MainMenuScene::generaNota,this)),nullptr)));
-    return true;
+
+	/*CocosDenshion::SimpleAudioEngine::getInstance()->preloadBackgroundMusic("sounds/Escenarios/MenuStartScene.wav");
+	CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("sounds/Escenarios/MenuStartScene.wav", true);*/
+
+	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sounds/Botones/Home_Btn.wav");
+	CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sounds/Botones/Home_Btn.wav");
+
+
+
+	return true;
 }
 void MainMenuScene::goToCreditos(Ref *pSender){
 

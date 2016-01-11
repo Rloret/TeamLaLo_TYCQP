@@ -11,14 +11,13 @@ public:
 	~ObjetoEscenario();
 	static ObjetoEscenario* create(const std::string &fileName, int daño, std::string nombre, int tipo);
 
-	//void initOptions();
-
 	void AddListener();
 	void TouchEvent(cocos2d::Touch* touch, cocos2d::Point _p);
 	void assignBody();
 
 	int getTipo();
 	int getDaño();
+	std::string getNombre();
 	void accionColision(Node* objeto);
 	void enableListener(bool estado);
 

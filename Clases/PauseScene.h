@@ -12,7 +12,8 @@ public:
 	void resumeGameScene(Ref *pSender);
 	void goToMainMenuScene(Ref *pSender);
 	void goToLogrosScene(Ref *pSender);
-
+	void activaZerrin(Node*sender);
+	int contador = 0;
 	// implement the "static create()" method manually
 	CREATE_FUNC(PauseScene);
 };

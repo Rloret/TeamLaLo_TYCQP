@@ -9,8 +9,8 @@ public:
 
 	virtual bool init();
 
-	void retryLevel(Ref *pSender);
 	void goToMenuStartScene(Ref * pSender);
+	void borraObjetoTemporal(Node* Sender);
 
 	// implement the "static create()" method manually
 	CREATE_FUNC(GameOverScene);

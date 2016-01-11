@@ -7,6 +7,7 @@
 #include "proj.win32\Arma.h"
 #include "proj.win32\ObjetoEscenario.h"
 #include "proj.win32\Global.h"
+#include "SimpleAudioEngine.h"
 
 USING_NS_CC;
 
@@ -39,25 +40,35 @@ bool MenuStartScene::init()
 
 	//Menu
 	
-	auto logrosBtn = MenuItemImage::create("images/MenuStartScene/logros_btn.png", "images/MenuStartScene/logros_btn.png",
+	auto logrosBtn = MenuItemImage::create("images/MenuStartScene/logros_btn.png", "images/MenuStartScene/logros_Btn_Idle.png",
 		CC_CALLBACK_1(MenuStartScene::goToLogrosScene, this));
-	auto vestuarioBtn = MenuItemImage::create("images/MenuStartScene/vestuario_btn.png", "images/MenuStartScene/vestuario_btn.png",
+	auto vestuarioBtn = MenuItemImage::create("images/MenuStartScene/vestuario_btn.png", "images/MenuStartScene/vestuario_Btn_Idle.png",
 		CC_CALLBACK_1(MenuStartScene::goToVestuarioScene, this));
-	auto tiendaBtn = MenuItemImage::create("images/MenuStartScene/tienda_btn.png", "images/MenuStartScene/tienda_btn.png",
+	auto tiendaBtn = MenuItemImage::create("images/MenuStartScene/tienda_btn.png", "images/MenuStartScene/tienda_Btn_Idle.png",
 		CC_CALLBACK_1(MenuStartScene::goToTiendaScene, this));
-	auto levelsBtn = MenuItemImage::create("images/MenuStartScene/levels_btn.png", "images/MenuStartScene/levels_btn.png",
+	auto levelsBtn = MenuItemImage::create("images/MenuStartScene/niveles_btn.png", "images/MenuStartScene/niveles_Btn_Idle.png",
 		CC_CALLBACK_1(MenuStartScene::goToLevelsScene, this));
 
 
-	auto menu1 = Menu::create( logrosBtn,vestuarioBtn,tiendaBtn,levelsBtn,NULL);
-	menu1->alignItemsVertically();
+	auto menu1 = Menu::create( logrosBtn,NULL);
 	addChild(menu1, 1);
-	
-	auto backBtn = MenuItemImage::create("images/MenuStartScene/back_btn.png", "images/MenuStartScene/back_btn.png",
+	menu1->setPosition(Point(menu1->getContentSize().width/2-60,512));
+	auto menu2 = Menu::create(vestuarioBtn, NULL);
+	addChild(menu2, 1);
+	menu2->setPosition(Point(90 + menu2->getContentSize().width / 2,363));
+	auto menu3 = Menu::create(tiendaBtn, NULL);
+	addChild(menu3, 1);
+	menu3->setPosition(Point( menu3->getContentSize().width / 2,208));
+	auto menu4 = Menu::create(levelsBtn, NULL);
+	addChild(menu4, 1);
+	menu4->setPosition(Point(50 + menu4->getContentSize().width / 2,65));
+
+
+	auto backBtn = MenuItemImage::create("images/AjustesScene/flecha.png", "images/AjustesScene/flecha2.png",
 			CC_CALLBACK_1(MenuStartScene::goToMainMenuScene,this));
-	auto menu2 = Menu::create(backBtn,NULL);
-	menu2->setPosition(Point(visibleSize.width - 20, visibleSize.height - 20));
-	addChild(menu2, 2);
+	auto menu6 = Menu::create(backBtn,NULL);
+	menu6->setPosition(Point(visibleSize.width - 50, visibleSize.height - 50));
+	addChild(menu6, 2);
 	
 
 
@@ -66,7 +77,21 @@ bool MenuStartScene::init()
 	auto background = Sprite::create("images/MenuStartScene/fondo_mainMenu.png");
 	background->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
 	addChild(background, 0);
+	
+
+	auto b2 = Sprite::create("images/MenuStartScene/menustartscene_torres.png");
+	b2->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
+	addChild(b2,1);
+
+	auto sombra = Sprite::create("images/MenuStartScene/s.png");
+	sombra->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
+	addChild(sombra, 2);
+	
+	sombra->runAction(RepeatForever::create(Sequence::create(FadeTo::create(4, 80), FadeTo::create(4, 255),NULL)));
+
 	return true;
+
+
 }
 
 
@@ -101,9 +126,6 @@ void MenuStartScene::goToTiendaScene(Ref *pSender){
 void MenuStartScene::goToLevelsScene(Ref *pSender){
 
 	//Scene* escena= Global::getInstance()->levelsMenuScene;
-	Director::getInstance()->pushScene(/*(Scene*)*/Global::getInstance()->levelsMenuScene);
-	/*auto scene = LevelsMenuScene::createScene();
-	Director::getInstance()->pushScene(scene);*/
-	
+	Director::getInstance()->pushScene(Global::getInstance()->levelsMenuScene);
 
 }

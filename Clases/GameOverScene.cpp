@@ -1,6 +1,7 @@
 #include "GameOverScene.h"
 #include"Global.h"
 #include "Nivel.h"
+#include "Animacion.h"
 USING_NS_CC;
 
 Scene* GameOverScene::createScene()
@@ -30,25 +31,30 @@ bool GameOverScene::init()
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
-	auto menuBtn = MenuItemImage::create("images/PauseScene/back_btn.png", "images/VestuarioScene/back_btn.png",
+	auto menuBtn = MenuItemImage::create("images/AjustesScene/flecha.png", "images/AjustesScene/flecha2.png",
 		CC_CALLBACK_1(GameOverScene::goToMenuStartScene, this));
 	
 
 	auto menu = Menu::create( menuBtn, NULL);
-	menu->alignItemsVerticallyWithPadding(visibleSize.height / 2);
-	menu->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
+	//menu->alignItemsVerticallyWithPadding(visibleSize.height / 2);
+	menu->setPosition(Point(visibleSize.width / 2, 50));
 	addChild(menu, 2);
 
-	auto goLabel = Label::createWithSystemFont("GAME OVER.", "Arial", 60);
-	goLabel->setColor(Color3B::RED);
-	goLabel->enableShadow();
-	goLabel->setPosition(Global::getInstance()->visibleSize.width / 2, Global::getInstance()->visibleSize.height / 2 + goLabel->getContentSize().height * 2);
-
-	this->addChild(goLabel,4);
 	//Fondo
-	auto background = Sprite::create("images/MainMenuScene/fondo_mainMenu.png");
+	auto background = Sprite::create("images/GameOverScene/gameover_fondo.png");
 	background->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
 	addChild(background, 0);
+	
+	auto KatahiRaptadaAnim = new Animacion("secuestro_%03d.png", 16, 0.8, "images/GameOverScene/ZerrinyKatahi.plist", true);
+	auto KatahiRaptada = KatahiRaptadaAnim->getAnimacionCreada();
+	KatahiRaptada->setPosition(0, 0);
+	this->addChild(KatahiRaptada, 1);
+	KatahiRaptada->runAction(Sequence::create(MoveBy::create(5,Vec2(1300,0)),CallFuncN::create(CC_CALLBACK_1(GameOverScene::borraObjetoTemporal,this)),NULL));
+
+	auto sombra = Sprite::create("images/GameOverScene/gameover_fondo_sombra.png");
+	sombra->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
+	addChild(sombra, 2);
+	sombra->runAction(RepeatForever::create(Sequence::create(FadeTo::create(2.5, 255 / 2), FadeTo::create(2.5, 255), NULL)));
 	return true;
 }
 
@@ -57,6 +63,11 @@ void GameOverScene::goToMenuStartScene(Ref * pSender)
 	Global::getInstance()->vaciaArmasNivel();
 	Global::getInstance()->juegoEnCurso = false;
 	Director::getInstance()->popToRootScene();
+}
+
+void GameOverScene::borraObjetoTemporal(Node * Sender)
+{
+	Sender->removeFromParentAndCleanup(true);
 }
 
 

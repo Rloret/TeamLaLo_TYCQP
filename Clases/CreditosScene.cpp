@@ -31,10 +31,10 @@ bool CreditosScene::init()
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
 	//menu
-	auto back_btn = MenuItemImage::create("images/CreditosScene/back_btn.png", "images/CreditosScene/back_btn.png",
+	auto back_btn = MenuItemImage::create("images/AjustesScene/flecha.png", "images/AjustesScene/flecha2.png",
 			CC_CALLBACK_1(CreditosScene::goToMainMenuScene,this));
 	auto menu = Menu::create(back_btn, NULL);
-
+	menu->setPosition(Point(visibleSize.width - 50, visibleSize.height - 50));
 	addChild(menu, 1);
 
 	//fondo

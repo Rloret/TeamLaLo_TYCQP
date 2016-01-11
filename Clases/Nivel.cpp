@@ -11,6 +11,8 @@
 #include "Arma.h"
 #include "WinScene.h"
 #include "chipmunk.h"
+#include "Animacion.h"
+
 USING_NS_CC;
 
 #define ANCHOARSENAL ((Global::getInstance()->visibleSize.width*4)/6);
@@ -19,7 +21,7 @@ USING_NS_CC;
 
 
 
-Scene* Nivel::createScene(std::vector<std::string> fondos, int i_objetos, int u_objetos)
+Scene* Nivel::createScene(int nivel, std::vector<std::string> fondos, int i_objetos, int u_objetos)
 {
 	// 'scene' is an autorelease object
 	auto scene = Scene::createWithPhysics();
@@ -33,7 +35,7 @@ Scene* Nivel::createScene(std::vector<std::string> fondos, int i_objetos, int u_
 	Global::getInstance()->layerObjects = layerObjects;
 
 	CCLOG("scene mide : %f, %f", scene->getBoundingBox().size.width, scene->getBoundingBox().size.height);
-	auto layer = Nivel::create(fondos, i_objetos, u_objetos);
+	auto layer = Nivel::create(nivel, fondos, i_objetos, u_objetos);
 	layer->setTag(102);
 	
 	layer->setPhysicsWorld(scene->getPhysicsWorld());
@@ -42,15 +44,13 @@ Scene* Nivel::createScene(std::vector<std::string> fondos, int i_objetos, int u_
 	CCLOG("Layer mide : %f, %f", layer->getBoundingBox().size.width, layer->getBoundingBox().size.height);
 	scene->addChild(layer,10);
 
-
-
 	return scene;
 }
 
 
-Nivel * Nivel::create(std::vector<std::string> fondos, int i_objetos, int u_objetos)
+Nivel * Nivel::create(int nivel, std::vector<std::string> fondos, int i_objetos, int u_objetos)
 {
-	Nivel *pRet = new(std::nothrow)Nivel(fondos, i_objetos, u_objetos); \
+	Nivel *pRet = new(std::nothrow)Nivel(nivel, fondos, i_objetos, u_objetos); \
 		if (pRet && pRet->init()) \
 		{ \
 			pRet->autorelease(); \
@@ -83,7 +83,7 @@ bool Nivel::init()
 }
 
 
-void Nivel::preparaNivel(std::vector<std::string> fondos, int i_objetos, int u_objetos) {  // nivel=numero nivel para colocar
+void Nivel::preparaNivel(int nivel, std::vector<std::string> fondos, int i_objetos, int u_objetos) {  // nivel=numero nivel para colocar
 	Global::getInstance()->ellapsedTime = 999.0;
 	Global::getInstance()->currentTime = 0.0;
 	Size visibleSize = Director::getInstance()->getVisibleSize();
@@ -92,14 +92,112 @@ void Nivel::preparaNivel(std::vector<std::string> fondos, int i_objetos, int u_o
 	auto alto = ALTOARSENAL;
 	Global::getInstance()->ContadorArmas = 0;
 	Global::getInstance()->juegoEnCurso = false;
-	colocaBotones();
-	displayArmasArsenal();
 	colocaFondo(fondos);
-	this->addContactListener();
-	addChild(Global::getInstance()->zerrin, 4);
 	colocaZerrin();
 
-	this->schedule(schedule_selector(Nivel::spawnNube), 2.0);
+	this->addContactListener();
+	
+	addChild(Global::getInstance()->zerrin, 4);
+
+	auto KatahiAnimacion = new Animacion("katahi_%03d.png", 2, 4.0, "images/GameOverScene/ZerrinyKatahi.plist", true);
+	Katahi = KatahiAnimacion->getAnimacionCreada();
+	this->addChild(Katahi,4);
+	Katahi->setPosition(2600,Global::getInstance()->zerrin->getPositionY()-Katahi->getBoundingBox().size.height/2);
+	if (nivel>=2) this->schedule(schedule_selector(Nivel::spawnNube), 2.0);
+	
+	//sprite vacio
+	cocos2d::Sprite *señuelo = cocos2d::Sprite::create();
+	addChild(señuelo, 4);
+	
+	señuelo->setPosition(Point(350 + Global::getInstance()->zerrin->getContentSize().width / 2
+		, visibleSize.height / 3 + señuelo->getContentSize().height / 2));
+	
+	this->runAction(Follow::create(señuelo, muralla->getBoundingBox()));
+
+
+	switch (nivel) {
+		case 0:
+			señuelo->runAction(Sequence::create(CCCallFunc::create(CC_CALLBACK_0(Nivel::cargaFrasesZerrin, this, 0)), 
+				DelayTime::create(3.0),
+				MoveBy::create(2, Point(3000, 0)),
+				CCCallFunc::create(CC_CALLBACK_0(Nivel::cargaFrasesKatahi, this, 0)),
+				DelayTime::create(3.0),
+				CCCallFunc::create(CC_CALLBACK_0(Nivel::cargaFrasesKatahi, this, 1)),
+				DelayTime::create(3.0), MoveBy::create(2, Point(-3000, 0)), 
+				CCCallFunc::create(CC_CALLBACK_0(Nivel::cargaFrasesZerrin, this, 1)), 
+				DelayTime::create(3.0), MoveBy::create(2, Point(3000, 0)),
+				CallFunc::create(CC_CALLBACK_0(Nivel::cargaFrasesKatahi, this, 2)),
+				DelayTime::create(3.0), MoveBy::create(2, Point(-3000, 0)),
+				CCCallFunc::create(CC_CALLBACK_0(Nivel::cargaFrasesZerrin, this, 2)),
+				DelayTime::create(3.0),
+				CCCallFunc::create(CC_CALLBACK_0(Nivel::cargaFrasesZerrin, this, 3)),
+				DelayTime::create(3.0), MoveBy::create(2, Point(3000, 0)),
+				CCCallFunc::create(CC_CALLBACK_0(Nivel::cargaFrasesKatahi, this, 4)),
+				DelayTime::create(3.0),
+				CCCallFunc::create(CC_CALLBACK_0(Nivel::cargaFrasesKatahi, this, 5)),
+				DelayTime::create(3.0),
+				CCCallFunc::create(CC_CALLBACK_0(Nivel::cargaFrasesKatahi, this, 6)),
+				DelayTime::create(3.0), MoveBy::create(2, Point(-3000, 0)),
+				CCCallFunc::create(CC_CALLBACK_0(Nivel::colocaHUD, this)),
+				CCCallFunc::create(CC_CALLBACK_0(Nivel::removeKatahi, this)),
+				NULL));
+
+			break;
+		case 1:
+			señuelo->runAction(Sequence::create(CCCallFunc::create(CC_CALLBACK_0(Nivel::cargaFrasesZerrin, this, 4)),
+				DelayTime::create(3.0),
+				MoveBy::create(2, Point(3000, 0)),
+				CCCallFunc::create(CC_CALLBACK_0(Nivel::cargaFrasesKatahi, this, 7)),
+				DelayTime::create(3.0),
+				CCCallFunc::create(CC_CALLBACK_0(Nivel::cargaFrasesKatahi, this, 8)),
+				DelayTime::create(3.0),
+				CCCallFunc::create(CC_CALLBACK_0(Nivel::cargaFrasesKatahi, this, 9)),
+				DelayTime::create(3.0),
+				MoveBy::create(2, Point(-3000, 0)),
+				CCCallFunc::create(CC_CALLBACK_0(Nivel::colocaHUD, this)),
+				CCCallFunc::create(CC_CALLBACK_0(Nivel::removeKatahi, this)),
+				NULL));
+
+			break;
+		case 2:
+			señuelo->runAction(Sequence::create(CCCallFunc::create(CC_CALLBACK_0(Nivel::cargaFrasesZerrin, this, 5)),
+				DelayTime::create(3.0),
+				MoveBy::create(2, Point(3000, 0)),
+				CCCallFunc::create(CC_CALLBACK_0(Nivel::cargaFrasesKatahi, this, 10)),
+				DelayTime::create(3.0),
+				MoveBy::create(2, Point(-3000, 0)),
+				CCCallFunc::create(CC_CALLBACK_0(Nivel::colocaHUD, this)),
+				CCCallFunc::create(CC_CALLBACK_0(Nivel::removeKatahi, this)), NULL));
+
+			break;
+		case 3:
+			colocaHUD();
+			removeKatahi();
+			break;
+
+		case 4:
+			señuelo->runAction(Sequence::create(CCCallFunc::create(CC_CALLBACK_0(Nivel::cargaFrasesZerrin, this, 6)),
+				DelayTime::create(3.0),
+				CCCallFunc::create(CC_CALLBACK_0(Nivel::cargaFrasesZerrin, this, 7)),
+				DelayTime::create(3.0),
+				MoveBy::create(2, Point(3000, 0)),
+				CCCallFunc::create(CC_CALLBACK_0(Nivel::cargaFrasesKatahi, this, 11)),
+				DelayTime::create(3.0),
+				MoveBy::create(2, Point(-3000, 0)),
+				CCCallFunc::create(CC_CALLBACK_0(Nivel::cargaFrasesZerrin, this, 8)),
+				DelayTime::create(3.0),
+				CCCallFunc::create(CC_CALLBACK_0(Nivel::cargaFrasesZerrin, this, 9)),
+				DelayTime::create(3.0),
+
+				CCCallFunc::create(CC_CALLBACK_0(Nivel::colocaHUD, this)), CCCallFunc::create(CC_CALLBACK_0(Nivel::removeKatahi, this)), NULL));
+
+			break;
+		default:
+			señuelo->runAction(CCCallFunc::create(CC_CALLBACK_0(Nivel::colocaHUD, this)));
+			break;
+	
+	}
+	
 }
 
 void Nivel::displayArmasArsenal()
@@ -305,8 +403,7 @@ void Nivel::recorreArmas(int iterador,int posicion,int ancho,int alto,int iterac
 		posicion++;
 		if (vueltasArsenal == Global::getInstance()->armasArsenal.size()) vueltasArsenal = 0;
 		Arma* arma = Global::getInstance()->armasArsenal[vueltasArsenal];
-		//arma->setPosition((((posicion + 1)*ancho) / 7) - arma->getContentSize().width, alto / 2 + 2 * vueltasArsenal);
-		arma->setPosition((((posicion + 1)*ancho) / 7) - arma->getContentSize().width/2, alto / 2 );
+		arma->setPosition(((rectangulo->getPositionX()+(posicion)*554) / 6), alto / 2 +30);
 		activaDesactivaArma(arma, true);
 		CCLOG("muestro la %d", vueltasArsenal);
 
@@ -334,20 +431,19 @@ void Nivel::colocaBotones()
 {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
-	rectangulo = Sprite::create("images/Nivel/rectangle.png");
+	rectangulo = Sprite::create("images/Nivel/Arsenal.png");
 	auto ancho = ANCHOARSENAL;
 	auto alto = ALTOARSENAL;
 
-	rectangulo->setScaleX(ancho / rectangulo->getContentSize().width);
-	rectangulo->setScaleY(alto / rectangulo->getContentSize().height);
-	rectangulo->setPosition(Point(ancho / 2, alto / 2));
+	//rectangulo->setScaleX(ancho / rectangulo->getContentSize().width);
+	//rectangulo->setScaleY(alto / rectangulo->getContentSize().height);
+	rectangulo->setPosition(Point(ancho / 2, alto / 2+30));
 	rectangulo->setVisible(false);
-	addChild(rectangulo, 6);
+	addChild(rectangulo, 8);
 
-	auto pauseBtn = MenuItemImage::create("images/Nivel/pause_btn.png", "images/Nivel/pause_btn.png", CC_CALLBACK_1(Nivel::goToPause, this));
-
-	auto tiendaBtn = MenuItemImage::create("images/Nivel/tienda_btn.png", "images/Nivel/tienda_btn.png", CC_CALLBACK_1(Nivel::goToTienda, this));
-	auto vestuarioBtn = MenuItemImage::create("images/Nivel/vestuario_btn.png", "images/Nivel/vestuario_btn.png", CC_CALLBACK_1(Nivel::goToVestuario, this));
+	auto pauseBtn = MenuItemImage::create("images/Nivel/Botones/pause_btn_good_res_idle.png", "images/Nivel/Botones/pause_btn_good_res.png", CC_CALLBACK_1(Nivel::goToPause, this));
+	auto tiendaBtn = MenuItemImage::create("images/Nivel/Botones/tienda_btn_good_res_idle.png", "images/Nivel/Botones/tienda_btn_good_res.png", CC_CALLBACK_1(Nivel::goToTienda, this));
+	auto vestuarioBtn = MenuItemImage::create("images/Nivel/Botones/vestuario_btn_good_res_idle.png", "images/Nivel/Botones/vestuario_btn_good_res.png", CC_CALLBACK_1(Nivel::goToVestuario, this));
 
 	auto listenerPause = EventListenerKeyboard::create();
 	listenerPause->onKeyPressed = [=](EventKeyboard::KeyCode keyCode, Event* event) {
@@ -380,18 +476,17 @@ void Nivel::colocaBotones()
 
 	};
 	menu1 = Menu::create(pauseBtn, tiendaBtn, vestuarioBtn, NULL);
-	menu1->setPosition(Point(150, visibleSize.height - pauseBtn->getContentSize().height));
+	menu1->setPosition(Point(180, visibleSize.height - pauseBtn->getContentSize().height/2));
 	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listenerPause, this);
 	menu1->alignItemsHorizontally();
 	addChild(menu1, 6);
 
-	auto arsenalBtn = MenuItemImage::create("images/Nivel/back_btn.png", "images/Nivel/back_btn.png", CC_CALLBACK_1(Nivel::abrirArsenal, this));
-	arsenalBtn->setColor(Color3B(100, 100, 100));
-	auto simulacionBtn = MenuItemImage::create("images/Nivel/back_btn.png", "images/Nivel/back_btn.png", CC_CALLBACK_1(Nivel::simulacion, this));
-	simulacionBtn->setColor(Color3B(150, 50, 150));
+	auto arsenalBtn = MenuItemImage::create("images/Nivel/Botones/arsenal_btn_good_res_idle.png", "images/Nivel/Botones/arsenal_btn_good_res.png", CC_CALLBACK_1(Nivel::abrirArsenal, this));
+	auto simulacionBtn = MenuItemImage::create("images/Nivel/Botones/play_btn_good_res_idle.png", "images/Nivel/Botones/play_btn_good_res.png", CC_CALLBACK_1(Nivel::simulacion, this));
+
 
 	menu2 = Menu::create(arsenalBtn, simulacionBtn, NULL);
-	menu2->setPosition(Point(visibleSize.width / 2 + visibleSize.width / 3, arsenalBtn->getContentSize().height/2));
+	menu2->setPosition(Point(visibleSize.width / 2 + visibleSize.width / 3, arsenalBtn->getContentSize().height-15));
 	menu2->alignItemsHorizontally();
 	addChild(menu2, 6);
 
@@ -437,14 +532,14 @@ void Nivel::colocaFondo(std::vector<std::string> fondos){
 	background1->retain();
 
 
-	background2 = Sprite::create(fondos[3]);
+	background2 = Sprite::create(fondos[2]);
 	addChild(background2, 3);
 
 	background2->setPosition(background2->getContentSize().width, visibleSize.height);
 	background2->setAnchorPoint(Vec2(1, 1));
 	background2->retain();
 
-	muralla = Sprite::create(fondos[4]);
+	muralla = Sprite::create(fondos[3]);
 	addChild(muralla, 5);
 	auto limitesEscenario = PhysicsBody::createEdgeBox(Size(background->getContentSize().width, 668), PhysicsMaterial(0.5f, 0.0f, 0.5f), 0.3);
 	limitesEscenario->setPositionOffset(Vec2(0, 200));
@@ -480,6 +575,71 @@ void Nivel::colocaZerrin()
 	zerrin->haLlegado = false;
 }
 
+void Nivel::colocaHUD()
+{
+	colocaBotones();
+	displayArmasArsenal();
+}
+
+void Nivel::cargaFrasesKatahi(int n)
+{
+	auto bocadillo = Sprite::create("images/Nivel/Bocadillo_Zerrin.png");
+	bocadillo->setAnchorPoint(Vec2(0.5, 0.5));
+	bocadillo->setScaleX(-1);
+	Label* fraseKatahi = Label::create();
+	fraseKatahi->setString(Global::getInstance()->BateriaFrasesKatahi[n]);
+	fraseKatahi->setAnchorPoint(Vec2(0.5,0.5));
+	fraseKatahi->setTextColor(Color4B(138,31,114,255));
+	fraseKatahi->setSystemFontSize(50.0);
+	fraseKatahi->setPosition(Katahi->getPositionX(),Katahi->getPositionY()+Katahi->getBoundingBox().size.height+bocadillo->getBoundingBox().size.height/2);
+	bocadillo->setPosition(fraseKatahi->getPosition());
+
+	colocaFrase(bocadillo, fraseKatahi);
+}
+
+void Nivel::cargaFrasesZerrin(int n)
+{
+	Label* fraseZerrin = Label::create();
+	auto bocadillo = Sprite::create("images/Nivel/Bocadillo_Zerrin.png");
+	bocadillo->setAnchorPoint(Vec2(0.5, 0.5));
+	bocadillo->setScaleX(-1);
+
+	fraseZerrin->setString(Global::getInstance()->BateriaFrasesZerrin[n]);
+
+	fraseZerrin->setPosition(Vec2(Global::getInstance()->zerrin->getPositionX(),Global::getInstance()->zerrin->getPositionY()+bocadillo->getBoundingBox().size.height));
+	fraseZerrin->setTextColor(Color4B(19,33,138,255));
+	fraseZerrin->setSystemFontSize(50.0);
+	bocadillo->setPosition(fraseZerrin->getPosition());
+
+
+	colocaFrase(bocadillo,fraseZerrin);
+
+	
+}
+
+void Nivel::colocaFrase(Sprite * Bocadillo, Label * Frase)
+{
+	float altmax = Bocadillo->getBoundingBox().size.height;
+	float anchmax = Bocadillo->getBoundingBox().size.width;
+	bool entra = false;
+	while (!entra) {
+		if (Frase->getBoundingBox().size.width > anchmax || Frase->getBoundingBox().size.height > altmax) {
+			Frase->setSystemFontSize(Frase->getSystemFontSize() / 2);
+		}
+		else entra = true;
+	}
+	addChild(Bocadillo, 5);
+	addChild(Frase, 5);
+
+	Bocadillo->setPosition(Frase->getPosition());
+	Frase->runAction(Sequence::create(ScaleBy::create(0.5, 1.5), ScaleBy::create(1.5, 1), FadeOut::create(0.5),
+		CallFuncN::create(CC_CALLBACK_1(Nivel::borraElementoTemporal, this, true)), NULL));
+	Bocadillo->runAction(Sequence::create(DelayTime::create(2), FadeOut::create(0.5), CallFuncN::create(CC_CALLBACK_1(Nivel::borraElementoTemporal, this, true)), NULL));
+}
+
+
+
+
 void Nivel::setPhysicsWorld(cocos2d::PhysicsWorld * world)
 {
 	nivelPhysics = world;
@@ -495,9 +655,9 @@ int Nivel::getBackgroundWidth()
 	return s.width;
 }
 
-Nivel::Nivel(std::vector<std::string> fondos, int i_objetos, int u_objetos)
+Nivel::Nivel(int nivel, std::vector<std::string> fondos, int i_objetos, int u_objetos)
 {
-	preparaNivel(fondos, i_objetos, u_objetos);
+	preparaNivel(nivel, fondos, i_objetos, u_objetos);
 }
 
 Nivel::~Nivel()
@@ -677,6 +837,11 @@ void Nivel::onContactPostSolve(PhysicsContact & contact, const PhysicsContactPos
 	}
 }
 
+void Nivel::removeKatahi()
+{
+	if (Katahi != nullptr)Katahi->removeFromParentAndCleanup(true);
+}
+
 
 
 void Nivel::addContactListener()
@@ -690,7 +855,9 @@ void Nivel::addContactListener()
 }
 
 
-
-
+void Nivel::borraElementoTemporal(Node * emisor, bool limpia)
+{
+	emisor->removeFromParentAndCleanup(limpia);
+}
 
 

@@ -151,21 +151,6 @@ void ZerrinClass::correr()
 	this->scheduleUpdate();
 }
 
-cocos2d::Sprite* ZerrinClass::creaAnimacionesZerrin(const char * format, int count,float multiplicadorvelocidad)
-{
-	auto animFrames = this->getAnimation(format,count);
-	auto sprite = cocos2d::Sprite::createWithSpriteFrame(animFrames.front());
-
-	if (sprite == nullptr) CCLOG("Nulooo");
-	else { this->addChild(sprite);
-	}
-	sprite->setAnchorPoint(Vec2(0, 0));
-
-	cocos2d::Animation* animation = cocos2d::Animation::createWithSpriteFrames(animFrames, 1.0/(count*multiplicadorvelocidad));
-	sprite->runAction(cocos2d::RepeatForever::create(cocos2d::Animate::create(animation)));
-	this->currentAnimation = sprite;
-	return sprite;
-}
 
 cocos2d::Vector<cocos2d::SpriteFrame*> ZerrinClass::getAnimation(const char * format, int count)
 {

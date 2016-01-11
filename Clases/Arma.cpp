@@ -15,7 +15,7 @@ Arma::Arma( int daño, std::string nombre, int tipo,int precio,int mechones)
 	this->tipo = tipo;
 	this->precio = precio;
 	this->mechones = mechones;
-	this->setArma(this);
+	//this->setArma(this);
 	this->AddListener();
 	desdeTienda = false;
 
@@ -97,6 +97,7 @@ void Arma::arrastraArma(cocos2d::Vec2 vector)
 	switch (tipo) {
 	case 3:
 	case 4:
+	case 5:
 		vector.y = 270;
 
 		if (vector.x > visibleSize.width - this->getBoundingBox().size.width) vector.x = visibleSize.width - this->getBoundingBox().size.width / 2;
@@ -166,10 +167,10 @@ void Arma::setPointY(int y)
 	this->toqueY = y;
 }
 
-void Arma::setArma(Arma* arma)
+/*void Arma::setArma(Arma* arma)
 {
 	esteArma = arma;
-}
+}*/
 
 void Arma::accion(Arma * a, cocos2d::Touch* touch)
 {
@@ -230,6 +231,7 @@ void Arma::accion(Arma * a, cocos2d::Touch* touch)
 		pivote->getPhysicsBody()->setContactTestBitmask(false);
 		pivote->getPhysicsBody()->setCollisionBitmask(false);
 		pivote->getPhysicsBody()->setDynamic(false);
+		pivote->runAction(RepeatForever::create(RotateBy::create(1/360,1)));
 
 		this->addChild(pivote);
 
@@ -287,6 +289,7 @@ void Arma::accion(Arma * a, cocos2d::Touch* touch)
 		break;
 
 	case 5:  //trampilla
+		a->setTexture("images/Armas/trampilla.png");
 		a->setPhysicsBody(PhysicsBody::createBox(a->getBoundingBox().size, cocos2d::PhysicsMaterial(10.0, 1, 1.0)));
 		a->getPhysicsBody()->setContactTestBitmask(true);
 		a->getPhysicsBody()->setCollisionBitmask(false);
@@ -303,8 +306,10 @@ void Arma::accion(Arma * a, cocos2d::Touch* touch)
 	default:
 		break;
 	}
-
 	a->setPositionX(((Global::getInstance()->zerrin->getPositionX() - 1024 / 2) / 1024) * 1024 + touch->getLocation().x);
+	if (a->getPositionX() > 3072 - 300)a->setPositionX(3072 - 300 - a->getBoundingBox().size.width);
+	if (a->getPositionX() < 307)a->setPositionX(307);
+	compruebaSitio(a);
 
 }
 
@@ -347,16 +352,26 @@ void Arma::reactivaBitmasks()
 	}
 	else if (this->tipo == 5) {
 		this->getPhysicsBody()->setContactTestBitmask(true);
-		this->removeAllChildren();
+		this->setTexture("images/Armas/trampilla.png");
 	}
 
 
 }
 
-Arma* Arma::getArma()
+void Arma::compruebaSitio(Arma* a)
+{
+	for (int i = 0; i < Global::getInstance()->ArmasNivel.size(); i++) {
+		if (Global::getInstance()->ArmasNivel[i]->colocada && a->getBoundingBox().intersectsRect(Global::getInstance()->ArmasNivel[i]->getBoundingBox())) {
+			auto nuevolugar = Global::getInstance()->ArmasNivel[i]->getPositionX() + Global::getInstance()->ArmasNivel[i]->getBoundingBox().size.width;
+			a->getPositionX()<1024 * 3 ? a->setPositionX(nuevolugar) : a->setPositionX(nuevolugar - Global::getInstance()->ArmasNivel[i]->getBoundingBox().size.width * 2);
+		}
+	}
+}
+
+/*Arma* Arma::getArma()
 {
 	return esteArma;
-}
+}*/
 
 int Arma::getTipo()
 {
@@ -420,19 +435,16 @@ void Arma::accionColision(int tipoDelArma)
 		animacionSprite = animacionArma->getAnimacionCreada();
 		this->addChild(animacionSprite);
 		animacionSprite->setPositionX(animacionSprite->getPositionX() - this->getBoundingBox().size.width*1.5);
+		break;
 	case 5:
 		cuerpoFisicas->setCollisionBitmask(false);
 		cuerpoFisicas->setContactTestBitmask(false);
-		if (Global::getInstance()->zerrin->getPositionX() > this->getPositionX()) {
-			animacionSprite = Sprite::create("images/LevelsMenuScene/Flecha.png");
-			animacionSprite->setAnchorPoint(Vec2(0.5, 0.5));
-			animacionSprite->setScaleX(-1);
+		if (Global::getInstance()->zerrin->getPositionX() > this->getPositionX()) { //dcha
+			this->setTexture("images/Armas/trampilla_activa_dcha.png");
 		}
 		else {
-			animacionSprite = Sprite::create("images/LevelsMenuScene/Flecha.png");
-			animacionSprite->setAnchorPoint(Vec2(0.5, 0.5));
+			this->setTexture("images/Armas/trampilla_activa_izq.png");;
 		}
-		this->addChild(animacionSprite);
 		//EXPERIMENTAL!!!!!!!
 		this->runAction(cocos2d::Sequence::create(cocos2d::DelayTime::create(7.0), cocos2d::CallFunc::create(CC_CALLBACK_0(Arma::reactivaBitmasks, this)), NULL));
 		//this->getPhysicsBody()->setVelocity(Vec2(-40, -40));

@@ -30,7 +30,7 @@ bool WinScene::init()
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
-	auto menuBtn = MenuItemImage::create("images/PauseScene/back_btn.png", "images/VestuarioScene/back_btn.png",
+	auto menuBtn = MenuItemImage::create("images/AjustesScene/flecha.png", "images/AjustesScene/flecha.png",
 		CC_CALLBACK_1(WinScene::goToMenuStartScene, this));
 
 

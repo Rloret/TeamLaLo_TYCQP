@@ -35,13 +35,13 @@ bool LevelsMenuScene::init()
 	//meter imagenes mundos en array
 	Sprite* mundo1 = Sprite::create("images/LevelsMenuScene/mundo1.png");
 	imagenesMundos.push_back(mundo1);
-	Sprite* mundo2 = Sprite::create("images/LevelsMenuScene/mundo2.png");
+	Sprite* mundo2 = Sprite::create("images/LevelsMenuScene/mundo_development.png");
 	imagenesMundos.push_back(mundo2);
-	Sprite* mundo3 = Sprite::create("images/LevelsMenuScene/mundo3.png");
+	Sprite* mundo3 = Sprite::create("images/LevelsMenuScene/mundo_development.png");
 	imagenesMundos.push_back(mundo3);
-	Sprite* mundo4 = Sprite::create("images/LevelsMenuScene/mundo1.png");
+	Sprite* mundo4 = Sprite::create("images/LevelsMenuScene/mundo_development.png");
 	imagenesMundos.push_back(mundo4);
-	Sprite* mundo5 = Sprite::create("images/LevelsMenuScene/mundo2.png");
+	Sprite* mundo5 = Sprite::create("images/LevelsMenuScene/mundo_development.png");
 	imagenesMundos.push_back(mundo5);
 
 
@@ -53,55 +53,116 @@ bool LevelsMenuScene::init()
 		if (i+1 != 1) imagenesMundos[i]->setVisible(false);
 	}
 
+	auto bolaBackground = Sprite::create("images/LevelsMenuScene/Bola_Bckgrnd.png");
+	bolaBackground->setPosition(visibleSize.width / 2, visibleSize.height / 2);
+	bolaBackground->setScale(0.95);
+	this->addChild(bolaBackground, 1);
 	// array btn
-	for (int i = 0; i < 25;i++){
+	auto itemimgaux = MenuItemImage::create("images/LevelsMenuScene/nivel_nosign_0_btn.png", "images/LevelsMenuScene/nivel_nosign_0_btn.png",
+		CC_CALLBACK_1(LevelsMenuScene::goToNivel, this, 10));
+	auto menuaux = Menu::create(itemimgaux, NULL);
+	std::string auxstring = "Nivel" + ((char)0);
+	menuaux->setName(auxstring);
+	this->vectorNiveles.push_back(menuaux);
+	this->addChild(vectorNiveles[0], 3);
+	vectorNiveles[0]->setVisible(false);
 
-		auto itemimgaux = MenuItemImage::create("images/LevelsMenuScene/back_btn.png", "images/LevelsMenuScene/back_btn.png",
-												CC_CALLBACK_1(LevelsMenuScene::goToNivel,this,i));
+
+	itemimgaux = MenuItemImage::create("images/LevelsMenuScene/nivel_3_idle_btn.png", "images/LevelsMenuScene/nivel_3_pressed_btn.png",
+		CC_CALLBACK_1(LevelsMenuScene::goToNivel, this, 3));
+	menuaux = Menu::create(itemimgaux, NULL);
+	auxstring = "Nivel" + ((char)1);
+	menuaux->setName(auxstring);
+	this->vectorNiveles.push_back(menuaux);
+	this->addChild(vectorNiveles[1], 3);
+	vectorNiveles[1]->setVisible(false);
+
+	itemimgaux = MenuItemImage::create("images/LevelsMenuScene/nivel_2_idle_btn.png", "images/LevelsMenuScene/nivel_2_pressed_btn.png",
+		CC_CALLBACK_1(LevelsMenuScene::goToNivel, this, 2));
+	menuaux = Menu::create(itemimgaux, NULL);
+	auxstring = "Nivel" + ((char)2);
+	menuaux->setName(auxstring);
+	this->vectorNiveles.push_back(menuaux);
+	this->addChild(vectorNiveles[2], 3);
+	vectorNiveles[2]->setVisible(false);
+
+	itemimgaux = MenuItemImage::create("images/LevelsMenuScene/nivel_nosign_3_btn.png", "images/LevelsMenuScene/nivel_nosign_3_btn.png",
+		CC_CALLBACK_1(LevelsMenuScene::goToNivel, this, 10));
+	menuaux = Menu::create(itemimgaux, NULL);
+	auxstring = "Nivel" + ((char)3);
+	menuaux->setName(auxstring);
+	this->vectorNiveles.push_back(menuaux);
+	this->addChild(vectorNiveles[3], 3);
+	vectorNiveles[3]->setVisible(false);
+
+	itemimgaux = MenuItemImage::create("images/LevelsMenuScene/nivel_0_idle_btn.png", "images/LevelsMenuScene/nivel_0_pressed_btn.png",
+		CC_CALLBACK_1(LevelsMenuScene::goToNivel, this, 0));
+	menuaux = Menu::create(itemimgaux, NULL);
+	auxstring = "Nivel" + ((char)4);
+	menuaux->setName(auxstring);
+	this->vectorNiveles.push_back(menuaux);
+	this->addChild(vectorNiveles[4], 3);
+	vectorNiveles[4]->setVisible(false);
+
+	for (int i = 5; i < 25;i++){
+
+		String * imagen;
+		if (i >= 5) {
+			imagen = String::createWithFormat("images/LevelsMenuScene/nivel_nosign_%d_btn.png", (i % 5));
+			int iteradorimg = (i % 5);
+			CCLOG("%d", iteradorimg);
+		}
+		else {
+			CCLOG("%d", i);
+			imagen = String::createWithFormat("images/LevelsMenuScene/nivel_nosign_%d_btn.png", i);
+		}
+		CCLOG("%s", imagen->getCString());
+		auto itemimgaux = MenuItemImage::create(imagen->getCString(), imagen->getCString(),
+												CC_CALLBACK_1(LevelsMenuScene::goToNivel,this,10));
 		auto menuaux = Menu::create(itemimgaux, NULL);
-		auto rand = cocos2d::RandomHelper::random_int(100, 230);
-		menuaux->setColor(Color3B( rand, rand, 100));
 		std::string auxstring = "Nivel" + ((char)i);
 		menuaux->setName(auxstring);
 		this->vectorNiveles.push_back(menuaux);
-		this->addChild(vectorNiveles[i],3);
+		this->addChild(menuaux,3);
 		vectorNiveles[i]->setVisible(false);
-		//CCLOG("i vale %d", i);
 	}
-	//CCLOG("vector ocupa: %d", vectorNiveles.capacity());
 	
-	
-	//menu
-	
-	auto backBtn = MenuItemImage::create("images/LevelsMenuScene/back_btn.png", "images/LevelsScene/back_btn.png",
+	auto backBtn = MenuItemImage::create("images/AjustesScene/flecha.png", "images/AjustesScene/flecha2.png",
 		CC_CALLBACK_1(LevelsMenuScene::goToMenuStart, this));
 
-	/*auto startNivelBtn = MenuItemImage::create("images/LevelsMenuScene/back_btn.png", "images/LevelsScene/back_btn.png",
-		CC_CALLBACK_1(LevelsMenuScene::goToNivel, this));
-	startNivelBtn->setColor(Color3B(1,1,1));*/
-
-	auto menu1 = Menu::create(backBtn/*,startNivelBtn*/, NULL);
+	auto menu1 = Menu::create(backBtn, NULL);
 	menu1->alignItemsHorizontallyWithPadding(visibleSize.width / 2);
-	menu1->setPositionY(10);
+	menu1->setPosition(Point(visibleSize.width - 50, visibleSize.height - 50));
 	addChild(menu1, 2);
 
+	brightEffect = Sprite::create("images/LevelsMenuScene/Bola_Bckgrnd.png_light.png");
 	
-	auto masBtn = MenuItemImage::create("images/LevelsMenuScene/Flecha.png", "images/LevelsMenuScene/Flecha.png", 
+	auto masBtn = MenuItemImage::create("images/LevelsMenuScene/Flecha.png", "images/LevelsMenuScene/Flecha2.png", 
 		CC_CALLBACK_1(LevelsMenuScene::muestraUnoMas,this));
 	masBtn->setScaleX(-1);
+	//masBtn->setPosition(brightEffect->getBoundingBox().size.width*0.75,384);
 
-	auto menosBtn = MenuItemImage::create("images/LevelsMenuScene/Flecha.png", "images/LevelsMenuScene/Flecha.png",
+	auto menosBtn = MenuItemImage::create("images/LevelsMenuScene/Flecha.png", "images/LevelsMenuScene/Flecha2.png",
 		CC_CALLBACK_1(LevelsMenuScene::muestraUnoMenos, this));
-
+	//menosBtn->setPosition(- brightEffect->getBoundingBox().size.width*0.75, 384);
 	auto menu2 = Menu::create( menosBtn,masBtn, NULL);
 	menu2->alignItemsHorizontallyWithPadding(visibleSize.width / 2);
-	menu2->setPositionY(visibleSize.height-50);
+	menu2->setPosition(Point(visibleSize.width / 2-70,visibleSize.height/2));
 	addChild(menu2, 2);
 	//Fondo
-	auto background = Sprite::create("images/LevelsScene/fondo_LevelsScene.png");
+	auto background = Sprite::create("images/LevelsMenuScene/fondo_LevelsScene.png");
 	background->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
 	addChild(background, 0);
 
+
+	fadingEffect = Sprite::create("images/LevelsMenuScene/Fading_effect.png");
+	fadingEffect->setPosition(visibleSize.width / 2, visibleSize.height / 2);
+	this->addChild(fadingEffect, 5);
+	
+	brightEffect->setOpacity(0);
+	brightEffect->setPosition(visibleSize.width / 2, visibleSize.height / 2);
+	this->addChild(brightEffect, 5);
+	this->activaBrightEffect();
 
 	return true;
 }
@@ -114,7 +175,7 @@ void LevelsMenuScene::goToMenuStart(Ref *pSender){
 
 
 void  LevelsMenuScene::muestraUnoMas(Ref *pSender){
-	CCLOG("%d", mundoSeleccionado);
+	//CCLOG("%d", mundoSeleccionado);
 	if (mundoSeleccionado < 4){
 	
 		imagenesMundos[mundoSeleccionado]->setVisible(false);
@@ -129,13 +190,15 @@ void  LevelsMenuScene::muestraUnoMas(Ref *pSender){
 		imagenesMundos[mundoSeleccionado]->setVisible(true);
 
 	}
+	if (mundoSeleccionado == 0) 
+		brightEffect->setColor(Color3B::WHITE);
+	else brightEffect->setColor(Color3B::Color3B(243, 216, 160));
 	addListener();
 }
 
 
 void  LevelsMenuScene::muestraUnoMenos(Ref *pSender){
-	CCLOG("%d", mundoSeleccionado);
-
+	//CCLOG("%d", mundoSeleccionado);
 	if (mundoSeleccionado > 0){
 
 		imagenesMundos[mundoSeleccionado]->setVisible(false);
@@ -150,6 +213,8 @@ void  LevelsMenuScene::muestraUnoMenos(Ref *pSender){
 		imagenesMundos[mundoSeleccionado]->setVisible(true);
 
 	}
+	if (mundoSeleccionado == 0) brightEffect->setColor(Color3B::WHITE);
+	else brightEffect->setColor(Color3B::Color3B(243, 216, 160));
 	addListener();
 
 }
@@ -174,7 +239,6 @@ void LevelsMenuScene::addListener(){
 	listener->onTouchEnded = [=](cocos2d::Touch* touch, cocos2d::Event* event){
 			LevelsMenuScene::touchEvent(touch, touch->getLocation());
 			Director::getInstance()->getEventDispatcher()->removeEventListener(listener);
-			CCLOG("QUITO LISTENER");
 	};
 
 	cocos2d::Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 30);
@@ -186,6 +250,7 @@ void LevelsMenuScene::touchEvent(cocos2d::Touch * touch, cocos2d::Point _p)
 
 	//CCLOG("no hay listener")
 	LevelsMenuScene::muestraNivelesBtn();
+	imagenesMundos[mundoSeleccionado]->setVisible(false);
 }
 
 void LevelsMenuScene::ocultaNivelesVisibles(int mundoseleccionado)
@@ -195,146 +260,110 @@ void LevelsMenuScene::ocultaNivelesVisibles(int mundoseleccionado)
 	}
 }
 
+void LevelsMenuScene::activaBrightEffect()
+{
+	fadingEffect->runAction(RepeatForever::create(Sequence::create(FadeTo::create(3, 0), FadeTo::create(3, 255), NULL)));
+	brightEffect->runAction(RepeatForever::create(Sequence::create(FadeTo::create(3, 180), FadeTo::create(3, 0), NULL)));
+}
+
+void LevelsMenuScene::borraElementoTemporal(Node * emisor, bool limpia)
+{
+	emisor->removeFromParentAndCleanup(limpia);
+}
+
+void LevelsMenuScene::añadeNivel(cocos2d::Scene * nivel, int inicioObjetos, int finObjetos)
+{
+
+	Director::getInstance()->pushScene(nivel);
+	Global::getInstance()->colocaObjetos(inicioObjetos, finObjetos);
+	Global::getInstance()->abreEstanteria();
+	Global::getInstance()->colocaFondo(fondosPasar);
+
+
+}
+
+
+
+
 void LevelsMenuScene::onEnterTransitionDidFinish()
 {
+	if (nivelpulsado != nullptr) nivelpulsado->setEnabled(true);
 	addListener();
+	activaBrightEffect();
+	brightEffect->setOpacity(0);
 }
 
 void LevelsMenuScene::goToNivel(Ref *psender,int i){
-	//cocos2d::Director::getInstance()->getEventDispatcher()->removeEventListener(listener);
-	_eventDispatcher->removeEventListener(this->listener);
+	Label*	notAvailableLabel;
+	nivelpulsado = (MenuItemImage*)psender;
+	nivelpulsado->setEnabled(false);
 
 	cocos2d::Scene* cene;
-	//Aqui SWITCH con el numero de nivel que es para saber que objetos tenemos que pasarle
 	switch (i)
 	{
 	case 0:
-
+		_eventDispatcher->removeEventListener(this->listener);
 		if(fondosPasar.size()>0)fondosPasar.clear();
-		fondosPasar.push_back("images/Nivel/Castillo_Fondo.png");
-		fondosPasar.push_back("images/Nivel/Castillo_Tercer_Plano.png");
-		fondosPasar.push_back("images/Nivel/Castillo_Nubes.png");
-		fondosPasar.push_back("images/Nivel/Castillo_Segundo_Plano.png");
-		fondosPasar.push_back("images/Nivel/Castillo_Primer_Plano.png");
-		cene = Nivel::createScene(fondosPasar, 0, 10);
-		Director::getInstance()->pushScene(cene);
-		Global::getInstance()->colocaObjetos(0, 10);
-		Global::getInstance()->abreEstanteria();
-		Global::getInstance()->colocaFondo(fondosPasar);
+		fondosPasar.push_back("images/Nivel/Escenarios/Habitacion_fondo.png");
+		fondosPasar.push_back("images/Nivel/Escenarios/Habitacion_segundo_plano.png");
+		//fondosPasar.push_back("images/Nivel/Castillo_Nubes.png");
+		fondosPasar.push_back("images/Nivel/Escenarios/Habitacion_tercer_plano.png");
+		fondosPasar.push_back("images/Nivel/Escenarios/Habitacion_primer_plano.png");
+		cene = Nivel::createScene(0,fondosPasar, 0, 10);
+		añadeNivel(cene, 0, 10);
 		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar,0, 10);	
 		break;
 
-	case 1:
-
-		if (fondosPasar.size()>0)fondosPasar.clear();
-		fondosPasar.push_back("images/Nivel/Castillo_Fondo.png");
-		fondosPasar.push_back("images/Nivel/Castillo_Tercer_Plano.png");
-		fondosPasar.push_back("images/Nivel/Castillo_Nubes.png");
-		fondosPasar.push_back("images/Nivel/Castillo_Segundo_Plano.png");
-		fondosPasar.push_back("images/Nivel/Castillo_Primer_Plano.png");
-		cene = Nivel::createScene(fondosPasar, 0, 10);
-		Director::getInstance()->pushScene(cene);
-		Global::getInstance()->colocaObjetos(0, 10);
-		Global::getInstance()->abreEstanteria();
-		Global::getInstance()->colocaFondo(fondosPasar);
-		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);	
-		break;
-
 	case 2:
+		_eventDispatcher->removeEventListener(this->listener);
 		if (fondosPasar.size()>0)fondosPasar.clear();
-		fondosPasar.push_back("images/Nivel/Castillo_Fondo.png");
-		fondosPasar.push_back("images/Nivel/Castillo_Tercer_Plano.png");
-		fondosPasar.push_back("images/Nivel/Castillo_Nubes.png");
-		fondosPasar.push_back("images/Nivel/Castillo_Segundo_Plano.png");
-		fondosPasar.push_back("images/Nivel/Castillo_Primer_Plano.png");
-		cene = Nivel::createScene(fondosPasar, 0, 10);
-		Director::getInstance()->pushScene(cene);
-		Global::getInstance()->colocaObjetos(0, 10);
-		Global::getInstance()->abreEstanteria();
-		Global::getInstance()->colocaFondo(fondosPasar);
-		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);	
+		fondosPasar.push_back("images/Nivel/Escenarios/Castillo_Fondo.png");
+		fondosPasar.push_back("images/Nivel/Escenarios/Castillo_Tercer_Plano.png");
+		//fondosPasar.push_back("images/Nivel/Castillo_Nubes.png");
+		fondosPasar.push_back("images/Nivel/Escenarios/Castillo_Segundo_Plano.png");
+		fondosPasar.push_back("images/Nivel/Escenarios/Castillo_Primer_Plano.png");
+		cene = Nivel::createScene(2,fondosPasar, 0, 10);
+		añadeNivel(cene, 0, 10);
 		break;
 
 	case 3:
+		_eventDispatcher->removeEventListener(this->listener);
 		if (fondosPasar.size()>0)fondosPasar.clear();
-		fondosPasar.push_back("images/Nivel/Castillo_Fondo.png");
-		fondosPasar.push_back("images/Nivel/Castillo_Tercer_Plano.png");
-		fondosPasar.push_back("images/Nivel/Castillo_Nubes.png");
-		fondosPasar.push_back("images/Nivel/Castillo_Segundo_Plano.png");
-		fondosPasar.push_back("images/Nivel/Castillo_Primer_Plano.png");
-		cene = Nivel::createScene(fondosPasar, 0, 10);
-		Director::getInstance()->pushScene(cene);
-		Global::getInstance()->colocaObjetos(0, 10);
-		Global::getInstance()->abreEstanteria();
-		Global::getInstance()->colocaFondo(fondosPasar);
-		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);	
-		break;
-
-	case 4:
-
-		if (fondosPasar.size()>0)fondosPasar.clear();
-		fondosPasar.push_back("images/Nivel/Castillo_Fondo.png");
-		fondosPasar.push_back("images/Nivel/Castillo_Tercer_Plano.png");
-		fondosPasar.push_back("images/Nivel/Castillo_Nubes.png");
-		fondosPasar.push_back("images/Nivel/Castillo_Segundo_Plano.png");
-		fondosPasar.push_back("images/Nivel/Castillo_Primer_Plano.png");
-		cene = Nivel::createScene(fondosPasar, 0, 10);
-		Director::getInstance()->pushScene(cene);
-		Global::getInstance()->colocaObjetos(0, 10);
-		Global::getInstance()->abreEstanteria();
-		Global::getInstance()->colocaFondo(fondosPasar);
-		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);		
-		break;
-
-	case 5:
-		if (fondosPasar.size()>0)fondosPasar.clear();
-		fondosPasar.push_back("images/Nivel/Castillo_Fondo.png");
-		fondosPasar.push_back("images/Nivel/Castillo_Tercer_Plano.png");
-		fondosPasar.push_back("images/Nivel/Castillo_Nubes.png");
-		fondosPasar.push_back("images/Nivel/Castillo_Segundo_Plano.png");
-		fondosPasar.push_back("images/Nivel/Castillo_Primer_Plano.png");
-		cene = Nivel::createScene(fondosPasar, 0, 10);
-		Director::getInstance()->pushScene(cene);
-		Global::getInstance()->colocaObjetos(0, 10);
-		Global::getInstance()->abreEstanteria();
-		Global::getInstance()->colocaFondo(fondosPasar);
-		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);
+		fondosPasar.push_back("images/Nivel/Escenarios/Castillo_Fondo.png");
+		fondosPasar.push_back("images/Nivel/Escenarios/Castillo_Tercer_Plano.png");
+		fondosPasar.push_back("images/Nivel/Escenarios/Castillo_Segundo_Plano.png");
+		fondosPasar.push_back("images/Nivel/Escenarios/Castillo_Primer_Plano.png");
+		cene = Nivel::createScene(3,fondosPasar, 0, 10);
+		añadeNivel(cene, 0, 10);
 		break;
 
 	default:
-		if (fondosPasar.size()>0)fondosPasar.clear();
-		fondosPasar.push_back("images/Nivel/Castillo_Fondo.png");
-		fondosPasar.push_back("images/Nivel/Castillo_Tercer_Plano.png");
-		fondosPasar.push_back("images/Nivel/Castillo_Nubes.png");
-		fondosPasar.push_back("images/Nivel/Castillo_Segundo_Plano.png");
-		fondosPasar.push_back("images/Nivel/Castillo_Primer_Plano.png");
-		cene = Nivel::createScene(fondosPasar, 0, 10);
-		Director::getInstance()->pushScene(cene);
-		Global::getInstance()->colocaObjetos(0, 10);
-		Global::getInstance()->abreEstanteria();
-		Global::getInstance()->colocaFondo(fondosPasar);
-		//((Nivel*)Global::getInstance()->nivel)->preparaNivel(fondosPasar, 0, 10);
+		notAvailableLabel = Label::createWithSystemFont("NOT AVAILABLE YET.", "Arial", 60);
+		notAvailableLabel->setColor(Color3B::RED);
+		notAvailableLabel->enableShadow();
+		notAvailableLabel->setPosition(Global::getInstance()->visibleSize.width / 2, Global::getInstance()->visibleSize.height / 2 + notAvailableLabel->getContentSize().height * 2);
+		this->addChild(notAvailableLabel,8);
+		notAvailableLabel->runAction(Sequence::create(ScaleBy::create(0.5, 1.5), ScaleBy::create(0.5, 0.5), FadeOut::create(0.2), CallFuncN::create(CC_CALLBACK_1(LevelsMenuScene::borraElementoTemporal, this, true)), NULL));
+		nivelpulsado->setEnabled(true);
 		break;
 	}
-	//Director::getInstance()->pushScene(Global::getInstance()->nivel);
-	//Director::getInstance()->pushScene(cene);
 	
 }
 
 
 void LevelsMenuScene::muestraNivelesBtn(){
 	int posant = 0;
+
 	for (int i = mundoSeleccionado*5; i < ((mundoSeleccionado * 5)+5); i++) {
-		CCLOG("desde %d hasta %d", i, ((mundoSeleccionado * 5) + 5));
+
 		if(i == mundoSeleccionado * 5){
-			vectorNiveles[i]->setPositionX(imagenesMundos[mundoSeleccionado]->getPosition().x -
-				imagenesMundos[mundoSeleccionado]->getContentSize().width / 2 + vectorNiveles[i]->getContentSize().width / 25);
-				//(i-mundoSeleccionado*5))/5); //((i / 5) * 568)
+			vectorNiveles[i]->setPositionY(imagenesMundos[mundoSeleccionado]->getPosition().y -
+				imagenesMundos[mundoSeleccionado]->getContentSize().height / 2 + vectorNiveles[i]->getContentSize().height / 25+3);
 		}
 		else {
-			vectorNiveles[i]->setPositionX(posant + (imagenesMundos[mundoSeleccionado]->getContentSize().width / 5));
+			vectorNiveles[i]->setPositionY(posant + (imagenesMundos[mundoSeleccionado]->getContentSize().height / 5));
 		}
-		posant = vectorNiveles[i]->getPositionX();
+		posant = vectorNiveles[i]->getPositionY();
 		vectorNiveles[i]->setVisible(true);	
 
 	}

@@ -33,18 +33,23 @@ bool LogrosScene::init()
 
 
 	//menu
-	auto backBtn = MenuItemImage::create("images/LogrosScene/back_btn.png", "images/LogrosScene/back_btn.png",
+	auto backBtn = MenuItemImage::create("images/AjustesScene/flecha.png", "images/AjustesScene/flecha.png",
 		CC_CALLBACK_1(LogrosScene::returnToScene, this));
 	auto menu = Menu::create(backBtn, NULL);
-	menu->setPosition(Point(visibleSize.width - 20, visibleSize.height - 20));
+	menu->setPosition(Point(visibleSize.width - 50, visibleSize.height - 50));
 	addChild(menu, 2);
 
-
 	//Fondo
-	/*auto background = Sprite::create("images/LogrosScene/fondo_LogrosScene.png");
+	auto background = Sprite::create("images/AjustesScene/enconstruccion.png");
 	background->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
-	addChild(background, 0);*/
+	addChild(background, 0);
 
+	auto prompt = cocos2d::Sprite::create("images/AjustesScene/prompt.png");
+	prompt->setPosition(Point(80, 480));
+	addChild(prompt, 1);
+	prompt->runAction(RepeatForever::create(Sequence::create(FadeOut::create(0.5), FadeIn::create(0.5), NULL)));
+
+	
 	return true;
 }
 

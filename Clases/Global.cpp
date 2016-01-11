@@ -18,16 +18,14 @@ Global::Global(){
 	 zerrin = ZerrinClass::create();
 	 katahi = KatahiClass::create();
 	 
-	// nivel->retain();
 	 levelsMenuScene->retain();
-
 	 creaArmas();
 	 creaObjetosEscenario();
 	 visibleSize = Director::getInstance()->getVisibleSize();
 	 armaAComprar = nullptr;
-//	 Camara = nullptr;
 
-	// CCLOG("me he iniciado por primera vez");
+	 CreaFrases();
+
 }
 void Global::añadeArmasANivel(Arma* a){
 	layerObjects->addChild(a, 3);
@@ -41,52 +39,44 @@ void Global::creaArmas()
 {
 	//TAMAÑO ESTANDARD ARMAS 84x84
 
-	//Prueba dagas
-	Texture2D* d = Director::getInstance()->getTextureCache()->addImage("images/Armas/dagas.png");
-	Arma* dagas = Arma::create(d,20,"dagas",0,50, random(0, 1));
-	dagas->setVisible(false);
-	dagas->setPosition(-200, -200);
-	armasTotales.push_back(dagas);
+	Texture2D* d1 = Director::getInstance()->getTextureCache()->addImage("images/Armas/daga1.png");
+	Arma* daga1 = Arma::create(d1,20,"daga_simple",0,0, random(0, 1));
+	armasTotales.push_back(daga1);
 
-	//Bola de demolicion
+	Texture2D* d3 = Director::getInstance()->getTextureCache()->addImage("images/Armas/daga3.png");
+	Arma* daga3 = Arma::create(d3, 20, "daga_cara", 0, 0, random(0, 1));
+	armasTotales.push_back(daga3);
+
+	Texture2D* d2 = Director::getInstance()->getTextureCache()->addImage("images/Armas/daga2.png");
+	Arma* daga2 = Arma::create(d2, 20, "daga_dientes", 0, 50, random(0, 1));
+	armasTotales.push_back(daga2);
+
+	Texture2D* d4 = Director::getInstance()->getTextureCache()->addImage("images/Armas/daga4.png");
+	Arma* daga4 = Arma::create(d4, 20, "daga_serpientes", 0, 50, random(0, 1));
+	armasTotales.push_back(daga4);
+
 	Texture2D *b= Director::getInstance()->getTextureCache()->addImage("images/Armas/bola.png");
 	Arma* bola = Arma::create(b, 100, "bola", 2, 0, 0);
-	bola->setVisible(false);
-	bola->setPosition(-200, -200);
 	armasTotales.push_back(bola);
 
 	Texture2D *c = Director::getInstance()->getTextureCache()->addImage("images/Armas/pinchos_activos.png");
 	Arma* pinchos = Arma::create(c, 100, "pinchos", 3, 0, 0);
-	pinchos->setVisible(false);
-	pinchos->setPosition(-200, -200);
 	armasTotales.push_back(pinchos);
 
 	Texture2D *e = Director::getInstance()->getTextureCache()->addImage("images/Armas/mina_no_activa.png");
 	Arma* mina = Arma::create(e, 100, "mina", 4, 0, 0);
-	mina->setVisible(false);
-	mina->setPosition(-200, -200);
 	armasTotales.push_back(mina);
 
-	Texture2D *f = Director::getInstance()->getTextureCache()->addImage("images/Armas/trampilla.png");
+	Texture2D *f = Director::getInstance()->getTextureCache()->addImage("images/Armas/trampilla_activa_izq.png");
 	Arma* trampilla = Arma::create(f, 100, "trampilla", 5, 0, 0);
-	trampilla->setVisible(false);
-	trampilla->setPosition(-200, -200);
 	armasTotales.push_back(trampilla);
 
 
 	Texture2D* t = Director::getInstance()->getTextureCache()->addImage("images/Armas/arma.png");
 
-	//provisional crea un array genérico, en un futuro hay que meter las armas 1 a una
-	for (int i = 5; i <20; i++){
-		char* nombre = "espada Bastarda numero: ";
-		nombre += i;
-		Arma* armaaux = Arma::create(t, 15+i, nombre, 1,i*10+1,random(0,1));
-		armaaux->setColor(Color3B(i * 25, i * 25, i * 25));
-		armaaux->setPosition(-200, -200);
-		//armaaux->setAnchorPoint(Vec2(0.5, 0.5));
-		//armaaux->setScale(84 / armaaux->getContentSize().width, 84 / armaaux->getContentSize().height);
-		armasTotales.push_back(armaaux);
-		armaaux->setVisible(false);
+	for (int i = 0; i <armasTotales.size(); i++){
+		armasTotales[i]->setPosition(-200, -200);
+		armasTotales[i]->setVisible(false);
 	}
 
 }
@@ -94,13 +84,25 @@ void Global::creaArmas()
 void Global::creaObjetosEscenario()
 {
 	auto visiblesize = Director::getInstance()->getVisibleSize();
-	//provisional crea un array genérico, en un futuro hay que meter los objetos 1 a 1
-	for (int i = 0; i < 10; i++) {
+	std::vector<std::string> macetas;
+	ObjetoEscenario* ancla = ObjetoEscenario::create("images/ObjetosEscenario/ancla.png", 100, "ancla",2);
+	ObjetosTotalesEscenarios.push_back(ancla);
+
+	ObjetoEscenario* cactus = ObjetoEscenario::create("images/ObjetosEscenario/cactus.png", 100, "cactus", 2);
+	ObjetosTotalesEscenarios.push_back(cactus);
+	macetas.push_back("images/ObjetosEscenario/cactus.png");
+	ObjetoEscenario* flor = ObjetoEscenario::create("images/ObjetosEscenario/flor.png", 100, "flor", 2);
+	ObjetosTotalesEscenarios.push_back(flor);
+	macetas.push_back("images/ObjetosEscenario/flor.png");
+	ObjetoEscenario* planta = ObjetoEscenario::create("images/ObjetosEscenario/planta.png", 100, "planta", 2);
+	ObjetosTotalesEscenarios.push_back(planta);
+	macetas.push_back("images/ObjetosEscenario/planta.png");
+
+	for (int i = 4; i < 10; i++) {
 		char* nombre = "Objeto Escenario numero: ";
 		nombre += i;
-
-		//ObjetosTotalesEscenarioPosiciones.push_back(&Vec2(((i + 1)*visiblesize.width) / 10, visiblesize.height / 2));
-		ObjetoEscenario* objetoaux = ObjetoEscenario::create("images/ObjetosEscenario/Baul.png", random(9,12), nombre,i%2==0?1:2);
+		auto cadena = macetas[random(0, 2)];
+		ObjetoEscenario* objetoaux = ObjetoEscenario::create(cadena, random(9,12), nombre,2);
 		Vec2 punto = Vec2(((i*5 + 100)*visiblesize.width) / 10 - objetoaux->getContentSize().width, visiblesize.height / 2);
 		objetoaux->setPosition(punto);
 		objetoaux->setColor(Color3B(i * 25, i * 25, i * 25));
@@ -139,18 +141,23 @@ void Global::quitaArmaDeNivel(Arma*a){
 void Global::colocaObjetos(int i_objetos, int u_objetos)
 {
 	for (int i = i_objetos; i < u_objetos; i++) {
-		//CCLOG("Posicion antes %f %f ", Global::getInstance()->ObjetosTotalesEscenarios[i]->getPositionX(), Global::getInstance()->ObjetosTotalesEscenarios[i]->getPositionY());
 		auto objetodeturno = Global::getInstance()->ObjetosTotalesEscenarios[i];
+		objetodeturno->setOpacity(255);
 		objetodeturno->setVisible(true);
+		objetodeturno->enableListener(true);
 		Vec2 punto = Vec2(((i + 1) * 1024 * 1.5) / (u_objetos - i_objetos)
 			+ 1024 
 			- Global::getInstance()->ObjetosTotalesEscenarios[i]->getContentSize().width
-			,(objetodeturno->getTipo()==1)? Director::getInstance()->getVisibleSize().height / 2: Director::getInstance()->getVisibleSize().height -objetodeturno->getContentSize().height*1.5);
+			,Director::getInstance()->getVisibleSize().height -objetodeturno->getContentSize().height*1.5);
 		objetodeturno->setPosition(punto);
 		objetodeturno->setPhysicsBody(nullptr);
+		float v;
+		if (objetodeturno->isVisible()) {
+			v = 1;
+		}
+		else v = 0;
 		layerObjects->addChild(objetodeturno, 3);
 		
-		//CCLOG("Posicion dsps %f %f ", Global::getInstance()->ObjetosTotalesEscenarios[i]->getPositionX(), Global::getInstance()->ObjetosTotalesEscenarios[i]->getPositionY());
 
 	}
 }
@@ -160,8 +167,6 @@ void Global::colocaFondo(std::vector<std::string> fondos) {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
 	auto background = Sprite::create(fondos[0]);
-
-	//CCLOG("COLOCOLOSFONDOSSSS");
 	background->retain();
 	background->setPosition(background->getContentSize().width, visibleSize.height);
 	background->setAnchorPoint(Vec2(1, 1));
@@ -191,21 +196,57 @@ void Global::abreEstanteria()
 {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
-	auto rectangulo2 = cocos2d::Sprite::create("images/Nivel/rectangle.png");
+	auto rectangulo2 = cocos2d::Sprite::create("images/Nivel/Arsenal.png");
 
-	rectangulo2->setScale((visibleSize.width *0.5)/rectangulo2->getContentSize().width,( visibleSize.height / 8)/rectangulo2->getContentSize().height);
 	rectangulo2->setAnchorPoint(Point(1, 1));
-	//rectangulo2->setPosition(Point(visibleSize.width / 2, visibleSize.height - rectangulo2->getBoundingBox().size.height / 2));
 	rectangulo2->setPosition(Point(visibleSize.width,visibleSize.height));
 	rectangulo2->setVisible(true);
-	layerObjects->addChild(rectangulo2, 2);
+	layerObjects->addChild(rectangulo2, 8);
 }
 
 void Global::recolocaArmasNivel()
 {
 	for (int i = 0; i< ArmasNivel.size(); i++) {
-		ArmasNivel[i]->setPositionX((i+1) * 512 / 5 + 512 - ArmasNivel[i]->getContentSize().width / 2);
+		ArmasNivel[i]->setPositionX((i+1) * 470 / 5 + 470 +32);
 	}
+}
+
+void Global::CreaFrases()
+{
+	//Katahi 0-6
+	BateriaFrasesKatahi.push_back("Eeeh...yo no he pedido\nningun rescate.");
+	BateriaFrasesKatahi.push_back("Sal de mi propiedad o \ntendre que matarte.");
+	BateriaFrasesKatahi.push_back("Comprando en la tienda.");
+	BateriaFrasesKatahi.push_back("No, bruto! Mejor me callo...");
+	BateriaFrasesKatahi.push_back("*pensando* Deberia abrir mi\narsenal y...");
+	BateriaFrasesKatahi.push_back("elegir las armas para\nponerlas en mi estanteria...");
+	BateriaFrasesKatahi.push_back("...y cuando\nempiece a correr,\nponerlas en su camino.");
+
+	//Katahi 7-9
+	BateriaFrasesKatahi.push_back("Pero tu...\nno te enteras.");
+	BateriaFrasesKatahi.push_back("Ojala pudiera \ntirarte este ancla\n a la cabeza.");
+	BateriaFrasesKatahi.push_back("*Pensando*\n Esque como se ponga\n a correr le tiro\n hasta el piano.");
+
+	//Katahi 10
+	BateriaFrasesKatahi.push_back("Por favor...");
+	//Katahi 11
+	BateriaFrasesKatahi.push_back("Si,Si...mejor ya\n nos vemos en los bosques\n de Memsuficaland");
+
+	//Zerrin 0-3
+	BateriaFrasesZerrin.push_back("Princeza Katahi,\n he venio' al RESCATE.");
+	BateriaFrasesZerrin.push_back("Como vaz a hacer ezo,\n si zoy tu principe?");
+	BateriaFrasesZerrin.push_back("Pero... no puedez\n matarme con una tienda.");
+	BateriaFrasesZerrin.push_back("Me la vaz a tirar encima?");
+	//Zerrin 4
+	BateriaFrasesZerrin.push_back("No ze preocupe\n princesa katahi,\n yo te salvare.");
+	//Zerrin 5
+	BateriaFrasesZerrin.push_back("Ze que zolo te haces\n la dura pa sedusirme!");
+	//Zerrin 6-9
+	BateriaFrasesZerrin.push_back("Nunca imagine yo\nque me fueses a querer tanto.");
+	BateriaFrasesZerrin.push_back("Como para tener\n una cita fuera del castillo.");
+	BateriaFrasesZerrin.push_back("Seguro...? no\nprefierez que vuelva");
+	BateriaFrasesZerrin.push_back("A tu habitacion ?\nSe que te gusta jugar\n con las dagas");
+
 }
 
 

@@ -9,15 +9,13 @@
 class Nivel : public cocos2d::Layer
 {
 public:
-	static cocos2d::Scene* createScene(std::vector<std::string> fondos, int i_objetos, int u_objetos);
+	static cocos2d::Scene* createScene(int nivel, std::vector<std::string> fondos, int i_objetos, int u_objetos);
 	// es int temporalmente debe ser de 
 	virtual bool init();
 	//int ContadorArmas;
 
-
-
 	cocos2d::Sprite* rectangulo;
-	void preparaNivel(std::vector<std::string> fondos, int i_objetos, int u_objetos);
+	void preparaNivel(int nivel, std::vector<std::string> fondos, int i_objetos, int u_objetos);
 	void displayArmasArsenal();
 	void goToGameOver(Ref *pSender);
 	void goToPause(Ref *pSender);
@@ -25,6 +23,8 @@ public:
 	void spawnNube(float dt);
 	void mueveFondo(float v);
 	void addContactListener();
+	void onContactPostSolve(cocos2d::PhysicsContact& contact, const cocos2d::PhysicsContactPostSolve& solve);
+
 
 	//void colocaObjetos(int i_objetos, int u_objetos);
 
@@ -38,12 +38,12 @@ public:
 
 	bool onContactBegin(cocos2d::PhysicsContact & contact);
 	bool onContactPreSolve(cocos2d::PhysicsContact & contact, cocos2d::PhysicsContactPreSolve & solve);
-	void onContactPostSolve(cocos2d::PhysicsContact& contact, const cocos2d::PhysicsContactPostSolve& solve);
+
 
 	cocos2d::EventListenerPhysicsContact * listenerColision;
 
-	static Nivel* create(std::vector<std::string> fondos, int i_objetos, int u_objetos);
-	Nivel(std::vector<std::string> fondos, int i_objetos, int u_objetos);
+	static Nivel* create(int nivel, std::vector<std::string> fondos, int i_objetos, int u_objetos);
+	Nivel(int nivel, std::vector<std::string> fondos, int i_objetos, int u_objetos);
 	~Nivel();
 	cocos2d::PhysicsWorld *nivelPhysics;
 	cocos2d::PhysicsWorld * getPhysicsWorld();
@@ -55,8 +55,8 @@ private:
 	static int tiempoDelNivel;
 	static int puntosDelNivel;
 	cocos2d::Menu* menuArsenal;
-	
 
+	
 	//bool juegoEnCurso;
 
 	void muestraUnoMas(Ref *pSender);
@@ -77,7 +77,13 @@ private:
 	void colocaBotones();
 	void colocaFondo(std::vector<std::string> fondos);
 	void colocaZerrin();
+	void colocaHUD();
+	void removeKatahi();
 
+
+	void cargaFrasesKatahi(int n);
+	void cargaFrasesZerrin(int n);
+	void colocaFrase(cocos2d::Sprite * Bocadillo, cocos2d::Label* Frase);
 
 	cocos2d::MenuItemImage* masBtn;
 	cocos2d::MenuItemImage* menosBtn;
@@ -95,12 +101,14 @@ private:
 	cocos2d::Sprite* background1;
 	cocos2d::Sprite* background2;
 	cocos2d::Sprite* muralla;
-	cocos2d::Sprite* nubes;
+	cocos2d::Sprite* Katahi;
+
+	//cocos2d::Sprite* nubes;
 	
 
 	
 	void setPhysicsWorld(cocos2d::PhysicsWorld* world);
-
+	void borraElementoTemporal(Node * emisor, bool limpia);
 
 };
 

@@ -20,12 +20,13 @@ public:
 
 	void setPointY(int y);
 	void setDesdeTienda(bool estado);
-	void setArma(Arma* arma);
+	//void setArma(Arma* arma);
 
 	void accion(Arma* a, cocos2d::Touch* touch);
 	void accionColision(int tipoDelArma);
 	void intervalo(int tipo);
 	void reactivaBitmasks();
+	void compruebaSitio(Arma* a);
 
 	Arma* clon;
 	Arma* getArma();
@@ -65,7 +66,7 @@ private:
 
 	std::string nombre;
 	
-	Arma* esteArma;
+	//Arma* esteArma;
 
 	void accionTouch(cocos2d::Touch* touch);
 

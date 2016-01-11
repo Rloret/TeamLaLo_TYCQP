@@ -37,6 +37,7 @@ private:
 
 	cocos2d::MenuItemImage* yesButton;
 	cocos2d::MenuItemImage* cerrarMenuButton;
+	cocos2d::Sprite* bocadillo;
 	cocos2d::Label* textoCompra;
 	cocos2d::Menu* menuCompra;
 

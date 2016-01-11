@@ -32,11 +32,11 @@ bool TiendaScene::init()
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	
 	//menu
-	auto backBtn = MenuItemImage::create("images/TiendaScene/back_btn.png", "images/TiendaScene/back_btn.png",
+	auto backBtn = MenuItemImage::create("images/AjustesScene/flecha.png", "images/AjustesScene/flecha2.png",
 		CC_CALLBACK_1(TiendaScene::returnToScene, this));
 
 	auto menu = Menu::create(backBtn, NULL);
-	menu->setPosition(Point(visibleSize.width- 20, visibleSize.height- 20));
+	menu->setPosition(Point(visibleSize.width- 50, visibleSize.height- 50));
 	addChild(menu, 2);
 
 	
@@ -76,7 +76,7 @@ void TiendaScene::createMenuCompra()
 	activaDesactivaBotones(this->yesButton, true);
 	activaDesactivaBotones(this->cerrarMenuButton, true);
 
-	textoCompra->setString(String::createWithFormat("Quieres comprar por \n el modico precio de %d lingotes de oro \n y tan solo %d mechon/es", Global::getInstance()->armaAComprar->getPrecio(), Global::getInstance()->armaAComprar->getMechones())->getCString());
+	textoCompra->setString(String::createWithFormat("Quieres comprar por \n el modico precio de \n %d lingotes de oro \n y tan solo %d mechones", Global::getInstance()->armaAComprar->getPrecio(), Global::getInstance()->armaAComprar->getMechones())->getCString());
 
 }
 
@@ -103,7 +103,7 @@ void TiendaScene::hacerCompra(Ref *pSender)
 				Global::getInstance()->armaAComprar->setVisible(false);
 				Global::getInstance()->katahi->modificaOro(-Global::getInstance()->armaAComprar->getPrecio());
 				Global::getInstance()->katahi->modificaMechones(-Global::getInstance()->armaAComprar->getMechones());
-				CCLOG("oro: %d", Global::getInstance()->katahi->getOro());
+				//CCLOG("oro: %d", Global::getInstance()->katahi->getOro());
 				
 				closeMenuCompra(this);
 				this->modificaTextoOro(dinero_oro_int);
@@ -116,10 +116,10 @@ void TiendaScene::hacerCompra(Ref *pSender)
 
 				activaDesactivaBotones(yesButton,false);
 				rectangulo->setVisible(true);
-				textoCompra->setString("Pero...si no tienes suficiente.\nNo me hagas perder el tiempo.");
+				textoCompra->setString("Pero...si no tienes \nsuficiente dinero.\nNo me hagas perder \nel tiempo.");
 				textoCompra->setVisible(true);
+				bocadillo->setVisible(true);
 				Global::getInstance()->armaAComprar->childEnTienda = false;
-
 			}	
 		}
 	}	
@@ -128,8 +128,8 @@ void TiendaScene::hacerCompra(Ref *pSender)
 void TiendaScene::colocaArmasTotales()
 {
 	int iterador = 0;
-	int margenesX = 200;
-	int margenesY = 140;
+	int margenesX = 280;
+	int margenesY = 170;
 	auto anchoCorrespondiente = 0;
 	auto altoCorrespondiente = 0;
 	for (int i = 0; i < Global::getInstance()->armasTotales.size(); i++) {
@@ -141,11 +141,11 @@ void TiendaScene::colocaArmasTotales()
 			arma->EnableSwallow(true);
 			if (i >= 5) {
 				iterador = floor(i / 5);
-				anchoCorrespondiente = ((i - (iterador * 5))*arma->getBoundingBox().size.width) *2;
+				anchoCorrespondiente = ((i - (iterador * 5))*84*1.2);
 				altoCorrespondiente = arma->getContentSize().height *floor(i / 5);
 			}
 			else {
-				anchoCorrespondiente = (i*arma->getBoundingBox().size.width * 2);
+				anchoCorrespondiente = (i*84 * 1.2);
 				altoCorrespondiente = arma->getContentSize().height *floor(i / 5);
 			}
 			arma->setPosition(margenesX + anchoCorrespondiente, margenesY + altoCorrespondiente + altoCorrespondiente *0.5);
@@ -162,6 +162,7 @@ void TiendaScene::activaDesactivaBotones(cocos2d::MenuItemImage * boton, bool es
 {
 	CCLOG("los activo o desactivo");
 	textoCompra->setVisible(estado);
+	bocadillo->setVisible(estado);
 	rectangulo->setVisible(estado);
 	boton->setVisible(estado);
 	boton->setEnabled(estado);
@@ -171,56 +172,58 @@ void TiendaScene::preparaBotones()
 {
 	auto ancho = (Global::getInstance()->visibleSize.width * 4) / 6;
 	auto alto = (Global::getInstance()->visibleSize.height) / 2;
-	rectangulo = Sprite::create("images/Nivel/rectangle.png");
-	rectangulo->setScaleX(ancho / rectangulo->getContentSize().width);
-	rectangulo->setScaleY(alto / rectangulo->getContentSize().height);
-	rectangulo->setPosition(Point(Global::getInstance()->visibleSize.width/2, Global::getInstance()->visibleSize.height / 2));
+	rectangulo = Sprite::create("images/TiendaScene/cartel_compra.png");
+	rectangulo->setPosition(Point(Global::getInstance()->visibleSize.width / 2, Global::getInstance()->visibleSize.height / 2 +50));
+	
 	addChild(rectangulo, 3);
+
+	yesButton = MenuItemImage::create("images/TiendaScene/si.png", "images/TiendaScene/si.png",
+		CC_CALLBACK_1(TiendaScene::hacerCompra, this));
+
+	cerrarMenuButton = MenuItemImage::create("images/TiendaScene/no.png", "images/TiendaScene/no.png",
+		CC_CALLBACK_1(TiendaScene::closeMenuCompra, this));
+
+	menuCompra = Menu::create(yesButton, cerrarMenuButton, NULL);
+	menuCompra->alignItemsHorizontallyWithPadding(rectangulo->getContentSize().width / 4);
+	menuCompra->setPosition(rectangulo->getPositionX(),rectangulo->getPositionY()-170);
+	this->addChild(menuCompra, 3);
+
+	
+	bocadillo = cocos2d::Sprite::create("images/Nivel/Bocadillo_Zerrin.png");
+	addChild(bocadillo, 3);
+	bocadillo->setPosition(Point(Global::getInstance()->visibleSize.width*3/4+bocadillo->getContentSize().width/2-20, Global::getInstance()->visibleSize.height*3/4-bocadillo->getContentSize().height/2));
+	bocadillo->setScale(1.7, 1.8);
 
 	textoCompra = Label::createWithSystemFont("QUIERES COMPRAR?", "Arial", 30);
 	textoCompra->setColor(Color3B::GRAY);
 	textoCompra->enableShadow();
-	textoCompra->setPosition(Global::getInstance()->visibleSize.width / 2, Global::getInstance()->visibleSize.height / 2+textoCompra->getContentSize().height*2);
-
-	addChild(textoCompra,3);
+	
+	textoCompra->setPosition(Point(bocadillo->getPositionX(),bocadillo->getPositionY()+textoCompra->getContentSize().height/2));
+	addChild(textoCompra, 4);
 	textoCompra->setVisible(false);
-	yesButton = MenuItemImage::create("images/Armas/yes.png", "images/Armas/yes.png",
-		CC_CALLBACK_1(TiendaScene::hacerCompra, this));
-	cerrarMenuButton = MenuItemImage::create("images/Armas/no.png", "images/Armas/no.png",
-		CC_CALLBACK_1(TiendaScene::closeMenuCompra, this));
-	cerrarMenuButton->setScale(0.3);
-	yesButton->setScale(0.6);
 
 	activaDesactivaBotones(this->yesButton, false);
 	activaDesactivaBotones(this->cerrarMenuButton, false);
-
-
-	yesButton->setPosition(-yesButton->getContentSize().width / 2, 0);
-	cerrarMenuButton->setPosition(cerrarMenuButton->getContentSize().width / 4, 0);
-
-	menuCompra = Menu::create(yesButton, cerrarMenuButton, NULL);
-	menuCompra->setPosition(Director::getInstance()->getVisibleSize().width / 2, Director::getInstance()->getVisibleSize().height / 2-30);
-	this->addChild(menuCompra, 3);
 }
 
 void TiendaScene::preparaLabels()
 {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	
-	int y = visibleSize.height - 50;
+	int y = visibleSize.height - 25;
 
-	dinero_oro_int = Label::createWithSystemFont((String::createWithFormat("Dinero : %i", Global::getInstance()->katahi->getOro())->getCString()), "Arial", 30);
-	dinero_oro_int->setColor(Color3B::ORANGE);
+	dinero_oro_int = Label::createWithSystemFont((String::createWithFormat("Dinero : %i", Global::getInstance()->katahi->getOro())->getCString()), "Arial", 40);
+	dinero_oro_int->setColor(Color3B::BLACK);
 	dinero_oro_int->enableShadow();
 
-	dinero_mechones_int = Label::createWithSystemFont((String::createWithFormat("Mechones : %i", Global::getInstance()->katahi->getMechones())->getCString()), "Arial", 30);
-	dinero_mechones_int->setColor(Color3B::ORANGE);
+	dinero_mechones_int = Label::createWithSystemFont((String::createWithFormat("Mechones : %i", Global::getInstance()->katahi->getMechones())->getCString()), "Arial", 40);
+	dinero_mechones_int->setColor(Color3B::BLACK);
 	dinero_mechones_int->enableShadow();
 
 	this->addChild(dinero_oro_int, 2);
 	this->addChild(dinero_mechones_int, 2); 
-	dinero_oro_int->setPosition(Point(320, y));
-	dinero_mechones_int->setPosition(Point(770, y));
+	dinero_oro_int->setPosition(Point(220, y));
+	dinero_mechones_int->setPosition(Point(670, y));
 }
 
 void TiendaScene::addListener()
