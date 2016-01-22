@@ -84,28 +84,23 @@ bool MainMenuScene::init()
 }
 void MainMenuScene::goToCreditos(Ref *pSender){
 	AudioEngine::pause(songMainMenuID);
-
+	AudioEngine::play2d("sounds/Boton_MainMenuScene_1.mp3", false, 0.8);
 	auto scene = CreditosScene::createScene();
-
 	Director::getInstance()->pushScene(scene);
 }
 
 
 void MainMenuScene::goToAjustes(Ref *pSender){
 	AudioEngine::pause(songMainMenuID);
-
+	AudioEngine::play2d("sounds/Boton_MainMenuScene_1.mp3", false, 0.8);
 	auto scene = AjustesScene::createScene();
-
 	Director::getInstance()->pushScene(scene);
-
 }
 
 void MainMenuScene::goToMenuStart(Ref *pSender){
-
 	AudioEngine::pause(songMainMenuID);
-
+	AudioEngine::play2d("sounds/Boton_MainMenuScene_2.mp3", false, 0.8);
 	auto scene = MenuStartScene::createScene();
-
 	Director::getInstance()->pushScene(scene);
 }
 

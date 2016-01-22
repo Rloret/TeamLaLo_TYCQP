@@ -21,12 +21,18 @@ public:
 	void accionColision(Node* objeto);
 	void enableListener(bool estado);
 
+	void PlayObjetoSound();
+	void SetRutaSonido(cocos2d::String* c);
+	cocos2d::String* GetRutaSonido();
+	int SoundCaer;
+
 
 private:
 	int daño;
 	int tipo;
 	std::string nombre;
 	cocos2d::EventListenerTouchOneByOne* listener;
+	cocos2d::String* rutaSonido;
 
 
 };

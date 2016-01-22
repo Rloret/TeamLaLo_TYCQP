@@ -4,14 +4,27 @@
 #include "Global.h"
 #include "Nivel.h"
 #include "Animacion.h"
+#include"AudioEngine.h"
 
+using namespace cocos2d::experimental;
 USING_NS_CC;
 
 
 
 ZerrinClass::ZerrinClass() {
 	velocidad = 0.2;
-	vida = 1000;
+	vida = 1;
+
+	//gritos
+	SonidosZerrin.pushBack(cocos2d::String::create("sounds/Zerrin_Uh_1.mp3"));
+	SonidosZerrin.pushBack(cocos2d::String::create("sounds/Zerrin_Uh_2.mp3"));
+
+	//hablar
+	SonidosZerrin.pushBack(cocos2d::String::create("sounds/Zerrin_Habla.mp3"));
+	SonidosZerrin.pushBack(cocos2d::String::create("sounds/zerrin_habla_1.mp3"));
+	SonidosZerrin.pushBack(cocos2d::String::create("sounds/zerrin_habla_3.mp3"));
+
+
 	this->retain();
 	this->setName("Zerrin");
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("images/Zerrin/Zerrin_Spritesheet.plist");
@@ -25,12 +38,7 @@ ZerrinClass::~ZerrinClass()
 ZerrinClass * ZerrinClass::create()
 {
 	ZerrinClass* zerrin = new ZerrinClass();
-	//Texture2D *texture = Director::getInstance()->getTextureCache()->addImage(fileName);
 	zerrin->initWithFile("images/Zerrin/Senuelo.png");
-	//zerrin->initWithSpriteFrame(zerrin->creaAnimacionesZerrin()->getSpriteFrame());
-	//zerrin->setVisible(false);
-	
-	
 	return zerrin;
 }
 
@@ -166,6 +174,14 @@ cocos2d::Vector<cocos2d::SpriteFrame*> ZerrinClass::getAnimation(const char * fo
 	return animFrames;
 }
 
+void ZerrinClass::PlayZerrinSound(int inicio,int final)
+{
+	int ran=(int)random(inicio,final);
+	CCLOG("random es %d", ran);
+	auto s = SonidosZerrin.at(ran);
+	AudioEngine::play2d(s->getCString(), false,1.0);
+}
+
 
 
 void ZerrinClass::setState(ZERRINFSM estado)
@@ -175,10 +191,10 @@ void ZerrinClass::setState(ZERRINFSM estado)
 	Animacion* animacionDeTurno;
 	switch (estadoz) {
 	case SUELO:
-		CCLOG("SUELO");
+		//CCLOG("SUELO");
 
 		this->getPhysicsBody()->setContactTestBitmask(false);
-		CCLOG("me levantare y esas cosis y empiezo a correr");
+		//CCLOG("me levantare y esas cosis y empiezo a correr");
 		this->getPhysicsBody()->setVelocity(Vec2(0.0,0.0));
 		this->getPhysicsBody()->setAngularVelocity(0);
 		this->runAction(RotateTo::create(0.5, 0));
@@ -187,7 +203,7 @@ void ZerrinClass::setState(ZERRINFSM estado)
 
 		break;
 	case IDLE:
-		CCLOG("IDLEEEEEEEEEEEEEEEEEEEE");
+		//CCLOG("IDLEEEEEEEEEEEEEEEEEEEE");
 		if (currentAnimation != nullptr) {
 			currentAnimation->stopAllActions();
 			this->removeChild(currentAnimation,true);
@@ -198,7 +214,7 @@ void ZerrinClass::setState(ZERRINFSM estado)
 		break;
 		
 	case CORRIENDO:
-		CCLOG("CORRIENDOOOOOOOOOOOO");
+		//CCLOG("CORRIENDOOOOOOOOOOOO");
 		if (currentAnimation != nullptr) {
 			currentAnimation->stopAllActions();
 			this->removeChild(currentAnimation, true);
@@ -215,7 +231,7 @@ void ZerrinClass::setState(ZERRINFSM estado)
 		velocidad = 0.15;
 		break;
 	case GOLPEADO_ALANTE:
-		CCLOG("GOLPE ALANTE");
+		//CCLOG("GOLPE ALANTE");
 		Global::getInstance()->ellapsedTime = Global::getInstance()->currentTime;
 		if (currentAnimation != nullptr) {
 			currentAnimation->stopAllActions();
@@ -226,7 +242,7 @@ void ZerrinClass::setState(ZERRINFSM estado)
 		this->addChild(currentAnimation);
 		break;
 	case GOLPEADO_ATRAS:
-		CCLOG("GOLPE ATRAS");
+		//CCLOG("GOLPE ATRAS");
 		Global::getInstance()->ellapsedTime = Global::getInstance()->currentTime;
 		if (currentAnimation != nullptr) {
 			currentAnimation->stopAllActions();

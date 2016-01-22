@@ -139,11 +139,9 @@ void Arma::accionTouch(cocos2d::Touch* touch){
 		if (p.y < 500 && !Global::getInstance()->juegoEnCurso) {
 			if (Global::getInstance()->ContadorArmas < 5 && !this->enNivel) {
 				Global::getInstance()->ContadorArmas += 1;
-				//llamar a global
 				Arma* a = this->ClonarArma(this);
 				Global::getInstance()->añadeArmasANivel(a);
 				a->colocada = false;
-				//a->setPosition(Point(Global::getInstance()->ArmasNivel.size() * 80 + 500,Director::getInstance()->getVisibleSize().height-70));
 				a->setPosition(Point(Global::getInstance()->ArmasNivel.size() * 512 /5  +512 -this->getContentSize().width/2, Director::getInstance()->getVisibleSize().height -this->getBoundingBox().size.height/2-20));
 				this->enNivel = true;
 				Global::getInstance()->recolocaArmasNivel();
@@ -160,8 +158,7 @@ void Arma::accionTouch(cocos2d::Touch* touch){
 		else if (Global::getInstance()->juegoEnCurso) {
 			if (!colocada) this->colocada = true;
 			accion(this,touch);
-			this->EnableListener(false);//
-			//segun el tipo configurar timers o no->
+			this->EnableListener(false);
 		}
 	}
 }
@@ -170,11 +167,6 @@ void Arma::setPointY(int y)
 {
 	this->toqueY = y;
 }
-
-/*void Arma::setArma(Arma* arma)
-{
-	esteArma = arma;
-}*/
 
 void Arma::accion(Arma * a, cocos2d::Touch* touch)
 {
@@ -189,6 +181,8 @@ void Arma::accion(Arma * a, cocos2d::Touch* touch)
 		a->setPhysicsBody(PhysicsBody::createBox(a->getBoundingBox().size, cocos2d::PhysicsMaterial(10000, 1, 0.5)));
 		a->getPhysicsBody()->setContactTestBitmask(true);
 		a->getPhysicsBody()->setCollisionBitmask(false);
+		SoundCaer = AudioEngine::play2d("sounds/Objeto_cae.mp3", false, 0.7);
+
 		for (int i = 0; i < Global::getInstance()->layerObjects->getChildrenCount(); i++) {
 			if (hijos.at(i) == a) {
 				Global::getInstance()->layerObjects->removeChild(a);
@@ -215,7 +209,6 @@ void Arma::accion(Arma * a, cocos2d::Touch* touch)
 		break;
 
 	case 2: //bola demolicion
-		//((Nivel*)Global::getInstance()->nivel)->getPhysicsWorld()->addJoint(jointDemolicion);
 		for (int i = 0; i < Global::getInstance()->layerObjects->getChildrenCount(); i++) {
 			if (hijos.at(i) == a) {
 				Global::getInstance()->layerObjects->removeChild(a);
@@ -228,7 +221,6 @@ void Arma::accion(Arma * a, cocos2d::Touch* touch)
 		this->setTexture(Director::getInstance()->getTextureCache()->addImage("images/Armas/senuelo.png"));
 		pivote = Sprite::create("images/Armas/pivote.png");
 		pivote->setAnchorPoint(Vec2(0.5, 0.5));
-		//Global::getInstance()->nivel->getChildByTag(102)->addChild(bolaDemolicion, 80);
 		this->addChild(bolaDemolicion);
 		bolaDemolicion->setAnchorPoint(Vec2(-3.0, 0));
 		pivote->setPhysicsBody(PhysicsBody::createCircle(a->getBoundingBox().size.width / 2, PhysicsMaterial(1000, 0.5, 0.1)));
@@ -341,6 +333,7 @@ void Arma::intervalo(int tipo)
 	if (parpadeo < 0) {
 		this->setTexture(t_Activa);
 		if(hayTransicionDeFisicasEntreTexturas)this->getPhysicsBody()->setContactTestBitmask(true);
+		if (tipo == 3) AudioEngine::play2d("sounds/Pinchos.mp3", false, 0.8);
 	}
 	else {
 		this->setTexture(t_No_Activa);
@@ -389,7 +382,7 @@ std::string Arma::getNombre()
 
 int Arma::getDaño()
 {
-	return 15;
+	return daño;
 }
 
 int Arma::getPrecio()
@@ -476,21 +469,23 @@ Arma* Arma::ClonarArma(Arma* a){
 
 	Arma* nueva = Arma::create(a->getTexture(),a->daño,a->getNombre(),a->tipo,a->precio,a->mechones);
 	nueva->clon = a;
+	//nueva->rutaSonido[0] = a->rutaSonido[0];
+	a->GetRutaSonido() == nullptr ? CCLOG("ES NULL") : CCLOG("NO ES NULL");
+	nueva->SetRutaSonido(a->GetRutaSonido());
 	return nueva;
 }
 
 void Arma::PlayArmaSound()
 {
-	/*if (rutaSonido!=nullptr) {
-		CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect(rutaSonido);
-		CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(rutaSonido);
-	}
-	else CCLOG("no hay sonido");-*/
-
-	AudioEngine::play2d("sounds/Back_Btn.mp3",true,1.0);
+	if(this->rutaSonido !=NULL)AudioEngine::play2d(rutaSonido->getCString(), false, 0.8);
 }
 
-void Arma::SetRutaSonido(std::string c)
+void Arma::SetRutaSonido(cocos2d::String* c)
 {
-	rutaSonido = c;
+	rutaSonido=c;
+	rutaSonido->retain();
+}
+cocos2d::String* Arma::GetRutaSonido()
+{
+	return rutaSonido;
 }

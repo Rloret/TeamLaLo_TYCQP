@@ -87,6 +87,7 @@ void TiendaScene::createMenuCompra()
 
 void TiendaScene::closeMenuCompra(Ref *pSender)
 {
+
 	activaDesactivaBotones(this->yesButton, false);
 	activaDesactivaBotones(this->cerrarMenuButton, false);
 	Global::getInstance()->armaAComprar = nullptr;
@@ -99,7 +100,7 @@ void TiendaScene::hacerCompra(Ref *pSender)
 
 	Global::getInstance()->armaAComprar->childEnTienda = true;
 	for (int i = 0; i < Global::getInstance()->armasTotales.size(); i++) {
-		if (Global::getInstance()->armasTotales[i] == Global::getInstance()->armaAComprar) {
+		if (Global::getInstance()->armasTotales[i] == Global::getInstance()->armaAComprar && Global::getInstance()->armaAComprar->disponible) {
 			if (Global::getInstance()->katahi->getOro() >= Global::getInstance()->armaAComprar->getPrecio() && Global::getInstance()->katahi->getMechones() >= Global::getInstance()->armaAComprar->getMechones()) {
 				Global::getInstance()->armasTotales[i]->setDesdeTienda(false);
 				Global::getInstance()->armasTotales.erase(Global::getInstance()->armasTotales.begin() + i);
@@ -108,8 +109,8 @@ void TiendaScene::hacerCompra(Ref *pSender)
 				Global::getInstance()->armaAComprar->setVisible(false);
 				Global::getInstance()->katahi->modificaOro(-Global::getInstance()->armaAComprar->getPrecio());
 				Global::getInstance()->katahi->modificaMechones(-Global::getInstance()->armaAComprar->getMechones());
-				//CCLOG("oro: %d", Global::getInstance()->katahi->getOro());
 				
+				AudioEngine::play2d("sounds/Tienda_Yes.mp3", false, 0.9);
 				closeMenuCompra(this);
 				this->modificaTextoOro(dinero_oro_int);
 			
@@ -117,15 +118,26 @@ void TiendaScene::hacerCompra(Ref *pSender)
 				break;
 			}
 			else {
-				//MessageBox("No tienes suficiente dinero", "Aviso");
 
 				activaDesactivaBotones(yesButton,false);
 				rectangulo->setVisible(true);
 				textoCompra->setString("Pero...si no tienes \nsuficiente dinero.\nNo me hagas perder \nel tiempo.");
+				AudioEngine::play2d("sounds/Tienda_No.mp3", false, 0.9);
+
 				textoCompra->setVisible(true);
 				bocadillo->setVisible(true);
 				Global::getInstance()->armaAComprar->childEnTienda = false;
 			}	
+		}
+		else if (!Global::getInstance()->armaAComprar->disponible) {
+			activaDesactivaBotones(yesButton, false);
+			rectangulo->setVisible(true);
+			textoCompra->setString("Pero...si tienes que \ndesbloquearla.\nNo me hagas perder \nel tiempo.");
+			AudioEngine::play2d("sounds/Tienda_No.mp3", false, 0.9);
+
+			textoCompra->setVisible(true);
+			bocadillo->setVisible(true);
+			Global::getInstance()->armaAComprar->childEnTienda = false;
 		}
 	}	
 }
@@ -154,18 +166,19 @@ void TiendaScene::colocaArmasTotales()
 				altoCorrespondiente = arma->getContentSize().height *floor(i / 5);
 			}
 			arma->setPosition(margenesX + anchoCorrespondiente, margenesY + altoCorrespondiente + altoCorrespondiente *0.5);
-			CCLOG("arma colocada en %f, %f", arma->getPositionX(), arma->getPositionY());
+			//CCLOG("arma colocada en %f, %f", arma->getPositionX(), arma->getPositionY());
 			//arma->setColor(Color3B(i * 50, i * 10 + 60, 10));
 		}
 		arma->setDesdeTienda(true);
-		CCLOG("%d", i);
+		if (!arma->disponible) {
+			arma->setOpacity(100);
+		}
+		else arma->setOpacity(255);
 	}
-	CCLOG("numero de hijos de tienda es : %d ", this->getChildren().size());
 }
 
 void TiendaScene::activaDesactivaBotones(cocos2d::MenuItemImage * boton, bool estado)
 {
-	CCLOG("los activo o desactivo");
 	textoCompra->setVisible(estado);
 	bocadillo->setVisible(estado);
 	rectangulo->setVisible(estado);
@@ -219,6 +232,9 @@ void TiendaScene::preparaBotones()
 
 	activaDesactivaBotones(this->yesButton, false);
 	activaDesactivaBotones(this->cerrarMenuButton, false);
+
+	songTiendaID=AudioEngine::play2d("sounds/Tienda.mp3",false,0.0);
+	AudioEngine::pause(songTiendaID);
 }
 
 void TiendaScene::preparaLabels()
@@ -269,21 +285,24 @@ void TiendaScene::gestionaToque()
 		createMenuCompra();
 		this->listenerTienda->setEnabled(false);
 		for (int i = 0; i < Global::getInstance()->armasTotales.size(); i++) Global::getInstance()->armasTotales[i]->EnableListener(false);
-		//CCLOG("si es en un arma");
 	}
-	else {
-		//CCLOG("no es en un arma");
-	}
+
 }
 
 void TiendaScene::modificaTextoOro(cocos2d::Label * l)
 {
 	auto aux1 = CCString::createWithFormat("%i", Global::getInstance()->katahi->getOro());
-	CCLOG("Katahi tiene : %d", Global::getInstance()->katahi->getOro());
+	//CCLOG("Katahi tiene : %d", Global::getInstance()->katahi->getOro());
 	dinero_oro_int->setString((String::createWithFormat("Dinero = %d", Global::getInstance()->katahi->getOro())->getCString()));
 	
 	dinero_mechones_int->setString((String::createWithFormat("Mechones = %d", Global::getInstance()->katahi->getMechones())->getCString()));
 	//l->setVisible(false);
+}
+
+void TiendaScene::onEnterTransitionDidFinish()
+{
+	AudioEngine::setVolume(songTiendaID, 0.9);
+	AudioEngine::resume(songTiendaID);
 }
 
 

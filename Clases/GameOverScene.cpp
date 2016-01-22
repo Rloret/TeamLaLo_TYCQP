@@ -61,6 +61,8 @@ bool GameOverScene::init()
 	sombra->runAction(RepeatForever::create(Sequence::create(FadeTo::create(2.5, 255 / 2), FadeTo::create(2.5, 255), NULL)));
 
 	AudioEngine::stopAll();
+	AudioEngine::play2d("sounds/Game_Over_Background.mp3", false, 0.8);
+	AudioEngine::play2d("sounds/Game_Over_Zerrin_Yee_Haaa.mp3", false, 0.9);
 	
 	return true;
 }

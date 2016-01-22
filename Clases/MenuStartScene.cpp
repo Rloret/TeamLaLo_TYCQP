@@ -7,7 +7,6 @@
 #include "proj.win32\Arma.h"
 #include "proj.win32\ObjetoEscenario.h"
 #include "proj.win32\Global.h"
-#include "SimpleAudioEngine.h"
 #include "AudioEngine.h"
 
 using namespace cocos2d::experimental;
@@ -48,7 +47,7 @@ bool MenuStartScene::init()
 		CC_CALLBACK_1(MenuStartScene::goToVestuarioScene, this));
 	auto tiendaBtn = MenuItemImage::create("images/MenuStartScene/tienda_btn.png", "images/MenuStartScene/tienda_Btn_Idle.png",
 		CC_CALLBACK_1(MenuStartScene::goToTiendaScene, this));
-	auto levelsBtn = MenuItemImage::create("images/MenuStartScene/niveles_btn.png", "images/MenuStartScene/niveles_Btn_Idle.png",
+	auto levelsBtn = MenuItemImage::create("images/MenuStartScene/niveles_Btn.png", "images/MenuStartScene/niveles_Btn_Idle.png",
 		CC_CALLBACK_1(MenuStartScene::goToLevelsScene, this));
 
 
@@ -89,12 +88,14 @@ bool MenuStartScene::init()
 	
 	sombra->runAction(RepeatForever::create(Sequence::create(FadeTo::create(4, 80), FadeTo::create(4, 255),NULL)));
 
+	songMenuStartID=AudioEngine::play2d("sounds/MenuStartScene_Ambiente.mp3",false,0.0);
+	AudioEngine::pause(songMenuStartID);
 	return true;
 }
 
 
 void MenuStartScene::goToMainMenuScene(Ref *pSender){
-
+	AudioEngine::stopAll();
 	Director::getInstance()->popScene();
 	AudioEngine::play2d("sounds/Back_Btn.mp3", false, 0.8);
 	
@@ -102,12 +103,18 @@ void MenuStartScene::goToMainMenuScene(Ref *pSender){
 
 
 void MenuStartScene::goToLogrosScene(Ref *pSender){
+	AudioEngine::stopAll();
+
+	AudioEngine::play2d("sounds/Botones_MenuStartScene.mp3", false, 0.9);
 
 	auto scene = LogrosScene::createScene();
 	Director::getInstance()->pushScene(scene);
 }
 
 void MenuStartScene::goToVestuarioScene(Ref *pSender){
+	AudioEngine::stopAll();
+
+	AudioEngine::play2d("sounds/Botones_MenuStartScene.mp3", false, 0.9);
 
 	auto scene = VestuarioScene::createScene();
 	Director::getInstance()->pushScene(scene);
@@ -115,6 +122,9 @@ void MenuStartScene::goToVestuarioScene(Ref *pSender){
 
 
 void MenuStartScene::goToTiendaScene(Ref *pSender){
+	AudioEngine::stopAll();
+
+	AudioEngine::play2d("sounds/Botones_MenuStartScene.mp3", false, 0.9);
 
 	auto scene = TiendaScene::createScene();
 	Director::getInstance()->pushScene(scene);
@@ -122,7 +132,16 @@ void MenuStartScene::goToTiendaScene(Ref *pSender){
 
 
 void MenuStartScene::goToLevelsScene(Ref *pSender){
+	AudioEngine::stopAll();
+
+	AudioEngine::play2d("sounds/Botones_MenuStartScene.mp3", false, 0.9);
 
 	Director::getInstance()->pushScene(Global::getInstance()->levelsMenuScene);
 
+}
+
+void MenuStartScene::onEnterTransitionDidFinish()
+{
+	AudioEngine::setVolume(songMenuStartID, 1.0);
+	AudioEngine::resume(songMenuStartID);
 }

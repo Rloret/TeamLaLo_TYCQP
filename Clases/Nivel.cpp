@@ -37,14 +37,15 @@ Scene* Nivel::createScene(int nivel, std::vector<std::string> fondos, int i_obje
 	scene->addChild(layerObjects,20);
 	Global::getInstance()->layerObjects = layerObjects;
 
-	CCLOG("scene mide : %f, %f", scene->getBoundingBox().size.width, scene->getBoundingBox().size.height);
+	//CCLOG("scene mide : %f, %f", scene->getBoundingBox().size.width, scene->getBoundingBox().size.height);
 	auto layer = Nivel::create(nivel, fondos, i_objetos, u_objetos);
+	
 	layer->setTag(102);
 	
 	layer->setPhysicsWorld(scene->getPhysicsWorld());
 
 
-	CCLOG("Layer mide : %f, %f", layer->getBoundingBox().size.width, layer->getBoundingBox().size.height);
+	//CCLOG("Layer mide : %f, %f", layer->getBoundingBox().size.width, layer->getBoundingBox().size.height);
 	scene->addChild(layer,10);
 
 	Global::getInstance()->colocaObjetos(i_objetos, u_objetos);
@@ -83,7 +84,6 @@ bool Nivel::init()
 		return false;
 	}
 
-	CCLOG("devuelvo true");
 	return true;
 }
 
@@ -100,8 +100,8 @@ void Nivel::preparaNivel(int nivel, std::vector<std::string> fondos, int i_objet
 	colocaFondo(fondos);
 	colocaZerrin();
 
-	
-
+	nivelID = nivel;
+	Global::getInstance()->nivelActualID = nivel;
 	this->addContactListener();
 	
 	addChild(Global::getInstance()->zerrin, 4);
@@ -120,12 +120,15 @@ void Nivel::preparaNivel(int nivel, std::vector<std::string> fondos, int i_objet
 		, visibleSize.height / 3 + señuelo->getContentSize().height / 2));
 	
 	this->runAction(Follow::create(señuelo, muralla->getBoundingBox()));
-
+	auto señuelo2 = Sprite::create();
+	this->addChild(señuelo2, 0);
+	
 
 	switch (nivel) {
 		case 0:
-			Global::getInstance()->currentSongID = AudioEngine::play2d("sounds/Habitacion_Bckground_Ambient.mp3", true, 0.2);
-
+			Global::getInstance()->currentSongID = AudioEngine::play2d("sounds/Habitacion_Bckground_Ambient.mp3", true, 0.0);
+			AudioEngine::setVolume(Global::getInstance()->currentSongID, 0.0);
+			
 			señuelo->runAction(Sequence::create(CCCallFunc::create(CC_CALLBACK_0(Nivel::cargaFrasesZerrin, this, 0)), 
 				DelayTime::create(3.0),
 				MoveBy::create(2, Point(3000, 0)),
@@ -172,6 +175,8 @@ void Nivel::preparaNivel(int nivel, std::vector<std::string> fondos, int i_objet
 
 		case 2:
 			Global::getInstance()->currentSongID = AudioEngine::play2d("sounds/Murallas_inicio.mp3", false, 0.2);
+			AudioEngine::setVolume(Global::getInstance()->currentSongID, 0.0);
+			señuelo2->runAction(Sequence::create(DelayTime::create(34.0), CallFunc::create(CC_CALLBACK_0(Nivel::activasegundaCancion, this)), NULL));
 			señuelo->runAction(Sequence::create(CCCallFunc::create(CC_CALLBACK_0(Nivel::cargaFrasesZerrin, this, 5)),
 				DelayTime::create(3.0),
 				MoveBy::create(2, Point(3000, 0)),
@@ -185,6 +190,8 @@ void Nivel::preparaNivel(int nivel, std::vector<std::string> fondos, int i_objet
 
 		case 3:
 			Global::getInstance()->currentSongID = AudioEngine::play2d("sounds/Murallas_inicio.mp3", false, 0.2);
+			AudioEngine::setVolume(Global::getInstance()->currentSongID, 0.0);
+			señuelo2->runAction(Sequence::create(DelayTime::create(34.0), CallFunc::create(CC_CALLBACK_0(Nivel::activasegundaCancion, this)), NULL));
 			señuelo->runAction(Sequence::create(CCCallFunc::create(CC_CALLBACK_0(Nivel::cargaFrasesZerrin, this, 5)),
 				DelayTime::create(3.0),
 				MoveBy::create(2, Point(3000, 0)),
@@ -198,6 +205,8 @@ void Nivel::preparaNivel(int nivel, std::vector<std::string> fondos, int i_objet
 
 		case 4:
 			Global::getInstance()->currentSongID = AudioEngine::play2d("sounds/Murallas_inicio.mp3", false, 0.2);
+			AudioEngine::setVolume(Global::getInstance()->currentSongID, 0.0);
+
 
 			señuelo->runAction(Sequence::create(CCCallFunc::create(CC_CALLBACK_0(Nivel::cargaFrasesZerrin, this, 6)),
 				DelayTime::create(3.0),
@@ -232,12 +241,10 @@ void Nivel::displayArmasArsenal()
 {
 
 	for (int i = 0; i < Global::getInstance()->armasArsenal.size(); i++) {
-		//CCLOG("arma con daño: %d", Global::getInstance()->armasArsenal[i]->getDaño());
 		Arma* arma = Global::getInstance()->armasArsenal[i];
 		if (!this->getChildren().contains(arma)) {
 			arma->enNivel = false;
 			arma->childEnNivel = true;
-			//CCLOG("el daño de este arma, que no esta añadida es = %d", Global::getInstance()->armasArsenal[i]->getDaño());
 			this->addChild(arma, 7);
 			arma->setVisible(false);
 		}
@@ -249,6 +256,8 @@ void Nivel::displayArmasArsenal()
 
 void Nivel::muestraUnoMas(Ref *pSender)
 {
+	AudioEngine::play2d("sounds/Boton_MainMenuScene_1.mp3", false, 0.7);
+
 	auto ancho = ANCHOARSENAL;
 	auto alto = ALTOARSENAL;
 
@@ -262,19 +271,20 @@ void Nivel::muestraUnoMas(Ref *pSender)
 	else {
 		recorreArmas(iterador, posicion, ancho, alto, Global::getInstance()->armasArsenal.size());
 	}
-	CCLOG("vueltasarsenal vale %d", vueltasArsenal);
+
 }
 
 void Nivel::muestraUnoMenos(Ref *pSender,int i)
 {
+	AudioEngine::play2d("sounds/Boton_MainMenuScene_1.mp3", false, 0.7);
+
 	auto iterador = 0;
 	auto posicion = 0;
 
 	auto ancho = ANCHOARSENAL;
 	auto alto = ALTOARSENAL;
-	Global::getInstance()->armasArsenal.size() > 5 ? CCLOG("true") : CCLOG("false");
+	//Global::getInstance()->armasArsenal.size() > 5 ? CCLOG("true") : CCLOG("false");
 	if(Global::getInstance()->armasArsenal.size()>5){
-		CCLOG("Si entro");
 
 		int max = 0;
 		Global::getInstance()->armasArsenal.size() >10 ?  max = 10: max =5;
@@ -285,11 +295,7 @@ void Nivel::muestraUnoMenos(Ref *pSender,int i)
 
 		recorreArmas(iterador, posicion, ancho, alto,5);
 		if (vueltasArsenal > Global::getInstance()->armasArsenal.size()) vueltasArsenal = 0;
-		CCLOG("vueltasarsenal vale %d", vueltasArsenal);
 	}
-
-
-
 }
 
 void Nivel::borraArsenal(int superiorinferior)
@@ -307,15 +313,14 @@ void Nivel::borraArsenal(int superiorinferior)
 			}
 			Arma* arma = Global::getInstance()->armasArsenal[iterador];
 			activaDesactivaArma(arma,false);
-			CCLOG("borro la %d", iterador);
 			iterador--;
 			armasborradas++;
 
 		}
-
 }
 
 void Nivel::goToTienda(Ref *pSender){
+	AudioEngine::pause(Global::getInstance()->currentSongID);
 	if (!Global::getInstance()->juegoEnCurso){
 
 		if (rectangulo->isVisible())abrirArsenal(this);
@@ -323,7 +328,6 @@ void Nivel::goToTienda(Ref *pSender){
 		auto scene = TiendaScene::createScene();
 		Director::getInstance()->pushScene(scene);
 	}
-	
 }
 
 
@@ -335,12 +339,6 @@ void Nivel::goToVestuario(Ref *pSender){
 }
 
 void Nivel::goToPause(Ref *pSender){
-/*
-	CocosDenshion::SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
-
-	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sounds/Pause.mp3");
-	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sounds/Pause.mp3");*/
-
 	auto scene = PauseScene::createScene();
 	Director::getInstance()->pushScene(scene);
 }
@@ -396,7 +394,6 @@ void Nivel::simulacion(Ref *pSender){
 
 	if (!Global::getInstance()->juegoEnCurso){
 		Global::getInstance()->juegoEnCurso = true;
-		CCLOG("Empieza la simulacion");
 		menu1->setVisible(false);
 		if(menu2!=nullptr)menu2->setVisible(false);
 		quitaArmas();
@@ -405,7 +402,6 @@ void Nivel::simulacion(Ref *pSender){
 			rectangulo->setVisible(false);
 			activaDesactivaBoton(masBtn, false);
 			activaDesactivaBoton(menosBtn,false);
-			
 		}
 		
 		
@@ -415,11 +411,7 @@ void Nivel::simulacion(Ref *pSender){
 		this->runAction(Follow::create(Global::getInstance()->zerrin,muralla->getBoundingBox()));
 
 		
-	}
-	else{
-		CCLOG("Ya estas en simulacion");
-	}
-	
+	}	
 }
 
 void Nivel::activaDesactivaBoton(MenuItemImage* boton, bool estado)
@@ -437,8 +429,6 @@ void Nivel::recorreArmas(int iterador,int posicion,int ancho,int alto,int iterac
 		Arma* arma = Global::getInstance()->armasArsenal[vueltasArsenal];
 		arma->setPosition(((rectangulo->getPositionX()+(posicion)*554) / 6), alto / 2 +30);
 		activaDesactivaArma(arma, true);
-		CCLOG("muestro la %d", vueltasArsenal);
-
 		iterador++;
 		vueltasArsenal++;
 	}
@@ -545,8 +535,6 @@ void Nivel::colocaFondo(std::vector<std::string> fondos){
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
 	background = Sprite::create(fondos[0]);
-
-	
 	background->retain();
 	background->setPosition(background->getContentSize().width, visibleSize.height);
 	background->setAnchorPoint(Vec2(1, 1));
@@ -554,17 +542,13 @@ void Nivel::colocaFondo(std::vector<std::string> fondos){
 	addChild(background,0);
 
 	background1 = Sprite::create(fondos[1]);
-
 	addChild(background1, 1);
-
 	background1->setPosition(background1->getContentSize().width, visibleSize.height);
 	background1->setAnchorPoint(Vec2(1, 1));
 	background1->retain();
 
-
 	background2 = Sprite::create(fondos[2]);
 	addChild(background2, 3);
-
 	background2->setPosition(background2->getContentSize().width, visibleSize.height);
 	background2->setAnchorPoint(Vec2(1, 1));
 	background2->retain();
@@ -573,16 +557,15 @@ void Nivel::colocaFondo(std::vector<std::string> fondos){
 	addChild(muralla, 5);
 	auto limitesEscenario = PhysicsBody::createEdgeBox(Size(background->getContentSize().width, 668), PhysicsMaterial(0.5f, 0.0f, 0.5f), 0.3);
 	limitesEscenario->setPositionOffset(Vec2(0, 200));
+
 	muralla->setPhysicsBody(limitesEscenario);
 	muralla->getPhysicsBody()->setContactTestBitmask(true);
 	muralla->getPhysicsBody()->setCollisionBitmask(true);
 	muralla->getPhysicsBody()->setDynamic(false);
 	muralla->setName("Limites");
-
 	muralla->setPosition(muralla->getContentSize().width, visibleSize.height);
 	muralla->setAnchorPoint(Vec2(1, 1));
 	muralla->retain();
-
 }
 
 void Nivel::colocaZerrin()
@@ -601,7 +584,6 @@ void Nivel::colocaZerrin()
 	zerrin->getPhysicsBody()->setAngularDamping(0.2);
 	zerrin->getPhysicsBody()->setLinearDamping(0.3);
 	zerrin->setState(zerrin->ZERRINFSM::IDLE);
-	zerrin->setVida(10000);
 	zerrin->haLlegado = false;
 }
 
@@ -617,7 +599,7 @@ void Nivel::colocaHUD()
 
 void Nivel::cargaFrasesKatahi(int n)
 {
-	AudioEngine::play2d("sounds/katahi_Habla.mp3", false, 0.5);
+	AudioEngine::play2d("sounds/katahi_Habla.mp3", false, 0.7);
 
 	auto bocadillo = Sprite::create("images/Nivel/Bocadillo_Zerrin.png");
 	bocadillo->setAnchorPoint(Vec2(0.5, 0.5));
@@ -627,7 +609,6 @@ void Nivel::cargaFrasesKatahi(int n)
 	fraseKatahi->setString(Global::getInstance()->BateriaFrasesKatahi[n]);
 	fraseKatahi->setAnchorPoint(Vec2(0.5,0.5));
 	fraseKatahi->setTextColor(Color4B(138,31,114,255));
-	//fraseKatahi->setSystemFontSize(50.0);
 	fraseKatahi->setPosition(Katahi->getPositionX(),Katahi->getPositionY()+Katahi->getBoundingBox().size.height+bocadillo->getBoundingBox().size.height/2);
 	bocadillo->setPosition(fraseKatahi->getPosition());
 
@@ -637,23 +618,19 @@ void Nivel::cargaFrasesKatahi(int n)
 void Nivel::cargaFrasesZerrin(int n)
 {
 
-	AudioEngine::play2d("sounds/Zerrin_Habla.mp3", false, 0.4);
+	//AudioEngine::play2d("sounds/Zerrin_Habla.mp3", false, 0.4);
+	Global::getInstance()->zerrin->PlayZerrinSound(2,4);
 	Label* fraseZerrin = Label::createWithTTF(Global::getInstance()->letraPersonajes, "", TextHAlignment::CENTER);
 	auto bocadillo = Sprite::create("images/Nivel/Bocadillo_Zerrin.png");
 	bocadillo->setAnchorPoint(Vec2(0.5, 0.5));
 	bocadillo->setScaleX(-1);
 
 	fraseZerrin->setString(Global::getInstance()->BateriaFrasesZerrin[n]);
-
 	fraseZerrin->setPosition(Vec2(Global::getInstance()->zerrin->getPositionX(),Global::getInstance()->zerrin->getPositionY()+bocadillo->getBoundingBox().size.height));
 	fraseZerrin->setTextColor(Color4B(19,33,138,255));
-	//fraseZerrin->setSystemFontSize(50.0);
 	bocadillo->setPosition(fraseZerrin->getPosition());
 
-
 	colocaFrase(bocadillo,fraseZerrin);
-
-	
 }
 
 void Nivel::colocaFrase(Sprite * Bocadillo, Label * Frase)
@@ -684,7 +661,6 @@ void Nivel::setPhysicsWorld(cocos2d::PhysicsWorld * world)
 	nivelPhysics = world;
 	nivelPhysics->setGravity(Vec2(0, -200.0));
 	nivelPhysics->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
-
 }
 
 
@@ -706,6 +682,12 @@ Nivel::~Nivel()
 cocos2d::PhysicsWorld * Nivel::getPhysicsWorld()
 {
 	return nivelPhysics;
+}
+
+void Nivel::onEnterTransitionDidFinish()
+{
+	AudioEngine::resume(Global::getInstance()->currentSongID);
+	AudioEngine::setVolume(Global::getInstance()->currentSongID, 0.6);
 }
 
 cocos2d::Rect Nivel::getBackgroundSize()
@@ -734,8 +716,6 @@ void Nivel::spawnNube(float dt)
 		}
 
 	}
-
-
 }
 
 
@@ -743,7 +723,6 @@ void Nivel::mueveFondo(float v) {
 	
 	if ((Global::getInstance()->zerrin->getEstado()!=Global::getInstance()->zerrin->ZERRINFSM::IDLE) && Global::getInstance()->zerrin->getEstado() != Global::getInstance()->zerrin->ZERRINFSM::SALIENDO) {
 		for (int i = Global::getInstance()->inicioObj; i < Global::getInstance()->finalObj; i++) {
-			//CCLOG("los objetos se mueven %f", - (v));
 			Global::getInstance()->ObjetosTotalesEscenarios[i]->setPositionX(Global::getInstance()->ObjetosTotalesEscenarios[i]->getPositionX() - (v));
 		}
 	}
@@ -786,34 +765,41 @@ bool Nivel::onContactBegin(cocos2d::PhysicsContact & contact) {
 	else if (a->getNode()->getName() == "Arma") {
 		if (b->getNode()->getName() == "Zerrin") {
 			zerrin->muestraDaño(((Arma*)a->getNode())->getDaño());
-			zerrin->setVida(zerrin->getVida() - ((Arma*)b->getNode())->getDaño());
+			zerrin->setVida(zerrin->getVida() - ((Arma*)a->getNode())->getDaño());
+			if (zerrin->getVida() <= 0) {
+				if (zerrin->getChildrenCount() > 0) zerrin->removeAllChildren();
+				goToWinScene();
+			}
+
 			((Arma*)a->getNode())->accionColision(((Arma*)a->getNode())->getTipo());
 			zerrin->accionColision(a->getNode()->getPositionX() >= zerrin->getPositionX(),1, ((Arma*)a->getNode())->getTipo());
 
-			//CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect(((Arma*)a->getNode())->RutaSonido);
-			((Arma*)a->getNode())->PlayArmaSound();
-
-			if (zerrin->getVida() <= 0) {
-				if (zerrin->getChildrenCount() > 0) zerrin->removeAllChildren();
-				Global::getInstance()->katahi->modificaOro(100);
-				goToWinScene();
+			if (((Arma*)a->getNode())->getTipo() != 3) {
+				if (((Arma*)a->getNode())->getTipo() == 0) AudioEngine::stop(((Arma*)a->getNode())->SoundCaer);
+				((Arma*)a->getNode())->PlayArmaSound();
+				zerrin->PlayZerrinSound(0,1);
 			}
+
+			
 		}
 	}
 	else if (b->getNode()->getName() == "Arma") {
 		if (a->getNode()->getName() == "Zerrin") {
 			zerrin->muestraDaño(((Arma*)b->getNode())->getDaño());
 			zerrin->setVida(zerrin->getVida() - ((Arma*)b->getNode())->getDaño());
+			if (zerrin->getVida() <= 0) {
+				if (zerrin->getChildrenCount() > 0) Global::getInstance()->zerrin->removeAllChildren();
+				goToWinScene();
+			}
+
 			((Arma*)b->getNode())->accionColision(((Arma*)b->getNode())->getTipo());
 			zerrin->accionColision(b->getNode()->getPositionX() >= zerrin->getPositionX(), 1, ((Arma*)b->getNode())->getTipo());
 
-			//CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect(((Arma*)b->getNode())->RutaSonido);
-			((Arma*)b->getNode())->PlayArmaSound();
+			if (((Arma*)b->getNode())->getTipo() != 3) {
+				if (((Arma*)b->getNode())->getTipo() == 0) AudioEngine::stop(((Arma*)b->getNode())->SoundCaer);
+				((Arma*)b->getNode())->PlayArmaSound();
+				zerrin->PlayZerrinSound(0,1);
 
-			if (zerrin->getVida() <= 0) {
-				if (zerrin->getChildrenCount() > 0) Global::getInstance()->zerrin->removeAllChildren();
-				Global::getInstance()->katahi->modificaOro(100);
-				goToWinScene();
 			}
 		}
 	}
@@ -824,14 +810,13 @@ bool Nivel::onContactBegin(cocos2d::PhysicsContact & contact) {
 			zerrin->muestraDaño(((ObjetoEscenario*)a->getNode())->getDaño());
 			zerrin->setVida(zerrin->getVida() - ((ObjetoEscenario*)a->getNode())->getDaño());
 
-			zerrin->accionColision(a->getNode()->getPositionX() >= zerrin->getPositionX(), 0, ((ObjetoEscenario*)a->getNode())->getTipo());
-			((ObjetoEscenario *)a)->accionColision(a->getNode());
-
 			if (zerrin->getVida() <= 0) {
 				if (zerrin->getChildrenCount() > 0) Global::getInstance()->zerrin->removeAllChildren();
-				Global::getInstance()->katahi->modificaOro(100);
 				goToWinScene();
 			}
+			zerrin->accionColision(a->getNode()->getPositionX() >= zerrin->getPositionX(), 0, ((ObjetoEscenario*)a->getNode())->getTipo());
+			((ObjetoEscenario *)a)->accionColision(a->getNode());
+			zerrin->PlayZerrinSound(0,1);			
 		} 
 	}
 	else if (a->getNode()->getName() == "Zerrin") {
@@ -840,18 +825,15 @@ bool Nivel::onContactBegin(cocos2d::PhysicsContact & contact) {
 			zerrin->muestraDaño(((ObjetoEscenario*)b->getNode())->getDaño());
 			zerrin->setVida(zerrin->getVida() - ((ObjetoEscenario*)b->getNode())->getDaño());
 
-			zerrin->accionColision(b->getNode()->getPositionX() >= zerrin->getPositionX(), 0, ((ObjetoEscenario*)b->getNode())->getTipo());
-			((ObjetoEscenario *)b)->accionColision(b->getNode());
-
-			
-
 			if (zerrin->getVida() <= 0) {
 				if (zerrin->getChildrenCount() > 0) zerrin->removeAllChildren();
-				Global::getInstance()->katahi->modificaOro(100);
 				goToWinScene();
 			}
+
+			zerrin->accionColision(b->getNode()->getPositionX() >= zerrin->getPositionX(), 0, ((ObjetoEscenario*)b->getNode())->getTipo());
+			((ObjetoEscenario *)b)->accionColision(b->getNode());
+			zerrin->PlayZerrinSound(0,1);		
 		}
-		
 	}
 
 	CCLOG("contacto de %s con %s", sa->getCString(), sb->getCString());
@@ -881,6 +863,13 @@ void Nivel::onContactPostSolve(PhysicsContact & contact, const PhysicsContactPos
 		if (Global::getInstance()->zerrin->getPhysicsBody()->getVelocity().y > 0)
 			Global::getInstance()->zerrin->getPhysicsBody()->setVelocity(Vec2(0, 0));
 	}
+}
+
+void Nivel::activasegundaCancion()
+{
+	CCLOG("ALLAHU");
+	Global::getInstance()->currentSongID = AudioEngine::play2d("sounds/Murallas_bucle.mp3", true, 0.6);
+
 }
 
 void Nivel::removeKatahi()

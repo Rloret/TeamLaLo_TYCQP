@@ -15,6 +15,9 @@ public:
 	void goToVestuarioScene(Ref *pSender);
 	void goToTiendaScene(Ref *pSender);
 	void goToLevelsScene(Ref * pSender);
+	void onEnterTransitionDidFinish();
+
+	int songMenuStartID;
 
 	// implement the "static create()" method manually
 	CREATE_FUNC(MenuStartScene);

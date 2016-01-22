@@ -31,6 +31,8 @@ public:
 
 	std::vector<ObjetoEscenario*> ObjetosTotalesEscenarios;
 	std::vector<std::pair<int, int>> PosicionObjetos;
+	std::vector<int> nivelesJugados;
+
 
 	cocos2d::Size visibleSize;
 
@@ -55,6 +57,9 @@ public:
 
 	int inicioObj;
 	int finalObj;
+	int RecompensaOro;
+	int RecompensaMechones;
+	int nivelActualID;
 
 	//std::vector<Vec2*> ObjetosTotalesEscenarioPosiciones;
 	

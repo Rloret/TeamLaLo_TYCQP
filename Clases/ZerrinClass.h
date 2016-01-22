@@ -33,6 +33,10 @@ public:
 	cocos2d::Vector<cocos2d::SpriteFrame *> getAnimation(const char *format, int count);
 	cocos2d::Sprite aspecto;
 
+	cocos2d::Vector<cocos2d::String*> SonidosZerrin;
+
+	void PlayZerrinSound(int inicio,int final);
+
 	enum ZERRINFSM
 	{
 		IDLE,

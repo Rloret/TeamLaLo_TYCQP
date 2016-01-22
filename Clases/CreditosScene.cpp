@@ -1,6 +1,5 @@
 #include "CreditosScene.h"
 #include "MainMenuScene.h"
-#include "SimpleAudioEngine.h"
 #include "AudioEngine.h"
 
 using namespace cocos2d::experimental;
@@ -46,13 +45,14 @@ bool CreditosScene::init()
 	background->setPosition(Point(visibleSize.width/2,visibleSize.height/2));
 	addChild(background, 0);
 
+	AudioEngine::play2d("sounds/Under_Development.mp3", true, 1.0);
+
 	return true;
 }
 
 void CreditosScene::goToMainMenuScene(Ref *pSender){
-
-	AudioEngine::play2d("sounds/Back_Btn.mp3", false, 0.8);
-
+	AudioEngine::stopAll();
+	AudioEngine::play2d("sounds/Back_Btn.mp3", false,1.0);
 
 	Director::getInstance()->popScene();
 }

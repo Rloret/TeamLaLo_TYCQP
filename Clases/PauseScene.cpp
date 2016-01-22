@@ -77,14 +77,14 @@ bool PauseScene::init()
 	addChild(sombra, 2);
 	sombra->runAction(RepeatForever::create(Sequence::create(FadeTo::create(2.5, 255 / 2), FadeTo::create(2.5, 255), NULL)));
 
-	
+	AudioEngine::play2d("sounds/Pause.mp3", true, 0.9);
 
 	return true;
 }
 
 
 void PauseScene::resumeGameScene(Ref *pSender){
-
+	AudioEngine::stopAll();
 	Director::getInstance()->popScene();
 	AudioEngine::play2d("sounds/Back_Btn.mp3", false, 0.8);
 

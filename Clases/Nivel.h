@@ -24,7 +24,7 @@ public:
 	void mueveFondo(float v);
 	void addContactListener();
 	void onContactPostSolve(cocos2d::PhysicsContact& contact, const cocos2d::PhysicsContactPostSolve& solve);
-
+	void activasegundaCancion();
 
 	//void colocaObjetos(int i_objetos, int u_objetos);
 
@@ -35,7 +35,7 @@ public:
 	int getPosXFondo();
 	int getBackgroundWidth();
 	int vueltasArsenal;
-
+	int nivelID;
 
 
 	bool onContactBegin(cocos2d::PhysicsContact & contact);
@@ -51,6 +51,7 @@ public:
 	cocos2d::PhysicsWorld * getPhysicsWorld();
 	cocos2d::Sprite* background;
 
+	virtual void onEnterTransitionDidFinish();
 
 
 private:

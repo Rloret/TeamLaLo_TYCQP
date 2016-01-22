@@ -54,17 +54,15 @@ bool AjustesScene::init()
 
 	prompt->runAction(RepeatForever::create(Sequence::create(FadeOut::create(0.5),FadeIn::create(0.5),NULL)));
 
+	AudioEngine::play2d("sounds/Under_Development.mp3", true, 1.0);
+	
 	return true;
 }
 
 
 void AjustesScene::goToMainMenuScene(Ref *pSender){
-
-	AudioEngine::play2d("sounds/Back_Btn.mp3", false, 0.8);
-
+	AudioEngine::stopAll();
+	AudioEngine::play2d("sounds/Back_Btn.mp3", false, 1.0);
 
 	Director::getInstance()->popScene();
-
-
-
 }

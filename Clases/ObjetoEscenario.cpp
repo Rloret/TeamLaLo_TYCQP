@@ -1,5 +1,7 @@
 #include "ObjetoEscenario.h"
 #include "Global.h"
+#include "AudioEngine.h"
+using namespace cocos2d::experimental;
 
 USING_NS_CC;
 
@@ -9,8 +11,6 @@ ObjetoEscenario::ObjetoEscenario(const std::string & fileName, int daño, std::st
 	this->nombre = nombre;
 	this->initWithFile(fileName);
 	this->tipo = tipo;
-
-
 	this->setName("Objeto");
 
 	this->AddListener();
@@ -60,7 +60,10 @@ void ObjetoEscenario::AddListener()
 
 }
 
-void ObjetoEscenario::TouchEvent(cocos2d::Touch * touch, cocos2d::Point _p){assignBody();}
+void ObjetoEscenario::TouchEvent(cocos2d::Touch * touch, cocos2d::Point _p){
+	assignBody();
+	
+}
 
 int ObjetoEscenario::getDaño(){	return daño;}
 
@@ -74,10 +77,13 @@ void ObjetoEscenario::enableListener(bool estado)
 	listener->setEnabled(estado);
 }
 
+
+
 void ObjetoEscenario::accionColision(Node* objeto)
 {
+	((ObjetoEscenario*)objeto)->PlayObjetoSound();
+
 	auto cuerpoFisicas = objeto->getPhysicsBody();
-	//CCLOG("obj con tipo %d" , ((ObjetoEscenario*)objeto)->getTipo());
 
 	switch (((ObjetoEscenario*)objeto)->tipo) {
 
@@ -110,9 +116,11 @@ void ObjetoEscenario::assignBody()
 	case 2:
 		body = cocos2d::PhysicsBody::createBox(this->getContentSize(), PHYSICSBODY_MATERIAL_DEFAULT);
 		this->setPhysicsBody(body);
-		this->nombre = "maceta";
 		this->getPhysicsBody()->setDynamic(true);
 		this->getPhysicsBody()->setVelocity(Vec2(0,-400));
+
+		SoundCaer=AudioEngine::play2d("sounds/Objeto_cae.mp3", false, 1.0);
+
 		break;
 	case 3:
 		break;
@@ -127,6 +135,22 @@ int ObjetoEscenario::getTipo()
 	return tipo;
 }
 
+void ObjetoEscenario::PlayObjetoSound()
+{
+	if (tipo == 2)AudioEngine::stop(SoundCaer);
 
+	if (this->rutaSonido != NULL)AudioEngine::play2d(rutaSonido->getCString(), false, 1.0);
+}
+
+void ObjetoEscenario::SetRutaSonido(cocos2d::String *c)
+{
+	rutaSonido = c;
+	rutaSonido->retain();
+}
+
+cocos2d::String * ObjetoEscenario::GetRutaSonido()
+{
+	return rutaSonido;
+}
 
 

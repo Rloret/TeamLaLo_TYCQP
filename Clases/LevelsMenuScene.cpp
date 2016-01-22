@@ -114,13 +114,11 @@ bool LevelsMenuScene::init()
 		if (i >= 5) {
 			imagen = String::createWithFormat("images/LevelsMenuScene/nivel_nosign_%d_btn.png", (i % 5));
 			int iteradorimg = (i % 5);
-			CCLOG("%d", iteradorimg);
+			
 		}
 		else {
-			CCLOG("%d", i);
 			imagen = String::createWithFormat("images/LevelsMenuScene/nivel_nosign_%d_btn.png", i);
 		}
-		CCLOG("%s", imagen->getCString());
 		auto itemimgaux = MenuItemImage::create(imagen->getCString(), imagen->getCString(),
 												CC_CALLBACK_1(LevelsMenuScene::goToNivel,this,10));
 		auto menuaux = Menu::create(itemimgaux, NULL);
@@ -185,7 +183,8 @@ void LevelsMenuScene::goToMenuStart(Ref *pSender){
 
 
 void  LevelsMenuScene::muestraUnoMas(Ref *pSender){
-	//CCLOG("%d", mundoSeleccionado);
+	AudioEngine::play2d("sounds/Boton_MainMenuScene_1.mp3", false, 0.7);
+
 	if (mundoSeleccionado < 4){
 	
 		imagenesMundos[mundoSeleccionado]->setVisible(false);
@@ -208,7 +207,7 @@ void  LevelsMenuScene::muestraUnoMas(Ref *pSender){
 
 
 void  LevelsMenuScene::muestraUnoMenos(Ref *pSender){
-	//CCLOG("%d", mundoSeleccionado);
+	AudioEngine::play2d("sounds/Boton_MainMenuScene_1.mp3",false,0.7);
 	if (mundoSeleccionado > 0){
 
 		imagenesMundos[mundoSeleccionado]->setVisible(false);
@@ -257,8 +256,7 @@ void LevelsMenuScene::addListener(){
 
 void LevelsMenuScene::touchEvent(cocos2d::Touch * touch, cocos2d::Point _p)
 {
-
-	//CCLOG("no hay listener")
+	AudioEngine::play2d("sounds/LevelsMenuSceneTap_Nivel.mp3", false, 0.8);
 	LevelsMenuScene::muestraNivelesBtn();
 	imagenesMundos[mundoSeleccionado]->setVisible(false);
 }
@@ -299,12 +297,11 @@ void LevelsMenuScene::onEnterTransitionDidFinish()
 	brightEffect->setOpacity(0);
 	
 	
-	AudioEngine::setVolume(songLevelsMenuID ,1.0);
+	AudioEngine::setVolume(songLevelsMenuID ,0.9);
 	AudioEngine::resume(songLevelsMenuID);
 }
 
 void LevelsMenuScene::goToNivel(Ref *psender,int i){
-	AudioEngine::pause(songLevelsMenuID);
 	Label*	notAvailableLabel;
 	nivelpulsado = (MenuItemImage*)psender;
 	nivelpulsado->setEnabled(false);
@@ -320,27 +317,29 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 		fondosPasar.push_back("images/Nivel/Escenarios/Habitacion_tercer_plano.png");
 		fondosPasar.push_back("images/Nivel/Escenarios/Habitacion_primer_plano.png");
 		cene = Nivel::createScene(0,fondosPasar, 0, 0);
-		añadeNivel(cene, 0, 0);
 
+		Global::getInstance()->RecompensaOro = 80;
+		Global::getInstance()->RecompensaMechones = 2;
+		Global::getInstance()->zerrin->setVida(20);
+		añadeNivel(cene, 0, 0);
+		AudioEngine::pause(songLevelsMenuID);
 		break;
+
 
 	case 2:
 		_eventDispatcher->removeEventListener(this->listener);
 		if (fondosPasar.size()>0)fondosPasar.clear();
 		fondosPasar.push_back("images/Nivel/Escenarios/Castillo_Fondo.png");
 		fondosPasar.push_back("images/Nivel/Escenarios/Castillo_Tercer_Plano.png");
-		//fondosPasar.push_back("images/Nivel/Castillo_Nubes.png");
 		fondosPasar.push_back("images/Nivel/Escenarios/Castillo_Segundo_Plano.png");
 		fondosPasar.push_back("images/Nivel/Escenarios/Castillo_Primer_Plano.png");
 		cene = Nivel::createScene(2,fondosPasar, 0, 1);
+		Global::getInstance()->zerrin->setVida(140);
+		Global::getInstance()->RecompensaOro =50;
+		Global::getInstance()->RecompensaMechones = 0;
+
 		añadeNivel(cene, 0, 1);
-
-		/*CocosDenshion::SimpleAudioEngine::getInstance()->preloadBackgroundMusic("sounds/Murallas_inicio.mp3.mp3");
-		CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("sounds/Murallas_inicio.mp3", false);
-		CocosDenshion::SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(0.5);*/
-
-		
-
+		AudioEngine::pause(songLevelsMenuID);
 		break;
 
 	case 3:
@@ -351,10 +350,17 @@ void LevelsMenuScene::goToNivel(Ref *psender,int i){
 		fondosPasar.push_back("images/Nivel/Escenarios/Castillo_Segundo_Plano.png");
 		fondosPasar.push_back("images/Nivel/Escenarios/Castillo_Primer_Plano.png");
 		cene = Nivel::createScene(3,fondosPasar, 1, 3);
+		Global::getInstance()->zerrin->setVida(260);
+		Global::getInstance()->RecompensaOro = 50;
+		Global::getInstance()->RecompensaMechones = 0;
+
 		añadeNivel(cene, 1,3);
+		AudioEngine::pause(songLevelsMenuID);
 		break;
 
 	default:
+		AudioEngine::play2d("sounds/LevelsMenuSceneTap_No_Signal.mp3", false, 1.0);
+
 		notAvailableLabel = Label::createWithSystemFont("NOT AVAILABLE YET.", "Arial", 60);
 		notAvailableLabel->setColor(Color3B::RED);
 		notAvailableLabel->enableShadow();

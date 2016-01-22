@@ -31,6 +31,10 @@ Global::Global(){
 	 letraPersonajes.customGlyphs = nullptr;
 	 letraPersonajes.distanceFieldEnabled = false;
 
+	 for (int i = 0; i < 10; i++) {
+		 nivelesJugados.push_back(0);
+	 }
+	
 	 CreaFrases();
 
 }
@@ -47,78 +51,86 @@ void Global::creaArmas()
 	//TAMAÑO ESTANDARD ARMAS 84x84
 
 	Texture2D* d1 = Director::getInstance()->getTextureCache()->addImage("images/Armas/daga1.png");
-	Arma* daga1 = Arma::create(d1,10,"daga_simple",0,10,0);
+	Arma* daga1 = Arma::create(d1,10,"daga_simple",0,5,0);
 	armasTotales.push_back(daga1);
-	daga1->SetRutaSonido("sounds/MainMenuScene.mp3");
+	daga1->SetRutaSonido(cocos2d::String::create("sounds/Daga_1.mp3"));
+	daga1->disponible = true;
 
 
 	Texture2D* d3 = Director::getInstance()->getTextureCache()->addImage("images/Armas/daga3.png");
-	Arma* daga3 = Arma::create(d3, 20, "daga_cara", 0, 20, 0);
+	Arma* daga3 = Arma::create(d3, 10, "daga_cara", 0,5, 0);
 	armasTotales.push_back(daga3);
-	daga3->SetRutaSonido("sounds/MainMenuScene.mp3");
+	daga3->SetRutaSonido(cocos2d::String::create("sounds/Daga_1.mp3"));
+	daga3->disponible = true;
+
 
 	Texture2D* d2 = Director::getInstance()->getTextureCache()->addImage("images/Armas/daga2.png");
-	Arma* daga2 = Arma::create(d2, 30, "daga_dientes", 0, 30, 0);
+	Arma* daga2 = Arma::create(d2, 10, "daga_dientes", 0, 20, 0);
 	armasTotales.push_back(daga2);
-	daga2->SetRutaSonido("sounds/MainMenuScene.mp3");
+	daga2->SetRutaSonido(cocos2d::String::create("sounds/Daga_1.mp3"));
+	daga2->disponible = true;
 
 	Texture2D* d4 = Director::getInstance()->getTextureCache()->addImage("images/Armas/daga4.png");
-	Arma* daga4 = Arma::create(d4, 40, "daga_serpientes", 0, 40, 0);
+	Arma* daga4 = Arma::create(d4, 10, "daga_serpientes", 0, 20, 0);
 	armasTotales.push_back(daga4);
-	daga4->SetRutaSonido("sounds/MainMenuScene.mp3");
+	daga4->SetRutaSonido (cocos2d::String::create("sounds/Daga_1.mp3"));
+	daga4->disponible = true;
 
-	Texture2D *b= Director::getInstance()->getTextureCache()->addImage("images/Armas/bola.png");
-	Arma* bola = Arma::create(b, 60, "bola", 2, 80, 0);
+	Texture2D *b = Director::getInstance()->getTextureCache()->addImage("images/Armas/bola.png");
+	Arma* bola = Arma::create(b, 40, "bola", 2, 90, 2);
 	armasTotales.push_back(bola);
-	bola->SetRutaSonido("sounds/Bola.mp3");
+	bola->SetRutaSonido(cocos2d::String::create("sounds/Bola.mp3"));
 
 	Texture2D *c = Director::getInstance()->getTextureCache()->addImage("images/Armas/pinchos_activos.png");
-	Arma* pinchos = Arma::create(c, 90, "pinchos", 3, 100, 0);
+	Arma* pinchos = Arma::create(c, 20, "pinchos", 3, 60, 0);
 	armasTotales.push_back(pinchos);
-	pinchos->SetRutaSonido("sounds/Pinchos.mp3");
-
-	Texture2D *e = Director::getInstance()->getTextureCache()->addImage("images/Armas/mina_no_activa.png");
-	Arma* mina = Arma::create(e, 100, "mina", 4, 80, 1);
-	armasTotales.push_back(mina);
-	mina->SetRutaSonido("sounds/Mina.mp3");
+	pinchos->SetRutaSonido(cocos2d::String::create("sounds/Pinchos.mp3"));
 
 	Texture2D *f = Director::getInstance()->getTextureCache()->addImage("images/Armas/trampilla_activa_izq.png");
-	Arma* trampilla = Arma::create(f, 10, "trampilla", 5, 50, 5);
+	Arma* trampilla = Arma::create(f, 15, "trampilla", 5, 30, 5);
 	armasTotales.push_back(trampilla);
-	trampilla->SetRutaSonido("sounds/Trampilla.mp3");
+	trampilla->SetRutaSonido(cocos2d::String::create("sounds/Trampilla.mp3"));
 
+	Texture2D *e = Director::getInstance()->getTextureCache()->addImage("images/Armas/mina_no_activa.png");
+	Arma* mina = Arma::create(e, 100, "mina", 4, 100, 1);
+	armasTotales.push_back(mina);
+	mina->SetRutaSonido(cocos2d::String::create("sounds/Mina.mp3"));
 
-	//Texture2D* t = Director::getInstance()->getTextureCache()->addImage("images/Armas/arma.png");
+	
 
 	for (int i = 0; i <armasTotales.size(); i++){
 		armasTotales[i]->setPosition(-200, -200);
 		armasTotales[i]->setVisible(false);
 	}
-
 }
 
 void Global::creaObjetosEscenario()
 {
 	auto visiblesize = Director::getInstance()->getVisibleSize();
 	std::vector<std::string> macetas;
+
 	ObjetoEscenario* ancla = ObjetoEscenario::create("images/ObjetosEscenario/ancla.png", 100, "ancla",2);
 	ObjetosTotalesEscenarios.push_back(ancla);
-	PosicionObjetos.push_back(std::make_pair(1700,550));
+	PosicionObjetos.push_back(std::make_pair(1700,650));
+	ancla->SetRutaSonido(cocos2d::String::create("sounds/Ancla.mp3"));
 
-	ObjetoEscenario* cactus = ObjetoEscenario::create("images/ObjetosEscenario/cactus.png", 100, "cactus", 2);
+	ObjetoEscenario* cactus = ObjetoEscenario::create("images/ObjetosEscenario/cactus.png", 40, "cactus", 2);
 	ObjetosTotalesEscenarios.push_back(cactus);
 	macetas.push_back("images/ObjetosEscenario/cactus.png");
-	PosicionObjetos.push_back(std::make_pair(1600, 550));
+	PosicionObjetos.push_back(std::make_pair(1600, 650));
+	cactus->SetRutaSonido(cocos2d::String::create("sounds/Maceta.mp3"));
 
-	ObjetoEscenario* flor = ObjetoEscenario::create("images/ObjetosEscenario/flor.png", 100, "flor", 2);
+	ObjetoEscenario* flor = ObjetoEscenario::create("images/ObjetosEscenario/flor.png", 40, "flor", 2);
 	ObjetosTotalesEscenarios.push_back(flor);
 	macetas.push_back("images/ObjetosEscenario/flor.png");
 	PosicionObjetos.push_back(std::make_pair(2000, 550));
+	flor->SetRutaSonido(cocos2d::String::create("sounds/Maceta2.mp3"));
 
-	ObjetoEscenario* planta = ObjetoEscenario::create("images/ObjetosEscenario/planta.png", 100, "planta", 2);
+	ObjetoEscenario* planta = ObjetoEscenario::create("images/ObjetosEscenario/planta.png", 40, "planta", 2);
 	ObjetosTotalesEscenarios.push_back(planta);
 	macetas.push_back("images/ObjetosEscenario/planta.png");
-	PosicionObjetos.push_back(std::make_pair(2500, 550));
+	PosicionObjetos.push_back(std::make_pair(2500, 650));
+	planta->SetRutaSonido(cocos2d::String::create("sounds/Maceta2.mp3"));
 
 
 	/*for (int i = 4; i < 10; i++) {
@@ -163,9 +175,7 @@ void Global::quitaArmaDeNivel(Arma*a){
 
 void Global::colocaObjetos(int i_objetos, int u_objetos)
 {
-	CCLOG("bucle desde %d hasta %d",i_objetos,u_objetos);
 	for (int i = i_objetos; i < u_objetos; i++) {
-		CCLOG("dentro bucle i :%d", i);
 
 		auto objetodeturno = Global::getInstance()->ObjetosTotalesEscenarios[i];
 		objetodeturno->setOpacity(255);
@@ -177,8 +187,6 @@ void Global::colocaObjetos(int i_objetos, int u_objetos)
 			,Director::getInstance()->getVisibleSize().height -objetodeturno->getContentSize().height*1.5);*/
 
 		Point p = Point(PosicionObjetos[i].first/1.0, PosicionObjetos[i].second/1.0);
-		CCLOG("posicion tupla x: %d y: %d        posicion point x:%f y:%f", PosicionObjetos[i].first, PosicionObjetos[i].second, p.x, p.y);
-		CCLOG("posicion objeto x: %f y: %f", objetodeturno->getPositionX(), objetodeturno->getPositionY());
 
 		objetodeturno->setPosition(p);
 		objetodeturno->setPhysicsBody(nullptr);
@@ -188,8 +196,6 @@ void Global::colocaObjetos(int i_objetos, int u_objetos)
 		}
 		else v = 0;
 		nivel->getChildByTag(102)->addChild(objetodeturno, 3);
-		
-
 	}
 }
 

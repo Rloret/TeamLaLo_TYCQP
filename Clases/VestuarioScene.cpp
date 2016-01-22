@@ -1,4 +1,7 @@
 #include "VestuarioScene.h"
+#include "AudioEngine.h"
+
+using namespace cocos2d::experimental;
 USING_NS_CC;
 
 Scene* VestuarioScene::createScene()
@@ -46,11 +49,15 @@ bool VestuarioScene::init()
 	addChild(prompt, 1);
 	prompt->runAction(RepeatForever::create(Sequence::create(FadeOut::create(0.5), FadeIn::create(0.5), NULL)));
 
+	
+	AudioEngine::play2d("sounds/Under_Development.mp3", true, 1.0);
+
 	return true;
 }
 
 
 void VestuarioScene::returnToScene(Ref *pSender){
-
+	AudioEngine::stopAll();
+	AudioEngine::play2d("sounds/Back_Btn.mp3", false, 1.0);
 	Director::getInstance()->popScene();
 }

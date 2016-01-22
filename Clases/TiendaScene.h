@@ -22,6 +22,7 @@ public:
 	// implement the "static create()" method manually
 	CREATE_FUNC(TiendaScene);
 private:
+	int songTiendaID;
 
 	void hacerCompra(Ref *pSender);
 	void colocaArmasTotales();
@@ -46,7 +47,7 @@ private:
 
 	cocos2d::TTFConfig letraGotica;
 
-	//virtual void onEnterTransitionDidFinish();
+	virtual void onEnterTransitionDidFinish();
 };
 
 #endif  

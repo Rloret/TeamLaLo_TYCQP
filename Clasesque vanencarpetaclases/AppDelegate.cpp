@@ -1,5 +1,8 @@
 #include "AppDelegate.h"
 #include "PortadaScene.h"
+#include"AudioEngine.h"
+
+using namespace cocos2d::experimental;
 
 USING_NS_CC;
 
@@ -67,6 +70,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     // create a scene. it's an autorelease object
     auto scene = PortadaScene::createScene();
+	
+	AudioEngine::play2d("sounds/Portada.mp3", false, 1.0);
 
     // run
     director->runWithScene(scene);
