@@ -58,6 +58,7 @@ private:
 	static int tiempoDelNivel;
 	static int puntosDelNivel;
 	cocos2d::Menu* menuArsenal;
+	void mueveLimites( int offset);
 
 	
 	//bool juegoEnCurso;

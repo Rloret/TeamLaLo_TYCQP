@@ -254,6 +254,12 @@ void Nivel::displayArmasArsenal()
 
 
 
+void Nivel::mueveLimites( int offset)
+{
+	muralla->getPhysicsBody()->setPositionOffset(Point(muralla->getPhysicsBody()->getPositionOffset().x,
+		muralla->getPhysicsBody()->getPositionOffset().y-offset));
+}
+
 void Nivel::muestraUnoMas(Ref *pSender)
 {
 	AudioEngine::play2d("sounds/Boton_MainMenuScene_1.mp3", false, 0.7);
@@ -471,7 +477,7 @@ void Nivel::colocaBotones()
 		case EventKeyboard::KeyCode::KEY_ESCAPE:
 			Nivel::goToPause(this);
 			break;
-		case EventKeyboard::KeyCode::KEY_I:
+		/*case EventKeyboard::KeyCode::KEY_I:
 			Global::getInstance()->zerrin->getPhysicsBody()->applyImpulse(Vec2(-100000000,0));
 			break;
 		case EventKeyboard::KeyCode::KEY_F:
@@ -483,7 +489,7 @@ void Nivel::colocaBotones()
 			Global::getInstance()->zerrin->setState(Global::getInstance()->zerrin->ZERRINFSM::GOLPEADO_ALANTE);
 			break;
 		case EventKeyboard::KeyCode::KEY_X:
-			auto armadeturno = Global::getInstance()->armasTotales[random(0, 10)];
+			auto armadeturno = Global::getInstance()->armasTotales[2];
 			auto armadeturno2 = armadeturno->ClonarArma(armadeturno);
 			armadeturno2->setName("Arma");
 			this->addChild(armadeturno2,3);
@@ -491,7 +497,7 @@ void Nivel::colocaBotones()
 			armadeturno2->setPhysicsBody(PhysicsBody::createBox(armadeturno2->getContentSize(), PhysicsMaterial(random(1,10)*10000,random(0,10)/10, random(0, 10)/10)));
 			armadeturno2->getPhysicsBody()->setCollisionBitmask(true);
 			armadeturno2->getPhysicsBody()->setContactTestBitmask(true);
-			break;
+			break;*/
 		}
 
 	};
@@ -766,6 +772,10 @@ bool Nivel::onContactBegin(cocos2d::PhysicsContact & contact) {
 		if (b->getNode()->getName() == "Zerrin") {
 			zerrin->muestraDaño(((Arma*)a->getNode())->getDaño());
 			zerrin->setVida(zerrin->getVida() - ((Arma*)a->getNode())->getDaño());
+
+			muralla->runAction(Sequence::create(CCCallFuncN::create(CC_CALLBACK_0(Nivel::mueveLimites, this, 10)),
+				DelayTime::create(0.2), CCCallFuncN::create(CC_CALLBACK_0(Nivel::mueveLimites, this, -10)), NULL));
+
 			if (zerrin->getVida() <= 0) {
 				if (zerrin->getChildrenCount() > 0) zerrin->removeAllChildren();
 				goToWinScene();
@@ -787,6 +797,10 @@ bool Nivel::onContactBegin(cocos2d::PhysicsContact & contact) {
 		if (a->getNode()->getName() == "Zerrin") {
 			zerrin->muestraDaño(((Arma*)b->getNode())->getDaño());
 			zerrin->setVida(zerrin->getVida() - ((Arma*)b->getNode())->getDaño());
+
+			muralla->runAction(Sequence::create(CCCallFuncN::create(CC_CALLBACK_0(Nivel::mueveLimites, this, 10)),
+				DelayTime::create(0.2), CCCallFuncN::create(CC_CALLBACK_0(Nivel::mueveLimites, this, -10)), NULL));
+
 			if (zerrin->getVida() <= 0) {
 				if (zerrin->getChildrenCount() > 0) Global::getInstance()->zerrin->removeAllChildren();
 				goToWinScene();
@@ -810,6 +824,9 @@ bool Nivel::onContactBegin(cocos2d::PhysicsContact & contact) {
 			zerrin->muestraDaño(((ObjetoEscenario*)a->getNode())->getDaño());
 			zerrin->setVida(zerrin->getVida() - ((ObjetoEscenario*)a->getNode())->getDaño());
 
+			muralla->runAction(Sequence::create(CCCallFuncN::create(CC_CALLBACK_0(Nivel::mueveLimites, this, 10)),
+				DelayTime::create(0.2), CCCallFuncN::create(CC_CALLBACK_0(Nivel::mueveLimites, this, -10)), NULL));
+
 			if (zerrin->getVida() <= 0) {
 				if (zerrin->getChildrenCount() > 0) Global::getInstance()->zerrin->removeAllChildren();
 				goToWinScene();
@@ -823,6 +840,10 @@ bool Nivel::onContactBegin(cocos2d::PhysicsContact & contact) {
 		if (b->getNode()->getName() == "Objeto") {
 			zerrin->posicionAnterior =zerrin->getPositionX();
 			zerrin->muestraDaño(((ObjetoEscenario*)b->getNode())->getDaño());
+
+			muralla->runAction(Sequence::create(CCCallFuncN::create(CC_CALLBACK_0(Nivel::mueveLimites, this, 10)),
+				DelayTime::create(0.2), CCCallFuncN::create(CC_CALLBACK_0(Nivel::mueveLimites, this, -10)), NULL));
+
 			zerrin->setVida(zerrin->getVida() - ((ObjetoEscenario*)b->getNode())->getDaño());
 
 			if (zerrin->getVida() <= 0) {
@@ -835,6 +856,8 @@ bool Nivel::onContactBegin(cocos2d::PhysicsContact & contact) {
 			zerrin->PlayZerrinSound(0,1);		
 		}
 	}
+	//CCCallFunc::create(CC_CALLBACK_0(Nivel::cargaFrasesZerrin, this, 4);
+
 
 	CCLOG("contacto de %s con %s", sa->getCString(), sb->getCString());
 	return true;
